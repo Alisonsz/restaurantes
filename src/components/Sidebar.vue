@@ -76,7 +76,7 @@
                     menu: { icon: "icon-clipboard", name: "Cardápio", route: "/cardapio"},
                     hours: { icon: "icon-clock", name: "Horário funcionam.", route: "/horario"},
                     preparation: { icon: "icon-pot", name: "Tempo de preparo", route: "/preparo"},
-                    config: { icon: "icon-settings", name: "Configurações loja", route: "/configuracoes"},
+                   // config: { icon: "icon-settings", name: "Configurações loja", route: "/configuracoes"},
                     performance: { icon: "icon-performance", name: "Performance do cardápio", route: "/performance"},
                     monitor: { 
                         icon: "icon-monitor", 

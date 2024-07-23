@@ -1,22 +1,22 @@
 <template>
     <div class="preparation" :class="completeConfig ? '' : 'with-footer'">
-        <Navbar :navbarData="navbarData" /><Sidebar :sidebarData="sidebarData" />
-        <h2 class="bold-700 title">Tempo de preparo</h2>
-        <div class="container-data">
-            <label class="bold-500">Tempo médio padrão</label>
-            <p class="mb-0 mt-0">Esse será o tempo que o estabelecimento terá para preparar os pedidos e o tempo que aparecerá ao consumidor no aplicativo.</p>
-            <div class="row">
-                <div class="col form-time">
-                    <button class="btn btn-minus" @click="changeTime('general', 'minus')"><span class="add-item add-right add-minus"></span></button>
-                    <input type="text" class="form-control mt-3 text" placeholder="Ex. 20 min" v-model="timeNumber.general.time">
-                    <button class="btn btn-plus" @click="changeTime('general', 'plus')"><span class="add-item add-right add-plus"></span></button>
-                    <button class="btn btn-save" :class="timeNumber.general.time === '' ? 'inactive' : ''" @click="saveGeneralTime(timeNumber.general)">Salvar</button>
-                </div>
-            </div>
-            <p class="mb-0 mt-2 required-alert" v-show="invalid.general">*Campo obrigatório</p>
-            <p class="mt-2 required-alert">Recomendamos não colocar um tempo de preparo longo, uma vez que isso pode fazer com que os consumidores desistam da compra.</p>
-            <p v-if="dataTime.general !== ''">Tempo definido: {{ dataTime.general.time }} <span class="add-item icon-trash" role="button" @click="removeGeneralTime()"></span></p>
-            <hr>
+      <Navbar :navbarData="navbarData" /><Sidebar :sidebarData="sidebarData" />
+      <h2 class="bold-700 title">Tempo de preparo</h2>
+      <div class="container-data">
+        <label class="bold-500">Tempo médio padrão</label>
+        <p class="mb-0 mt-0">Esse será o tempo que o estabelecimento terá para preparar os pedidos e o tempo que aparecerá ao consumidor no aplicativo.</p>
+        <div class="row">
+          <div class="col form-time">
+            <button class="btn btn-minus" @click="changeTime('general', 'minus')"><span class="add-item add-right add-minus"></span></button>
+            <input type="number" class="form-control mt-3 text" placeholder="Ex. 20 min" v-model.number="timeNumber.general.time">
+            <button class="btn btn-plus" @click="changeTime('general', 'plus')"><span class="add-item add-right add-plus"></span></button>
+            <button class="btn btn-save" :class="timeNumber.general.time === '' ? 'inactive' : ''" @click="saveGeneralTime(timeNumber.general)">Salvar</button>
+          </div>
+        </div>
+        <p class="mb-0 mt-2 required-alert" v-show="invalid.general">*Campo obrigatório</p>
+        <p class="mt-2 required-alert">Recomendamos não colocar um tempo de preparo longo, uma vez que isso pode fazer com que os consumidores desistam da compra.</p>
+        <p v-if="dataTime.general !== ''">Tempo definido: {{ dataTime.general.time }} minutos <span class="add-item icon-trash" role="button" @click="removeGeneralTime()"></span></p>
+        <hr>
             <div class="list-item accordion mt-3">
                 <label class="bold-500 mt-2">Tempo médio específico</label>
                 <p class="mb-0 mt-0">Tempo que o estabelecimento terá para preparar os pedidos em determinados dias e horários da semana. Esse tempo aparecerá para  o consumidor no aplicativo.</p>
@@ -68,140 +68,155 @@
 </template>
 
 <script>
-    import Navbar from "../components/Navbar.vue";
-    import Sidebar from "../components/Sidebar.vue";
-    import Footer from "../components/Footer.vue"
-    
-    export default {
-        name: "PreparationView",
-        data() {
-            return {
-                completeConfig: false,
-                currentConfigStep: 4,
-                countConfigSteps: 5,
-                weekdays: {
-                    monday: "Segunda-feira",
-                    tuesday: "Terça-feira",
-                    wednesday: "Quarta-feira",
-                    thursday: "Quinta-feira",
-                    friday: "Sexta-feira",
-                    saturday: "Sábado",
-                    sunday: "Domingo"
-                },
-                hours: [
-                    "00h00", "01h00", "02h00", "03h00", "04h00", "05h00", 
-                    "06h00", "07h00", "08h00", "09h00", "10h00", "11h00",  
-                    "12h00", "13h00", "14h00", "15h00", "16h00", "17h00", 
-                    "18h00", "19h00", "20h00", "21h00", "22h00", "23h00"
-                ],
-                invalid: {
-                    general: false,
-                    special: false
-                },
-                timeNumber: {
-                    general: { number: 0, time: ""},
-                    special: { number: 0, time: "", day: "", open: "", close: ""}
-                },
-                dataTime: {
-                    general: "",
-                    special:  {
-                        monday: "",
-                        tuesday: "",
-                        wednesday: "",
-                        thursday: "",
-                        friday: "",
-                        saturday: "",
-                        sunday: ""
-                    }
-                },
-                sidebarData: {
-                    logo: "/img/logo1.png",
-                    company: "TATÁ Sushi",
-                    address: "R. João Cachoeira, 278",
-                    active: "preparation",
-                    message: "Configure os menus abaixo para começar a receber pedidos!",
-                    open: true,
-                    links: {
-                        profile: { complete: true },
-                        menu: { complete: true },
-                        hours: { complete: true },
-                        preparation: { complete: false },
-                        config: { complete: false }
-                    }
-                },
-                navbarData: {
-                    /*
-                    time: "9 horas",
-                    notifications: 4
-                    */
-                }
-            }            
-        },
-        components: {
-            Navbar,
-            Sidebar,
-            Footer
-        },
-        methods: {
-            changeTime(field, operation) {
-                if (this.timeNumber[field].time === "") {
-                    this.timeNumber[field].number = 0;
-                } else {
-                    if (this.timeNumber[field].time.includes('h')) {
-                        let dataHour = this.timeNumber[field].time.replace(/\s+/g, '').split("h");
-                        if (dataHour.length > 1 && dataHour[1] !== "") {
-                            this.timeNumber[field].number = (parseInt(dataHour[0]) * 60) + parseInt(dataHour[1]);
-                        } else {
-                            this.timeNumber[field].number = parseInt(dataHour[0]) * 60;
-                        }
-                    } else {
-                        this.timeNumber[field].number = parseInt(this.timeNumber[field].time);
-                    }
-                }
-                this.timeNumber[field].time = "";
-                if (operation === 'plus') {
-                    this.timeNumber[field].number = this.timeNumber[field].number +1;
-                } else if (operation === 'minus') {
-                    this.timeNumber[field].number = this.timeNumber[field].number -1;
-                    if (this.timeNumber[field].number < 0) {
-                        this.timeNumber[field].number = 0;
-                    }
-                }
-                if (parseInt(this.timeNumber[field].number / 60) > 0) {
-                    this.timeNumber[field].time += parseInt(this.timeNumber[field].number / 60) + ' h '
-                }
-                if (this.timeNumber[field].number % 60 > 0) {
-                    this.timeNumber[field].time += (this.timeNumber[field].number % 60) + ' min '
-                }
-            },
-            saveGeneralTime(time) {
-                if (time.number > 0) {
-                    this.dataTime.general = time;
-                    this.invalid.general = false;
-                    this.timeNumber.general = { number: 0, time: ""};
-                } 
-            },
-            removeGeneralTime() {
-                this.dataTime.general = "";
-            },
-            saveSpecialTime(time) {
-                if (time.number > 0 && time.day !== "" && time.open !== "" && time.close !== "") {
-                    this.dataTime.special[time.day] = time;
-                    this.dataTime.special[time.day].day = this.weekdays[time.day];
-                    this.timeNumber.special = { number: 0, time: "", day: "", open: "", close: ""};
-                    this.invalid.special = false;
-                }
-            },
-            removeSpecialTime(index) {
-                this.dataTime.special[index] = "";
-            },
-            nextConfigStep() {
-                this.$router.push('/configuracoes');
-            }
-        }
-    }
-</script>
+import axios from 'axios';
+import Navbar from "../components/Navbar.vue";
+import Sidebar from "../components/Sidebar.vue";
+import Footer from "../components/Footer.vue";
+import { mapState } from 'vuex';
 
+export default {
+  name: "PreparationView",
+  data() {
+    return {
+      completeConfig: false,
+      currentConfigStep: 4,
+      countConfigSteps: 5,
+      weekdays: {
+        1: "Domingo",
+        2: "Segunda-feira",
+        3: "Terça-feira",
+        4: "Quarta-feira",
+        5: "Quinta-feira",
+        6: "Sexta-feira",
+        7: "Sábado"
+      },
+      hours: [
+        "00:00", "01:00", "02:00", "03:00", "04:00", "05:00", 
+        "06:00", "07:00", "08:00", "09:00", "10:00", "11:00",  
+        "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", 
+        "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"
+      ],
+      invalid: {
+        general: false,
+        special: false
+      },
+      timeNumber: {
+        general: { number: 0, time: 0 },
+        special: { number: 0, time: "", day: "", open: "", close: "" }
+      },
+      dataTime: {
+        general: "",
+        special: []
+      },
+      sidebarData: {
+        logo: "/img/logo1.png",
+        company: "TATÁ Sushi",
+        address: "R. João Cachoeira, 278",
+        active: "preparation",
+        message: "Configure os menus abaixo para começar a receber pedidos!",
+        open: true,
+        links: {
+          profile: { complete: true },
+          menu: { complete: true },
+          hours: { complete: true },
+          preparation: { complete: false },
+          config: { complete: false }
+        }
+      },
+      navbarData: {}
+    };
+  },
+  computed: {
+    ...mapState(['token'])
+  },
+  methods: {
+    async fetchRestaurantData() {
+      try {
+        // Obtém o ID do restaurante a partir dos dados do usuário
+        const userResponse = await axios.get('https://api.prattuapp.com.br/api/users/me', {
+          headers: {
+            'Authorization': `Bearer ${this.token}`
+          }
+        });
+        const restaurantId = userResponse.data.restaurant_id;
+
+        // Log para verificar o ID do restaurante e o token
+        console.log('Restaurant ID:', restaurantId);
+        console.log('Token:', this.token);
+
+        // Faz a requisição para obter os dados do restaurante
+        const restaurantResponse = await axios.get(`https://api.prattuapp.com.br/api/restaurants/${restaurantId}/detailed`, {
+          headers: {
+            'Authorization': `Bearer ${this.token}`
+          }
+        });
+
+        this.restaurantId = restaurantId;
+        const preparationTime = restaurantResponse.data.preparation_time;
+        this.timeNumber.general.time = preparationTime; // Inicializar com o valor em minutos
+      } catch (error) {
+        console.error('Erro ao buscar dados do restaurante:', error);
+      }
+    },
+    async saveGeneralTime(time) {
+      if (time.time > 0) {
+        try {
+          // Converta o valor para string para replicar o comportamento do PHP cURL
+          const preparationTime = time.time.toString();
+          
+          // Verifique a estrutura dos dados que estão sendo enviados
+          console.log('Saving Preparation Time:', preparationTime);
+
+          await axios.post(`https://api.prattuapp.com.br/api/restaurants/${this.restaurantId}?_method=PUT`, {
+            preparation_time: preparationTime
+          }, {
+            headers: {
+              'Authorization': `Bearer ${this.token}`
+            }
+          });
+          this.dataTime.general = time;
+          this.invalid.general = false;
+          this.timeNumber.general = { number: 0, time: 0 };
+        } catch (error) {
+          console.error('Erro ao salvar tempo de preparação:', error);
+
+          // Verifique se há mensagens de erro específicas na resposta
+          if (error.response && error.response.data) {
+            console.error('Erro detalhado:', error.response.data);
+          }
+        }
+      } else {
+        this.invalid.general = true;
+      }
+    },
+    changeTime(field, operation) {
+      if (operation === 'plus') {
+        this.timeNumber[field].time += 1;
+      } else if (operation === 'minus') {
+        this.timeNumber[field].time -= 1;
+        if (this.timeNumber[field].time < 0) {
+          this.timeNumber[field].time = 0;
+        }
+      }
+    },
+    removeGeneralTime() {
+      this.dataTime.general = "";
+      this.timeNumber.general.time = 0;
+    },
+    nextConfigStep() {
+      this.$router.push('/configuracoes');
+    }
+  },
+  async created() {
+    await this.fetchRestaurantData();
+  },
+  components: {
+    Navbar,
+    Sidebar,
+    Footer
+  }
+};
+</script>
 <style lang="scss" scoped>
     h2.title {
         font-size: 23px;

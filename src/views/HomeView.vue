@@ -28,7 +28,7 @@
         padding-top: 70px;
         padding-bottom: 0;
         max-width: 100%;
-        background-image: url("~@/assets/img/add_on.svg");
+        background-image: url("~@/assets/img/bg2.jpeg");
         background-position: center center;
     }
 </style>

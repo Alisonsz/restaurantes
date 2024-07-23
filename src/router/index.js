@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-
+import LocationPicker from '../LocationPicker.vue';
 const routes = [
     {
         path: '/',
@@ -74,7 +74,17 @@ const routes = [
         path: '/pagamentos',
         name: 'payments',
         component: () => import(/* webpackChunkName: "about" */ '../views/PaymentsView.vue')
-    }
+    },
+    {
+        path: '/login',
+        name: 'login',
+        component: () => import(/* webpackChunkName: "login" */ '../views/LoginView.vue')
+    },
+    {
+        path: '/location-teste',
+        name: 'LocationTest',
+        component: LocationPicker
+      }
 ]
 
 const router = createRouter({
