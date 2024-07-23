@@ -28,7 +28,8 @@
         padding-top: 70px;
         padding-bottom: 0;
         max-width: 100%;
-        background-image: url("~@/assets/img/bg2.jpeg");
+        background-image: url("~@/assets/img/bg3.jpeg");
         background-position: center center;
+        
     }
 </style>
