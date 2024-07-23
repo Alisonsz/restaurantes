@@ -25,6 +25,8 @@
     max-width: 100%;
     background-image: url("~@/assets/img/bg4.jpeg");
     background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
   }
   </style>
   

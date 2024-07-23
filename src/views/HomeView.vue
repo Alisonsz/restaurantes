@@ -30,6 +30,8 @@
         max-width: 100%;
         background-image: url("~@/assets/img/bg3.jpeg");
         background-position: center center;
+        background-size: cover;
+        background-repeat: no-repeat;
         
     }
 </style>
