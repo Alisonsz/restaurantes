@@ -28,7 +28,7 @@
         padding-top: 70px;
         padding-bottom: 0;
         max-width: 100%;
-        background-image: url("~@/assets/img/bg3.jpeg");
+        background-image: url("~@/assets/img/bg5.jpg");
         background-position: center center;
         background-size: cover;
         background-repeat: no-repeat;

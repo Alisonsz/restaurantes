@@ -23,7 +23,7 @@
     padding-top: 70px;
     padding-bottom: 0;
     max-width: 100%;
-    background-image: url("~@/assets/img/bg4.jpeg");
+    background-image: url("~@/assets/img/bg6.jpg");
     background-position: center center;
     background-size: cover;
     background-repeat: no-repeat;
