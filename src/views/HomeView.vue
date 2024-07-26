@@ -28,8 +28,8 @@
         padding-top: 70px;
         padding-bottom: 0;
         max-width: 100%;
-        background-image: url("~@/assets/img/bg5.jpg");
-        background-position: center center;
+        background-image: url("~@/assets/img/bg11.png");
+        background-position: center top;
         background-size: cover;
         background-repeat: no-repeat;
         

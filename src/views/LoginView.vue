@@ -23,8 +23,8 @@
     padding-top: 70px;
     padding-bottom: 0;
     max-width: 100%;
-    background-image: url("~@/assets/img/bg6.jpg");
-    background-position: center center;
+    background-image: url("~@/assets/img/bg12.png");
+    background-position: center top;
     background-size: cover;
     background-repeat: no-repeat;
   }
