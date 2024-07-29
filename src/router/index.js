@@ -81,10 +81,10 @@ const routes = [
         component: () => import(/* webpackChunkName: "login" */ '../views/LoginView.vue')
     },
     {
-        path: '/location-teste',
-        name: 'LocationTest',
-        component: LocationPicker
-      }
+        path: '/gestao-de-pedidos',
+        name: 'orders',
+        component: () => import(/* webpackChunkName: "login" */ '../views/Orders')
+    }
 ]
 
 const router = createRouter({
