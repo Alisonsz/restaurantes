@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import LocationPicker from '../LocationPicker.vue';
+import PrivacyPolicy from '@/views/PrivacyPolicy.vue';
 const routes = [
     {
         path: '/',
@@ -80,6 +81,11 @@ const routes = [
         name: 'login',
         component: () => import(/* webpackChunkName: "login" */ '../views/LoginView.vue')
     },
+    {
+        path: '/politica-de-privacidade',
+        name: 'PrivacyPolicy',
+        component: PrivacyPolicy,
+      },
     {
         path: '/gestao-de-pedidos',
         name: 'orders',

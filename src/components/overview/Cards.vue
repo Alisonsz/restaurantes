@@ -84,15 +84,15 @@
             return {
                 refusedData: {
                     selected: "sevenDays",
-                    sevenDays: { value: 19, compare: -16 },
-                    oneMonth: { value: 80, compare: -12 },
-                    sixMonths: { value: 428, compare: 4 }
+                    sevenDays: { value: 0, compare: 0 },
+                    oneMonth: { value: 0, compare: 0 },
+                    sixMonths: { value: 428, compare: 0 }
                 },
                 reviewsData: {
                     selected: "sevenDays",
-                    sevenDays: { value: 4.8, compare: 12 },
-                    oneMonth: { value: 3.7, compare: 11 },
-                    sixMonths: { value: 5.0, compare: 15 }
+                    sevenDays: { value: 0, compare: 0 },
+                    oneMonth: { value: 0, compare: 0 },
+                    sixMonths: { value: 0, compare: 0 }
                 },
                 preparationData: {
                     selected: "sevenDays",

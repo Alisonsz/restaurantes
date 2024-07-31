@@ -20,17 +20,39 @@
                 </div>
             </div>
         </form>
+        <ModalBase :show="showModal" @close="showModal = false">
+            <template #header>
+                <h3>{{ modalTitle }}</h3>
+            </template>
+            <template #body>
+                <p>{{ modalMessage }}</p>
+            </template>
+            <template #footer>
+                <button class="btn btn-cancel" @click="showModal = false">Voltar</button>
+            </template>
+        </ModalBase>
     </div>
 </template>
 
 <script>
 import axios from 'axios';
+import ModalBase from '@/components/ModalBase.vue';
 
 export default {
     name: "Finance",
+    components: {
+        ModalBase
+    },
     props: {
         currentStep: Number,
         countSteps: Number
+    },
+    data() {
+        return {
+            showModal: false,
+            modalTitle: '',
+            modalMessage: ''
+        };
     },
     methods: {
         async createAsaasAccount() {
@@ -40,13 +62,14 @@ export default {
                         Authorization: `Bearer ${this.$store.state.token}`
                     }
                 });
-                alert(`Resposta da API: ${JSON.stringify(response.data, null, 2)}`);
-                this.$emit('nextStep');
+                this.modalTitle = 'Conta Asaas criada com sucesso';
+                this.modalMessage = `Resposta da API: ${JSON.stringify(response.data, null, 2)}`;
             } catch (error) {
-                const errorMessage = error.response?.data ? 
-                    `Erro: ${error.response.data.error}\nDetalhes: ${error.response.data.details}` : 
-                    error.message;
-                alert(`Erro ao criar conta no Asaas: ${errorMessage}`);
+                const errorMessage = error.response?.data ? error.response.data.details : error.message;
+                this.modalTitle = 'Erro ao criar conta da Asaas';
+                this.modalMessage = `Erro: ${errorMessage}`;
+            } finally {
+                this.showModal = true;
             }
         },
         cancel() {
@@ -85,4 +108,3 @@ export default {
     padding-bottom: 5px;
 }
 </style>
-

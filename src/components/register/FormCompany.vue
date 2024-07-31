@@ -30,6 +30,7 @@
                 v-model="address" 
                 placeholder="Digite o endereço, cidade ou CEP" 
                 class="form-control mt-3"
+                autocomplete="new-address"
               />
             </div>
           </div>
