@@ -20,13 +20,13 @@
   
   <style lang="scss" scoped>
   .container-data {
-    padding-top: 70px;
-    padding-bottom: 0;
+   
     max-width: 100%;
-    background-image: url("~@/assets/img/bg12.png");
-    background-position: center top;
-    background-size: cover;
+    background-image: url("~@/assets/img/bglogin.jpg");
+    background-position: left top;
+    background-size: contain;
     background-repeat: no-repeat;
+
   }
   </style>
   
