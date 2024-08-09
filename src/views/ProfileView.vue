@@ -1,14 +1,15 @@
 <template>
   <div class="profile container-data" :class="completeConfig ? '' : 'with-footer'">
-    <Navbar :navbarData="navbarData" /><Sidebar :sidebarData="sidebarData" />
+    <Navbar :navbarData="navbarData" />
+    <Sidebar :sidebarData="sidebarData" />
     <div class="row">
       <div class="col-lg-6">
         <div class="row">
           <div class="col profile-image">
-            <img :src="dataCompany.logo_photo ? dataCompany.logo_photo : '/img/default_logo.png'" alt="Logo" @click="showModalLogo">
+            <img :src="dataCompany.logo_photo ? dataCompany.logo_photo : '/img/default_logo.png'" alt="Logo" @click="uploadLogo">
           </div>
           <div class="col d-flex align-items-center justify-content-center profile-logo">
-            <img :src="dataCompany.cover_photo ? dataCompany.cover_photo : '/img/default_cover.png'" alt="Cover" @click="showModalCover">
+            <img :src="dataCompany.cover_photo ? dataCompany.cover_photo : '/img/default_cover.png'" alt="Cover" @click="uploadCover">
           </div>
         </div>
       </div>
@@ -45,7 +46,7 @@
           <p class="hint">Esse será o tempo médio de preparo que o estabelecimento terá para preparar o pedido.</p>
           <ul>
             <li>{{ dataCompany.preparation_time }} minutos</li>
-          </ul>                    
+          </ul>
         </div>
         <div class="order-types">
           <hr/>
@@ -114,27 +115,149 @@
     </ModalStart>
   </Teleport>
 </template>
+
 <script setup>
-import { ref } from 'vue';
+import { ref, reactive, computed, onMounted } from 'vue';
+import { useStore } from 'vuex';
+import axios from 'axios';
 
-import ModalCategories from "../components/ModalBase.vue";
-import ModalOrderTypes from "../components/ModalBase.vue";
-import ModalCompany from "../components/ModalBase.vue";
-import ModalWelcome from "../components/ModalBase.vue";
-import ModalLink from "../components/ModalBase.vue";
-import ModalStart from "../components/ModalBase.vue";
+const store = useStore();
 
-// Ref para controlar a visibilidade dos modais
 const showModalCategories = ref(false);
 const showModalOrderTypes = ref(false);
 const showModalCompany = ref(false);
 const showModalLogo = ref(false);
 const showModalCover = ref(false);
+
+const dataCompany = reactive({
+  logo_photo: null,
+  cover_photo: null,
+  name: "",
+  display_name: "",
+  company_legal_number: "",
+  zip_code: "",
+  street: "",
+  number: "",
+  city: "",
+  state: "",
+  description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+  withdrawal: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+  opening_hours: [],
+  preparation_time: 0,
+  category: "",
+  eat_on: false
+});
+
+const formattedOpeningHours = computed(() => {
+  if (!dataCompany.opening_hours || dataCompany.opening_hours.length === 0) {
+    return "Nenhum horário de funcionamento definido.";
+  }
+
+  const daysOfWeek = {
+    1: "Domingo",
+    2: "Segunda-feira",
+    3: "Terça-feira",
+    4: "Quarta-feira",
+    5: "Quinta-feira",
+    6: "Sexta-feira",
+    7: "Sábado"
+  };
+
+  return dataCompany.opening_hours
+    .sort((a, b) => a.day_of_week - b.day_of_week) // Ordena pela ordem dos dias da semana
+    .map(hour => {
+      return `${daysOfWeek[hour.day_of_week]}: ${hour.is_closed ? 'Fechado' : `${hour.open_time.slice(0, 5)} - ${hour.close_time.slice(0, 5)}`}`;
+    })
+    .join('\n');
+});
+
+async function uploadLogo() {
+  try {
+    const logoFile = await selectFile();
+    await uploadImage(logoFile, 'logo_photo');
+  } catch (error) {
+    console.error('Erro ao fazer upload do logo:', error);
+  }
+}
+
+async function uploadCover() {
+  try {
+    const coverFile = await selectFile();
+    await uploadImage(coverFile, 'cover_photo');
+  } catch (error) {
+    console.error('Erro ao fazer upload da foto de capa:', error);
+  }
+}
+
+async function selectFile() {
+  return new Promise((resolve, reject) => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = () => resolve(input.files[0]);
+    input.onerror = reject;
+    input.click();
+  });
+}
+
+async function uploadImage(file, field) {
+  try {
+    const formData = new FormData();
+    formData.append(field, file);
+
+    const userResponse = await axios.get('https://api.prattuapp.com.br/api/users/me', {
+      headers: {
+        'Authorization': `Bearer ${store.state.token}`
+      }
+    });
+    const restaurantId = userResponse.data.restaurant_id;
+
+    await axios.post(`https://api.prattuapp.com.br/api/restaurants/${restaurantId}/update-logo-cover`, formData, {
+      headers: {
+        'Authorization': `Bearer ${store.state.token}`,
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+
+    // Atualiza a imagem na UI após o upload
+    if (field === 'logo_photo') {
+      dataCompany.logo_photo = URL.createObjectURL(file);
+    } else if (field === 'cover_photo') {
+      dataCompany.cover_photo = URL.createObjectURL(file);
+    }
+
+  } catch (error) {
+    console.error(`Erro ao fazer upload da ${field === 'logo_photo' ? 'logo' : 'foto de capa'}:`, error);
+  }
+}
+
+onMounted(async () => {
+  await fetchData();
+});
+
+async function fetchData() {
+  try {
+    const userResponse = await axios.get('https://api.prattuapp.com.br/api/users/me', {
+      headers: {
+        'Authorization': `Bearer ${store.state.token}`
+      }
+    });
+    const restaurantId = userResponse.data.restaurant_id;
+
+    const restaurantResponse = await axios.get(`https://api.prattuapp.com.br/api/restaurants/${restaurantId}/detailed`, {
+      headers: {
+        'Authorization': `Bearer ${store.state.token}`
+      }
+    });
+    
+    Object.assign(dataCompany, restaurantResponse.data);
+  } catch (error) {
+    console.error('Erro ao buscar dados do restaurante:', error);
+  }
+}
 </script>
 
-  
 <script>
-import axios from 'axios';
 import Navbar from "../components/Navbar.vue";
 import Sidebar from "../components/Sidebar.vue";
 import Footer from "../components/Footer.vue";
@@ -156,24 +279,6 @@ export default {
         welcome: true,
         link: false,
         start: false
-      },
-      dataCompany: {
-        logo_photo: null,
-        cover_photo: null,
-        name: "",
-        display_name: "",
-        company_legal_number: "",
-        zip_code: "",
-        street: "",
-        number: "",
-        city: "",
-        state: "",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-        withdrawal: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-        opening_hours: [],
-        preparation_time: 0,
-        category: "",
-        eat_on: false
       },
       sidebarData: {
         logo: "/img/logo1.png",
@@ -204,116 +309,12 @@ export default {
     Link,
     Start
   },
-  computed: {
-  formattedOpeningHours() {
-    if (!this.dataCompany.opening_hours || this.dataCompany.opening_hours.length === 0) {
-      return "Nenhum horário de funcionamento definido.";
-    }
-    
-    const daysOfWeek = {
-      1: "Domingo",
-      2: "Segunda-feira",
-      3: "Terça-feira",
-      4: "Quarta-feira",
-      5: "Quinta-feira",
-      6: "Sexta-feira",
-      7: "Sábado"
-    };
-
-    return this.dataCompany.opening_hours
-      .sort((a, b) => a.day_of_week - b.day_of_week) // Ordena pela ordem dos dias da semana
-      .map(hour => {
-        return `${daysOfWeek[hour.day_of_week]}: ${hour.is_closed ? 'Fechado' : `${hour.open_time.slice(0, 5)} - ${hour.close_time.slice(0, 5)}`}`;
-      })
-      .join('\n');
-  }
-
-
-  },
   methods: {
-    async fetchData() {
-      try {
-        const userResponse = await axios.get('https://api.prattuapp.com.br/api/users/me', {
-          headers: {
-            'Authorization': `Bearer ${this.$store.state.token}`
-          }
-        });
-        const restaurantId = userResponse.data.restaurant_id;
-
-        const restaurantResponse = await axios.get(`https://api.prattuapp.com.br/api/restaurants/${restaurantId}/detailed`, {
-          headers: {
-            'Authorization': `Bearer ${this.$store.state.token}`
-          }
-        });
-        
-        this.dataCompany = restaurantResponse.data;
-      } catch (error) {
-        console.error('Erro ao buscar dados do restaurante:', error);
-      }
-    },
-    async uploadLogo() {
-      try {
-        const logoFile = await this.selectFile();
-        await this.uploadImage(logoFile, 'logo_photo');
-      } catch (error) {
-        console.error('Erro ao fazer upload do logo:', error);
-      }
-    },
-    async uploadCover() {
-      try {
-        const coverFile = await this.selectFile();
-        await this.uploadImage(coverFile, 'cover_photo');
-      } catch (error) {
-        console.error('Erro ao fazer upload da foto de capa:', error);
-      }
-    },
-    async selectFile() {
-      return new Promise((resolve, reject) => {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = 'image/*';
-        input.onchange = () => resolve(input.files[0]);
-        input.onerror = reject;
-        input.click();
-      });
-    },
-    async uploadImage(file, field) {
-      try {
-        const formData = new FormData();
-        formData.append(field, file);
-
-        const userResponse = await axios.get('https://api.prattuapp.com.br/api/users/me', {
-          headers: {
-            'Authorization': `Bearer ${this.$store.state.token}`
-          }
-        });
-        const restaurantId = userResponse.data.restaurant_id;
-
-        await axios.post(`https://api.prattuapp.com.br/api/restaurants/${restaurantId}/update-logo-cover`, formData, {
-          headers: {
-            'Authorization': `Bearer ${this.$store.state.token}`,
-            'Content-Type': 'multipart/form-data'
-          }
-        });
-
-        // Atualiza a imagem na UI após o upload
-        if (field === 'logo_photo') {
-          this.dataCompany.logo_photo = URL.createObjectURL(file);
-        } else if (field === 'cover_photo') {
-          this.dataCompany.cover_photo = URL.createObjectURL(file);
-        }
-
-      } catch (error) {
-        console.error(`Erro ao fazer upload da ${field === 'logo_photo' ? 'logo' : 'foto de capa'}:`, error);
-      }
-    },
     showModalLogo() {
       this.showModalCompany = true;
-      // Additional logic if needed
     },
     showModalCover() {
       this.showModalCompany = true;
-      // Additional logic if needed
     },
     saveCategories(data) {
       this.dataCompany.category = data;
@@ -333,21 +334,19 @@ export default {
     nextConfigStep() {
       this.$router.push('/cardapio');
     }
-  },
-  async created() {
-    await this.fetchData();
   }
 };
 </script>
-
-  
 <style lang="scss" scoped>
 .profile-logo {
   text-align: center;
   max-width: 150px;
   img {
-    max-width: 100%;
+    max-width: 100px;
+    height: 100px;
+    border-radius: 50%;
     cursor: pointer;
+    object-fit: cover;
   }
 }
 .profile-image img {

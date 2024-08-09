@@ -1,164 +1,168 @@
 <template>
-    <div class="sidebar border border-right col p-0 sidebar-size" :class="open ? 'open' : ''">
-        <a class="navbar-brand icon-double-arrow-left" href="#" @click.prevent="openClose()"></a>
-        <div class="offcanvas-md offcanvas-end" tabindex="-1" id="sidebarMenu" aria-labelledby="sidebarMenuLabel">
-            <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-0">
-                <div class="row data-company">
-                    <div class="company-logo">
-                        <img class="logo" :src="sidebarData.logo" :alt="sidebarData.company">
-                    </div>
-                    <div class="col">
-                        <span class="company-name">{{ sidebarData.company }}</span>
-                        <span class="company-adress">{{ sidebarData.address }}</span>
-                    </div>
-                </div>
-                <div class="sublinks-floating" :style="{ top: positionSublink + 'px' }" v-show="visibleSublink">
-                    <p v-for="(sublink, i) in selectedSublinks" :key="i">
-                        <router-link class="nav-sublink" :to="sublink.route">
-                            <span>{{ sublink.name }}</span>
-                        </router-link>
-                    </p>
-                </div>
-                <div class="menu-content" @scroll="visibleSublink = false">
-                    <p class="message" v-if="typeof sidebarData.message === 'string'">{{ sidebarData.message }}</p>
-                    <ul class="nav nav-top flex-column" :class="typeof sidebarData.message === 'string' ? '' : 'mt-4'">
-                        <div v-for="(link, index) in links" :key="index">
-                            <li class="nav-item" :class="typeof link.sublinks === 'object' ? 'with-sublink' : ''" v-if="typeof sidebarData.links !== 'object' || typeof sidebarData.links[index] === 'object'">
-                                <span v-if="typeof link.sublinks === 'object'" @click="selectSublink(index, link.sublinks, $event)" ref="clickableElement">
-                                    <a class="nav-link d-flex align-items-center collapsed" data-bs-toggle="collapse" :href="'#sublinks' + index" aria-expanded="false" :aria-controls="'sublinks' + index" :class="[sidebarData.active === index ? 'icon-active ' : '']">
-                                        <span class="sidbar-icon" :class="link.icon"></span>
-                                        <span class="name">{{ link.name }}</span>
-                                        <span class="sublink-icon"></span>
-                                    </a>
-                                    <div class="sublinks-list float-left collapse" :id="'sublinks' + index" data-bs-parent=".nav-top">
-                                        <div class="sublink" v-for="(sublink, i) in link.sublinks" :key="i">
-                                            <router-link class="nav-sublink" :to="sublink.route">
-                                                <span>{{ sublink.name }}</span>
-                                            </router-link>
-                                        </div>
-                                    </div>
-                                </span>
-                                <router-link class="nav-link d-flex align-items-center" aria-current="page" v-else :to="link.route" :class="[sidebarData.active === index ? 'icon-active ' : '']">
-                                    <span class="sidbar-icon info-icon" :class="checkAddIcon(index)"></span>
-                                    <span class="sidbar-icon" :class="link.icon"></span>
-                                    <span class="name">{{ link.name }}</span>
-                                </router-link>
-                            </li>
-                        </div>
-                        
-                    </ul>
-                    <ul class="nav nav-bottom flex-column">
-                        <li class="nav-item">
-                            <router-link  to="/" class="nav-link d-flex align-items-center" aria-current="page">
-                                <span class="sidbar-icon icon-exit"></span>
-                                <span class="name">Logout</span>
-                            </router-link>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+  <div class="sidebar border border-right col p-0 sidebar-size" :class="open ? 'open' : ''">
+    <a class="navbar-brand icon-double-arrow-left" href="#" @click.prevent="openClose()"></a>
+    <div class="offcanvas-md offcanvas-end" tabindex="-1" id="sidebarMenu" aria-labelledby="sidebarMenuLabel">
+      <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-0">
+        <div class="row data-company">
+          <div class="company-logo">
+            <img class="logo" :src="sidebarData.logo" :alt="sidebarData.company">
+          </div>
+          <div class="col">
+            <span class="company-name">{{ sidebarData.company }}</span>
+            <span class="company-adress">{{ sidebarData.address }}</span>
+          </div>
         </div>
+        <div class="sublinks-floating" :style="{ top: positionSublink + 'px' }" v-show="visibleSublink">
+          <p v-for="(sublink, i) in selectedSublinks" :key="i">
+            <router-link class="nav-sublink" :to="sublink.route">
+              <span>{{ sublink.name }}</span>
+            </router-link>
+          </p>
+        </div>
+        <div class="menu-content" @scroll="visibleSublink = false">
+          <p class="message" v-if="typeof sidebarData.message === 'string'">{{ sidebarData.message }}</p>
+          <ul class="nav nav-top flex-column" :class="typeof sidebarData.message === 'string' ? '' : 'mt-4'">
+            <div v-for="(link, index) in links" :key="index">
+              <li class="nav-item" :class="typeof link.sublinks === 'object' ? 'with-sublink' : ''" v-if="typeof sidebarData.links !== 'object' || typeof sidebarData.links[index] === 'object'">
+                <span v-if="typeof link.sublinks === 'object'" @click="selectSublink(index, link.sublinks, $event)" ref="clickableElement">
+                  <a class="nav-link d-flex align-items-center collapsed" data-bs-toggle="collapse" :href="'#sublinks' + index" aria-expanded="false" :aria-controls="'sublinks' + index" :class="[sidebarData.active === index ? 'icon-active ' : '']">
+                    <span class="sidbar-icon" :class="link.icon"></span>
+                    <span class="name">{{ link.name }}</span>
+                    <span class="sublink-icon"></span>
+                  </a>
+                  <div class="sublinks-list float-left collapse" :id="'sublinks' + index" data-bs-parent=".nav-top">
+                    <div class="sublink" v-for="(sublink, i) in link.sublinks" :key="i">
+                      <router-link class="nav-sublink" :to="sublink.route">
+                        <span>{{ sublink.name }}</span>
+                      </router-link>
+                    </div>
+                  </div>
+                </span>
+                <router-link class="nav-link d-flex align-items-center" aria-current="page" v-else :to="link.route" :class="[sidebarData.active === index ? 'icon-active ' : '']">
+                  <span class="sidbar-icon info-icon" :class="checkAddIcon(index)"></span>
+                  <span class="sidbar-icon" :class="link.icon"></span>
+                  <span class="name">{{ link.name }}</span>
+                </router-link>
+              </li>
+            </div>
+          </ul>
+          <ul class="nav nav-bottom flex-column">
+            <li class="nav-item">
+              <router-link to="/" class="nav-link d-flex align-items-center" aria-current="page">
+                <span class="sidbar-icon icon-exit"></span>
+                <span class="name">Logout</span>
+              </router-link>
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
-    export default {
-        name: "Sidebar",
-        data() {
-            return {
-                open: false,
-                lastLink: "",
-                selectedSublinks: [],
-                positionSublink: 0,
-                visibleSublink: false,
-                links: {
-                    hours: { icon: "icon-clock", name: "Horário funcionam.", route: "/horario"},
-                    preparation: { icon: "icon-pot", name: "Tempo de preparo", route: "/preparo"},
-                    profile: { icon: "icon-account", name: "Perfil", route: "/perfil"},
-                    config: { icon: "icon-settings", name: "Configurações loja", route: "/configuracoes"},
-                    menu: { icon: "icon-clipboard", name: "Cardápio", route: "/cardapio"},
-           
-                   
-                
-                    performance: { icon: "icon-performance", name: "Performance do cardápio", route: "/performance"},
-                    monitor: { 
-                        icon: "icon-monitor", 
-                        name: "Monitor Performance", 
-                        sublinks: [
-                            {name: "Visão geral", route: "/visao"},
-                            {name: "Vendas", route: "/vendas"}
-                        ]
-                    },
-                    insights: { 
-                        icon: "icon-insights", 
-                        name: "Insights", 
-                        sublinks: [
-                            {name: "Análise de clientes", route: "/clientes"},
-                            {name: "Eficiência operacional", route: "/operacional"}
-                        ]
-                    },
-                    history: { icon: "icon-summarize", name: "Histórico", route: "/historico"},
-                    payments: { icon: "icon-payment", name: "Pagamentos", route: "/pagamentos"}
-                }
-            } 
+export default {
+  name: "Sidebar",
+  data() {
+    return {
+      open: false,
+      lastLink: "",
+      selectedSublinks: [],
+      positionSublink: 0,
+      visibleSublink: false,
+      links: {
+        hours: { icon: "icon-clock", name: "Horário funcionam.", route: "/horario"},
+        preparation: { icon: "icon-pot", name: "Tempo de preparo", route: "/preparo"},
+        profile: { icon: "icon-account", name: "Perfil", route: "/perfil"},
+        config: { icon: "icon-settings", name: "Configurações loja", route: "/configuracoes"},
+        menu: { icon: "icon-clipboard", name: "Cardápio", route: "/cardapio"},
+        performance: { icon: "icon-performance", name: "Performance do cardápio", route: "/performance"},
+        monitor: { 
+          icon: "icon-monitor", 
+          name: "Monitor Performance", 
+          sublinks: [
+            {name: "Visão geral", route: "/visao"},
+            {name: "Vendas", route: "/vendas"}
+          ]
         },
-        props: {
-            sidebarData: Object
+        insights: { 
+          icon: "icon-insights", 
+          name: "Insights", 
+          sublinks: [
+            {name: "Análise de clientes", route: "/clientes"},
+            {name: "Eficiência operacional", route: "/operacional"}
+          ]
         },
-        methods: {
-            openClose() {
-                this.open = !this.open;
-                this.visibleSublink = false;
-                const mainElement = document.querySelector('main');
-                const firstChild = mainElement.querySelector('div');
-                if (this.open) {
-                    firstChild.style.marginLeft = '280px';
-                    firstChild.classList.add('sidebar-open');
-                } else {
-                    firstChild.style.marginLeft = '90px';
-                    firstChild.classList.remove('sidebar-open');
-                }
-            },
-            checkAddIcon(index) {
-                if (typeof this.sidebarData.links === "object") {
-                    if (typeof this.sidebarData.links[index] === "object") {
-                        if (typeof this.sidebarData.links[index].complete === "boolean") {
-                            if (this.sidebarData.links[index].complete) {
-                                return 'check-on'
-                            } else {
-                                return 'icon-alert'
-                            }
-                        } else {
-                            return 'd-none'
-                        }
-                    } else {
-                        return 'd-none'
-                    }
-                } else {
-                    return 'd-none'
-                }
-            },
-            selectSublink(link, sublinks, event) {
-                this.visibleSublink = link === this.lastLink ? !this.visibleSublink : true;
-                this.lastLink = link;
-                const rect = event.target.getBoundingClientRect();
-                this.positionSublink = rect.top - 30;
-                this.selectedSublinks = sublinks;
-            }
-        },
-        mounted() {
-            this.open = this.sidebarData.open;
-            const mainElement = document.querySelector('main');
-            const firstChild = mainElement.querySelector('div');
-            if (this.open) {
-                firstChild.style.marginLeft = '280px';
-                firstChild.classList.add('sidebar-open');
-            } else {
-                firstChild.style.marginLeft = '90px';
-                firstChild.classList.remove('sidebar-open');
-            }
+        history: { icon: "icon-summarize", name: "Histórico", route: "/historico"},
+        payments: { icon: "icon-payment", name: "Pagamentos", route: "/pagamentos"}
+      }
+    }
+  },
+  props: {
+    sidebarData: Object
+  },
+  methods: {
+    openClose() {
+      this.open = !this.open;
+      this.visibleSublink = false;
+      const mainElement = document.querySelector('main');
+      if (mainElement) {
+        const firstChild = mainElement.querySelector('div');
+        if (firstChild) {
+          if (this.open) {
+            firstChild.style.marginLeft = '280px';
+            firstChild.classList.add('sidebar-open');
+          } else {
+            firstChild.style.marginLeft = '90px';
+            firstChild.classList.remove('sidebar-open');
+          }
         }
-    };
+      }
+    },
+    checkAddIcon(index) {
+      if (typeof this.sidebarData.links === "object") {
+        if (typeof this.sidebarData.links[index] === "object") {
+          if (typeof this.sidebarData.links[index].complete === "boolean") {
+            if (this.sidebarData.links[index].complete) {
+              return 'check-on';
+            } else {
+              return 'icon-alert';
+            }
+          } else {
+            return 'd-none';
+          }
+        } else {
+          return 'd-none';
+        }
+      } else {
+        return 'd-none';
+      }
+    },
+    selectSublink(link, sublinks, event) {
+      this.visibleSublink = link === this.lastLink ? !this.visibleSublink : true;
+      this.lastLink = link;
+      const rect = event.target.getBoundingClientRect();
+      this.positionSublink = rect.top - 30;
+      this.selectedSublinks = sublinks;
+    }
+  },
+  mounted() {
+    this.open = this.sidebarData.open;
+    const mainElement = document.querySelector('main');
+    if (mainElement) {
+      const firstChild = mainElement.querySelector('div');
+      if (firstChild) {
+        if (this.open) {
+          firstChild.style.marginLeft = '280px';
+          firstChild.classList.add('sidebar-open');
+        } else {
+          firstChild.style.marginLeft = '90px';
+          firstChild.classList.remove('sidebar-open');
+        }
+      }
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>

@@ -63,7 +63,7 @@
         name: "CardTypes",
         data() {
             return {
-                intervalSelected: "sevenDays",
+                intervalSelected: "oneMonth",
                 countCustomers: 0,
                 reportChart: [],
                 baseColors: {
@@ -83,11 +83,11 @@
                     },
                     usual: {
                         name: "Clientes frequentes",
-                        description: "Clientes que realizaram mais de 4 pedidos na sua loja nos últimos 90 dias."
+                        description: "Clientes que realizaram mais de 4 pedidos na sua loja."
                     },
                     casual: {
                         name: "Clientes ocasionais",
-                        description: "Clientes que pediram até 4 vezes na sua loja nos últimos 90 dias."
+                        description: "Clientes que pediram até 4 vezes na sua loja."
                     }
                 },
                 dataCustomers: {
@@ -97,7 +97,7 @@
                         sixMonths: 59,
                     },
                     sevenDays: {
-                        new: { number: 15, compare: 11, tiket: 12.45 },
+                        new: { number: 0, compare: 92.3, tiket: 12.45 },
                         casual: { number: 25, compare: -8, tiket: 12.65 },
                         usual: { number: 18, compare: 15, tiket: 19.45 }
                     },
@@ -350,5 +350,11 @@
             line-height: 1.5
         }
     }
+    .description {
+  
+    font-weight: 400;
+    line-height: 1.5;
+    min-height: 50px; // Define a altura mínima para o campo description
+}
 
 </style>

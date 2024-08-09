@@ -2,6 +2,9 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import LocationPicker from '../LocationPicker.vue';
 import PrivacyPolicy from '@/views/PrivacyPolicy.vue';
+import AccountConfig from '@/views/AccountConfig.vue';
+import Help from '@/views/Help.vue';
+import PrivacyUser from '@/views/PrivacyUser.vue';
 const routes = [
     {
         path: '/',
@@ -85,6 +88,21 @@ const routes = [
         path: '/politica-de-privacidade',
         name: 'PrivacyPolicy',
         component: PrivacyPolicy,
+      },
+      {
+        path: '/ajuda',
+        name: 'help',
+        component: Help,
+      },
+      {
+        path: '/configuracoes-da-conta',
+        name: 'AccountConfig',
+        component: AccountConfig,
+      },
+      {
+        path: '/privacidade-dos-usuarios',
+        name: 'PrivacyUser',
+        component: PrivacyUser,
       },
     {
         path: '/gestao-de-pedidos',

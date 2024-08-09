@@ -2,111 +2,124 @@
   <div class="privacy-policy container-data">
     <Navbar />
     <div class="content">
-      <h1>POLÍTICA DE PRIVACIDADE PRATTU</h1>
-      <p>Seja muito bem-vindo(a) à PRATTU INOVAÇÃO E TECNOLOGIA!! Somos uma empresa sediada em São Paulo, Capital, na Alameda dos Guatás, 1694, Vila da Saúde, inscrita no CNPJ nº 49.224.812/0001-00.</p>
-      <p>Sabemos que a privacidade e a segurança dos seus dados são muito importantes. Por isso, queremos explicar, de maneira clara e transparente, como tratamos suas informações. Esta Política de Privacidade descreve os tipos de dados que coletamos, como usamos e protegemos essas informações, e os direitos que você tem em relação a elas.</p>
-      <p>Nosso objetivo é proporcionar a melhor experiência possível para você, como USUÁRIO de nossa plataforma, garantindo que seus dados estejam sempre seguros e que você tenha controle sobre eles.</p>
-      <p>Seja para encontrar o restaurante perfeito, pedir aquela comida deliciosa ou acompanhar seu pedido até a retirada, estamos comprometidos em proteger a sua privacidade em todas as etapas.</p>
-      <p>É importante que você saiba que ao se cadastrar na plataforma para utilizar os serviços da PRATTU, você, como novo USUÁRIO, confirma que leu, compreendeu e que CONCORDA com todas as disposições desta Política de Privacidade.</p>
-      <p>Recomendamos, portanto, que leia com atenção os termos e definições abaixo, e se tiver qualquer dúvida, é só nos chamar através do e-mail <a href="mailto:suporte@prattuapp.com.br">suporte@prattuapp.com.br</a></p>
-      <p><strong>Vamos lá!</strong></p>
-      
-      <h2>1. CONCEITOS INICIAIS:</h2>
-      <p>Com o objetivo de facilitar a sua compreensão sobre esta Política de Privacidade e termos nela utilizados, seguem os principais conceitos. Vejamos:</p>
+      <h1>POLÍTICA DE PRIVACIDADE PARA ESTABELECIMENTOS</h1>
+      <h2>1. Informações de Contato</h2>
+      <p>A Prattu Inovação e Tecnologia Ltda está comprometida com a transparência e a segurança dos dados dos nossos parceiros. Caso tenha dúvidas sobre nossa política de privacidade ou sobre o tratamento dos seus dados entre em contato conosco:</p>
       <ul>
-        <li><strong>Dado Pessoal:</strong> refere-se a qualquer informação relacionada a pessoa natural que possa ser identificada direta ou indiretamente, tanto em formato digital quanto físico.</li>
-        <li><strong>Titular do dado:</strong> pessoa natural a quem se referem os dados pessoais (você!).</li>
-        <li><strong>Tratamento:</strong> toda operação realizada com dados pessoais, como as que se referem a coleta, produção, recepção, classificação, utilização, acesso, reprodução, transmissão, distribuição, processamento, arquivamento, armazenamento, eliminação, avaliação ou controle da informação, modificação, comunicação, transferência, difusão ou extração.</li>
-        <li><strong>Anonimização:</strong> utilização de meios técnicos razoáveis e disponíveis no momento do tratamento, por meio dos quais um dado perde a possibilidade de associação, direta ou indireta, a um indivíduo;</li>
-        <li><strong>Controlador:</strong> pessoa natural ou jurídica, de direito público ou privado, a quem competem as decisões referentes ao tratamento de dados pessoais;</li>
-        <li><strong>Operador:</strong> pessoa natural ou jurídica, de direito público ou privado, que realiza o tratamento de dados pessoais em nome do controlador;</li>
-        <li><strong>Consentimento:</strong> manifestação livre, informada e inequívoca pela qual o titular concorda com o tratamento de seus dados pessoais para uma finalidade determinada;</li>
-        <li><strong>Usuário:</strong> é a pessoa que acessa e utiliza os serviços da plataforma, realizando ações como navegação, registro, pedidos e interação com os recursos disponíveis.</li>
+        <li><strong>Nome:</strong> Prattu Inovação e Tecnologia Ltda</li>
+        <li><strong>Endereço:</strong> Alameda dos Guatás, 1694</li>
+        <li><strong>Email para contato:</strong> <a href="mailto:suporte@prattuapp.com.br">suporte@prattuapp.com.br</a></li>
       </ul>
 
-      <h2>2. INFORMAÇÕES COLETADAS:</h2>
+      <h2>2. Tipos de Dados Coletados</h2>
+      <p>Coletamos uma variedade de informações do estabelecimento para fornecer e melhorar nossos serviços garantindo uma experiência eficiente e personalizada.</p>
       <h3>Dados Pessoais:</h3>
       <ul>
-        <li><strong>E-mail:</strong> será utilizado para que possamos nos comunicar com você.</li>
-        <li><strong>Celular:</strong> permitirá o nosso contato com você através de SMS ou chamadas.</li>
-        <li><strong>CPF:</strong> coletado para a sua identificação única e para processamento de pagamentos.</li>
-        <li><strong>Nome Completo:</strong> permite a sua identificação e personalização da sua experiência como USUÁRIO da nossa plataforma.</li>
-        <li><strong>Dados de Localização:</strong> coletado através de sua permissão, com o objetivo de fornecer serviços baseados em sua localização, como mostrar restaurantes próximos.</li>
-        <li><strong>Dados de Pagamento:</strong> os dados do seu cartão como o número, data de vencimento, código de segurança e nome impresso, além do endereço completo, são coletados no ato da compra e transferidos automaticamente para o Asaas, nossa plataforma parceira, responsável por efetuar todas as transações de pagamentos das compras realizadas em nosso aplicativo. Também compartilhamos o CPF e o e-mail dos clientes com o Asaas, para fins de processamento de pagamento.</li>
+        <li><strong>Nome do responsável pelo estabelecimento, e-mail, número de telefone e CPF:</strong> Necessários para a identificação e comunicação direta com o responsável pelo estabelecimento.</li>
       </ul>
-      <p>O ASAAS é uma instituição de pagamentos certificada pelo Banco Central do Brasil. O link a seguir te trará informações mais completas sobre ela, inclusive a sua política de privacidade. Não deixe de acessar! <a href="https://ajuda.asaas.com/pt-BR/articles/102029-politica-de-privacidade">https://ajuda.asaas.com/pt-BR/articles/102029-politica-de-privacidade</a></p>
-
-      <h3>Dados de Uso:</h3>
+      <h3>Dados do Estabelecimento:</h3>
       <ul>
-        <li><strong>Histórico de Pedidos:</strong> coletado para fornecer um histórico de suas compras, melhorando a sua experiência de uso através de sugestões personalizadas.</li>
-        <li><strong>Acesso aos Contatos:</strong> coletado automaticamente mediante o seu consentimento, a fim de facilitar a conexão com seus amigos dentro da plataforma.</li>
+        <li><strong>CNPJ, razão social, nome da loja, faturamento mensal e tipo de empresa:</strong> Coletamos também horário de funcionamento, itens do cardápio e respectivos valores. Essas informações são essenciais para o cadastro do estabelecimento na nossa plataforma e para cumprir requisitos fiscais e regulatórios.</li>
       </ul>
-
-      <h3>Informações Adicionais:</h3>
-      <p>Para fornecer um serviço de alta qualidade, podemos coletar informações adicionais conforme necessário. Qualquer nova coleta de dados será informada a você e estará sujeita a esta política de privacidade.</p>
-
-      <h2>3. MÉTODOS DE COLETA:</h2>
+      <h3>Dados de Localização:</h3>
       <ul>
-        <li><strong>Formulários:</strong> e-mail, celular, CPF e nome completo são coletados através do preenchimento do formulário de cadastro em nosso aplicativo.</li>
-        <li><strong>Automático:</strong> a sua localização e acesso aos seus contatos são coletados automaticamente, e desde que haja a sua permissão.</li>
-        <li><strong>Durante a Compra:</strong> os dados de pagamento são coletados no ato da compra através das informações prestadas por você, como número do cartão, data de vencimento, código de segurança e nome impresso no cartão, os quais serão enviados, juntamente com seu e-mail e CPF, ao Asaas, para finalização do pagamento.</li>
+        <li><strong>Endereço completo do estabelecimento incluindo CEP, bairro, endereço, número, cidade e estado:</strong> Estes dados são utilizados para direcionar os pedidos dos clientes ao estabelecimento correto e para fins de logística.</li>
       </ul>
-
-      <h2>4. USO DAS INFORMAÇÕES:</h2>
-      <p><strong>Processamento de Pedidos e Pagamentos:</strong> todos os dados inseridos por você no aplicativo da PRATTU serão enviados ao Asaas, para que as transações de pagamentos sejam realizadas. Já os estabelecimentos comerciais parceiros terão acesso apenas ao seu nome assim que receberem o pedido.</p>
-      <p><strong>Comunicação com os Usuários:</strong> utilizaremos o seu e-mail e o número de celular para nos comunicarmos com você em caso de problemas com pedidos ou outras questões gerais.</p>
-      <p><strong>Personalização da Experiência do Usuário:</strong> utilizaremos as suas informações de usabilidade para promover melhorias em nossa plataforma.</p>
-      <p><strong>Marketing e Promoções:</strong> utilizaremos o seu e-mail e o número de celular para te enviar notificações de marketing, mediante seu consentimento.</p>
-      <p><strong>Uso das Informações entre Usuários:</strong> como seremos um aplicativo de social commerce, você poderá adicionar seus amigos, bem como ver onde e o que eles estão comprando. A partir do momento em que você fizer o pedido e retirá-lo, informações sobre o produto e o nome do estabelecimento serão compartilhadas em seu feed social para que seus amigos vejam. Mas caso opte por não ter essas publicações automáticas, você poderá desativá-las e só postar quando desejar. Você poderá, também, avaliar o estabelecimento, postar um comentário, ganhar várias curtidas, assim como curtir as postagens de seus amigos!</p>
-
-      <h2>5. COMPARTILHAMENTO DE INFORMAÇÕES:</h2>
-      <p><strong>Com Parceiros:</strong> os dados serão compartilhados com o Asaas a partir do momento em que você efetuar uma compra em nosso aplicativo, visto que, como dissemos acima, ele é a instituição de pagamento responsável por processar essas transações. Além disso, o seu nome completo será compartilhado com o restaurante em que o pedido foi realizado, juntamente com os itens escolhidos para a compra e horário de retirada pré-definidos por você.</p>
-      <p><strong>Para Fins de Análise e Publicidade:</strong> podemos compartilhar dados agregados e não identificáveis com terceiros, para análise e publicidade. Isso ajuda a melhorar nossos serviços e personalizar a experiência do usuário.</p>
-
-      <h2>6. SEGURANÇA DOS DADOS:</h2>
-      <p>Nós implementamos diversas medidas de segurança para proteger os seus dados, incluindo:</p>
+      <h3>Dados Financeiros:</h3>
       <ul>
-        <li>Uso de TLS/SSL para proteger os seus dados durante a transmissão entre o dispositivo do USUÁRIO e os servidores.</li>
-        <li>Criptografia de dados armazenados para impedir acesso não autorizado.</li>
-        <li>Políticas de Senha: utilizamos requisitos para senhas fortes.</li>
-        <li>Firewalls: implementamos firewalls para filtrar tráfego e bloquear acessos não autorizados.</li>
-        <li>Monitoramento de Rede: realizamos monitoramento contínuo para identificar e responder a atividades suspeitas.</li>
-        <li>Logs de Acesso: registramos todas as atividades de acesso e alterações de dados para rastreamento e revisão.</li>
-        <li>Auditorias Regulares: promovemos revisões periódicas de segurança para identificar e corrigir vulnerabilidades.</li>
-        <li>Minimização de Dados: coletamos apenas os dados necessários para que você possa utilizar os serviços oferecidos pela nossa plataforma.</li>
-        <li>Política de Retenção: armazenamos dados apenas pelo tempo necessário e eliminação segura quando não for mais necessário.</li>
+        <li><strong>Informações bancárias para pagamentos:</strong> Todas as informações financeiras do estabelecimento são cadastradas na plataforma do Asaas, nosso parceiro financeiro responsável por todos os repasses.</li>
       </ul>
-      <p>Embora a PRATTU adote diversas medidas para proteger a segurança dos seus dados, a responsabilidade pela segurança da sua conta também recai sobre você, USUÁRIO. Portanto, é essencial que você mantenha seus dados seguros, incluindo senha e login, e outras informações da conta. Além disso, é importante que você acesse a sua conta somente a partir de conexões e dispositivos seguros e confiáveis.</p>
-      <p>Em relação às operações de pagamentos, o ASAAS implementa diversas medidas físicas e digitais para proteger os dados armazenados dos USUÁRIOS. Essas medidas incluem controles de acesso, criptografia de informações, firewalls, auditoria de alterações, autenticação multifator, controle de permissões e outras boas práticas de segurança, com o objetivo de garantir a máxima proteção por meio de técnicas avançadas e ações preventivas.</p>
-
-      <h2>7. RETENÇÃO DE DADOS:</h2>
-      <p>Os seus dados serão mantidos enquanto você estiver cadastrado e ativo em nossa plataforma. Caso opte por excluir a sua conta, todos os dados pessoais serão apagados, exceto quando for necessário manter certas informações por motivos legais.</p>
-
-      <h2>8. DIREITOS DOS USUÁRIOS:</h2>
-      <p>A legislação brasileira (Lei nº 13.079/2018, art. 18) lhe garante uma série de direitos relacionados aos seus dados pessoais e a PRATTU está comprometida com o cumprimento desses direitos. Veja quais são eles:</p>
+      <p>O ASAAS é uma instituição de pagamentos certificada pelo Banco Central do Brasil. O link a seguir te trará informações mais completas sobre ele, inclusive a sua política de privacidade: <a href="https://ajuda.asaas.com/pt-BR/articles/102029-politica-de-privacidade">https://ajuda.asaas.com/pt-BR/articles/102029-politica-de-privacidade</a></p>
+      <h3>Dados de Uso da Plataforma:</h3>
       <ul>
-        <li><strong>Confirmação da Existência de Tratamento:</strong> você pode nos requisitar a confirmação da existência de tratamento de seus dados pessoais e acessá-los, caso haja o tratamento.</li>
-        <li><strong>Acesso aos seus Dados Pessoais:</strong> você pode requisitar o acesso aos dados pessoais que temos sobre você.</li>
-        <li><strong>Correção dos seus Dados Pessoais:</strong> você poderá corrigir e atualizar seus dados pessoais através da página de perfil dentro do aplicativo, sempre que estiverem incompletos, inexatos e desatualizados.</li>
-        <li><strong>Anonimização, bloqueio ou eliminação:</strong> você poderá requisitar que seus dados sejam anonimizados, bloqueados ou eliminados quando forem desnecessários, excessivos e/ou o seu tratamento estiver em desconformidade com as normas vigentes.</li>
-        <li><strong>Portabilidade dos Dados Pessoais:</strong> você poderá requisitar que seus dados sejam transferidos para outro prestador de serviço.</li>
-        <li><strong>Exclusão dos seus Dados Pessoais:</strong> você poderá solicitar a exclusão dos seus Dados Pessoais de nossa base de dados. Assim, todos os dados coletados serão removidos de nossos servidores mediante sua solicitação ou quando não forem mais necessários ou relevantes para a prestação de nossos serviços. No entanto, os dados poderão ser mantidos se houver uma obrigação legal de retenção ou se forem necessários para proteger os direitos da PRATTU.</li>
-        <li><strong>Revogação de Consentimento:</strong> você poderá revogar a qualquer momento, mediante manifestação expressa, qualquer consentimento dado para tratamento de seus dados dentro da nossa plataforma.</li>
+        <li><strong>Informações sobre todos os pedidos feitos, contato com clientes, valores totais, horários de retirada, entre outros:</strong> Esses dados são utilizados para análise de desempenho e melhoria contínua dos nossos serviços.</li>
       </ul>
-      <p>É importante destacar que os direitos acima apontados deverão ser exercidos mediante requerimento expresso do USUÁRIO titular dos dados ou de seu representante legalmente constituído, através do envio de mensagem eletrônica ao e-mail <a href="mailto:suporte@prattuapp.com.br">suporte@prattuapp.com.br</a>.</p>
+      <p><strong>Importante:</strong> Todos os dados do estabelecimento (dados pessoais + dados do estabelecimento + dados de localização) são compartilhados com o Asaas para que o estabelecimento possa criar uma conta, receber repasses e acompanhar todas as suas vendas/faturamento. Na plataforma da PRATTU, o estabelecimento pode apenas acompanhar dados de vendas, sem a possibilidade de efetuar saques ou outras transações financeiras diretamente.</p>
 
-      <h2>9. ALTERAÇÕES NA POLÍTICA DE PRIVACIDADE:</h2>
-      <p>Estamos constantemente buscando melhorar nossa plataforma e serviços, por isso esta Política de Privacidade pode ser atualizada periodicamente. Assim, recomendamos que você visite esta página regularmente para se manter informado sobre quaisquer modificações. Se fizermos alterações significativas, especialmente aquelas que exigem seu consentimento, publicaremos a atualização e solicitaremos seu consentimento conforme necessário.</p>
+      <h2>3. Métodos de Coleta</h2>
+      <ul>
+        <li><strong>Formulários:</strong> Dados pessoais do responsável e do estabelecimento são coletados através de formulários durante o processo de cadastro.</li>
+        <li><strong>APIs:</strong> Integrações automáticas que permitem a coleta e atualização de dados diretamente dos sistemas do estabelecimento ou de parceiros.</li>
+        <li><strong>Cookies:</strong> Utilizamos cookies e tecnologias semelhantes para coletar informações sobre a interação do estabelecimento com nossa plataforma, visando melhorar a sua experiência.</li>
+      </ul>
 
-      <h2>10. BASES LEGAIS UTILIZADAS E JURISDIÇÃO</h2>
+      <h2>4. Uso das Informações</h2>
+      <p>Os dados coletados são utilizados para diversas finalidades, garantindo que possamos oferecer um serviço completo e eficiente:</p>
+      <ul>
+        <li><strong>Processamento de Pedidos:</strong> Utilizamos os dados para garantir que os pedidos dos clientes sejam processados corretamente e entregues ao estabelecimento apropriado.</li>
+        <li><strong>Comunicação:</strong> Enviamos notificações e comunicações importantes sobre pedidos, atualizações de serviço e suporte.</li>
+        <li><strong>Marketing e Promoções:</strong> Utilizamos e-mails e notificações para informar sobre promoções, novos recursos e outras novidades que possam ser de interesse do estabelecimento.</li>
+        <li><strong>Análises:</strong> Analisamos os dados para entender o comportamento dos usuários e do estabelecimento e melhorar nossos serviços continuamente.</li>
+        <li><strong>Pagamentos:</strong> Os dados financeiros são utilizados para processar pagamentos através do Asaas.</li>
+        <li><strong>Personalização:</strong> Utilizamos os dados para personalizar a experiência do estabelecimento na plataforma, oferecendo recomendações e ajustes baseados no uso individual.</li>
+      </ul>
+
+      <h2>5. Compartilhamento de Informações</h2>
+      <p>Os dados do estabelecimento poderão ser compartilhados com:</p>
+      <ul>
+        <li><strong>Parceiros de Pagamento:</strong> Como o Asaas para processar transações financeiras.</li>
+        <li><strong>Provedores de Serviços:</strong> Empresas que nos ajudam a operar e melhorar nossos serviços, incluindo provedores de hospedagem, análise de dados, suporte ao cliente e marketing.</li>
+        <li><strong>Autoridades Legais:</strong> Quando exigido por lei ou para proteger nossos direitos, podemos compartilhar dados com autoridades governamentais ou reguladoras.</li>
+      </ul>
+
+      <h2>6. Segurança dos Dados</h2>
+      <p>Implementamos diversas medidas de segurança para proteger os dados do estabelecimento:</p>
+      <ul>
+        <li><strong>Criptografia:</strong> Dados sensíveis são criptografados tanto em trânsito quanto em repouso.</li>
+        <li><strong>Firewalls e Proteção de Rede:</strong> Utilizamos firewalls e outras medidas de proteção para prevenir acessos não autorizados a nossos sistemas.</li>
+        <li><strong>Monitoramento Contínuo:</strong> Realizamos monitoramento contínuo e auditorias de segurança para identificar e corrigir vulnerabilidades.</li>
+        <li><strong>Políticas de Senha:</strong> Utilizamos requisitos para senhas fortes.</li>
+        <li><strong>Logs de Acesso:</strong> Registramos todas as atividades de acesso e alterações de dados para rastreamento e revisão.</li>
+        <li><strong>Minimização de Dados:</strong> Coletamos apenas os dados necessários do estabelecimento para fins de utilização dos serviços oferecidos pela plataforma PRATTU.</li>
+        <li><strong>Política de Retenção:</strong> Armazenamos dados apenas pelo tempo necessário e eliminação segura quando não for mais necessário.</li>
+      </ul>
+      <p>Embora a PRATTU adote diversas medidas para proteger a segurança dos dados do estabelecimento parceiro, a responsabilidade pela segurança da sua conta também recai sobre ele. Portanto, é essencial que o estabelecimento mantenha seus dados seguros, incluindo senha e login, e outras informações da conta. Além disso, é importante que acesse a sua conta somente a partir de conexões e dispositivos seguros e confiáveis.</p>
+      <p>Em relação às operações de pagamentos, o ASAAS implementa diversas medidas físicas e digitais para proteger os dados armazenados dos estabelecimentos parceiros. Essas medidas incluem controles de acesso, criptografia de informações, firewalls, auditoria de alterações, autenticação multifator, controle de permissões e outras boas práticas de segurança, com o objetivo de garantir a máxima proteção por meio de técnicas avançadas e ações preventivas.</p>
+
+      <h2>7. Retenção de Dados</h2>
+      <p>Os dados do estabelecimento são mantidos enquanto o cadastro estiver ativo em nossa plataforma. Caso o estabelecimento cancele o cadastro, manteremos as informações por um período de 12 meses para facilitar uma possível reativação do contrato. Após esse período, os dados serão excluídos de nossos sistemas, exceto quando for necessário manter informações para cumprir obrigações legais ou regulatórias.</p>
+
+      <h2>8. Direitos dos Estabelecimentos</h2>
+      <p>O estabelecimento tem vários direitos em relação aos seus dados:</p>
+      <ul>
+        <li><strong>Confirmação da Existência de Tratamento:</strong> O estabelecimento poderá requisitar a confirmação da existência de tratamento de seus dados e acessá-los, caso haja o tratamento.</li>
+        <li><strong>Acesso aos seus Dados:</strong> O estabelecimento poderá requisitar o acesso aos seus dados registrados na PRATTU.</li>
+        <li><strong>Correção de Dados:</strong> O estabelecimento poderá corrigir e atualizar seus dados inseridos no aplicativo sempre que estiverem incompletos, inexatos e desatualizados.</li>
+        <li><strong>Anonimização, bloqueio ou eliminação:</strong> O estabelecimento poderá requisitar que seus dados sejam anonimizados, bloqueados ou eliminados quando forem desnecessários, excessivos e/ou o seu tratamento estiver em desconformidade com as normas vigentes.</li>
+        <li><strong>Portabilidade dos Dados:</strong> O estabelecimento poderá solicitar a transferência de seus dados para outra plataforma ou serviço.</li>
+        <li><strong>Exclusão dos seus Dados Pessoais:</strong> O estabelecimento poderá solicitar a exclusão dos seus dados da nossa base de dados. Assim, todos os dados coletados serão removidos de nossos servidores mediante solicitação ou quando não forem mais necessários ou relevantes para a prestação de nossos serviços. No entanto, os dados poderão ser mantidos se houver uma obrigação legal de retenção ou se forem necessários para proteger os direitos da PRATTU.</li>
+        <li><strong>Revogação de Consentimento:</strong> O estabelecimento poderá revogar a qualquer momento, mediante manifestação expressa, qualquer consentimento dado para tratamento de seus dados dentro da nossa plataforma.</li>
+      </ul>
+      <p>Os direitos acima apontados deverão ser exercidos mediante requerimento expresso do estabelecimento parceiro ou de seu representante legalmente constituído, através do envio de mensagem eletrônica ao e-mail <a href="mailto:suporte@prattuapp.com.br">suporte@prattuapp.com.br</a>.</p>
+
+      <h2>9. Cookies</h2>
+      <p>Utilizamos cookies para melhorar a experiência do estabelecimento parceiro em nossa plataforma e páginas da internet. Eles servem para lembrar suas preferências, manter registros das suas atividades na plataforma e coletar informações para oferecer conteúdo personalizado de acordo com seus interesses. Eles são utilizados:</p>
+      <ul>
+        <li>Na execução de autenticação e segurança.</li>
+        <li>Na medição do desempenho da plataforma para aplicação de melhorias.</li>
+        <li>Para personalizar anúncios e promoções.</li>
+      </ul>
+      <p>O estabelecimento pode gerenciar suas preferências de cookies através das configurações do navegador.</p>
+
+      <h2>10. Alterações na Política de Privacidade</h2>
+      <p>Quaisquer alterações na nossa política de privacidade serão comunicadas ao estabelecimento parceiro através de e-mail e notificações na própria plataforma da PRATTU. Recomendamos que o estabelecimento revise periodicamente esta política para se manter informado sobre como protegemos seus dados.</p>
+
+      <h2>11. Transferência Internacional de Dados</h2>
+      <p>Os dados coletados podem ser transferidos para outros países onde os nossos provedores de serviços estão localizados. Garantimos que essas transferências ocorrerão de acordo com as leis de proteção de dados aplicáveis e com medidas de segurança adequadas, como cláusulas contratuais padrão e outras salvaguardas.</p>
+
+      <h2>12. Base Legal para Processamento e Jurisdição</h2>
       <p>Esta Política de Privacidade será interpretada de acordo com a legislação brasileira (LGPD). Fica eleito o Foro da Comarca de São Paulo para resolver qualquer litígio, questão ou dúvida decorrente desta política, com expressa renúncia a qualquer outro foro, por mais privilegiado que seja.</p>
 
-      <h2>11. CONSIDERAÇÕES FINAIS</h2>
-      <p>Ao concordar com esta Política de Privacidade você consente com o tratamento dos seus dados pessoais, na forma e hipóteses aplicáveis.</p>
-      <p>Todas as operações descritas nesta Política de Privacidade são indispensáveis para a utilização dos serviços disponibilizados pela PRATTU e caso você discorde do conteúdo deste documento, ficará impossibilitado de utilizar os nossos serviços.</p>
+      <h2>13. Considerações Finais</h2>
+      <p>Ao concordar com esta Política de Privacidade, o estabelecimento consente com o tratamento dos seus dados na forma e hipóteses aplicáveis. Todas as operações descritas nesta Política de Privacidade são indispensáveis para a utilização dos serviços disponibilizados pela PRATTU e caso o estabelecimento discorde do conteúdo deste documento, ficará impossibilitado de utilizar os nossos serviços.</p>
 
-      <h2>12. CONTATO</h2>
-      <p>Em caso de dúvidas aos termos da presente Política de Privacidade ou solicitações relacionadas ao tratamento de seus dados pessoais, você poderá entrar em contato conosco através do e-mail <a href="mailto:suporte@prattuapp.com.br">suporte@prattuapp.com.br</a>.</p>
+      <h2>14. Contato para Dúvidas e Exercício de Direitos</h2>
+      <p>Em caso de dúvidas aos termos da presente Política de Privacidade ou solicitações relacionadas ao tratamento de dados, o estabelecimento poderá entrar em contato conosco através do e-mail <a href="mailto:suporte@prattuapp.com.br">suporte@prattuapp.com.br</a>.</p>
+
+      <h2>15. Informações Adicionais</h2>
+      <p>Qualquer outra informação relevante específica para a operação da PRATTU com o estabelecimento será comunicada através da plataforma ou diretamente pelo nosso suporte.</p>
+
+      <p>Esta política de privacidade é válida a partir de 07/08/2024 e foi elaborada para garantir transparência e segurança no tratamento dos dados dos estabelecimentos parceiros da PRATTU.</p>
     </div>
   </div>
 </template>

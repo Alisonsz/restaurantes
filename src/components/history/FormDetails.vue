@@ -7,8 +7,8 @@
         </div>
         <div class="details" v-if="selectTab === 'details'">
             <div class="mt-0">
-                <span class="bold-600">Detalhes do pedido </span> 
-                <span>({{ dataDetails.items.length }} itens)</span>
+                <span class="bold-600">Detalhes do pedido </span>
+                <span>({{ dataDetails.products.length }} itens)</span>
             </div>
             <table class="table">
                 <tbody>
@@ -17,16 +17,15 @@
                             <span class="bold-600">Consumo</span>
                         </td>
                         <td class="align-middle text-end">
-                            <span>{{ dataDetails.consumption }}</span>
+                            <span>{{ dataDetails.eat_on ? "Local" : "Entrega" }}</span>
                         </td>
                     </tr>
-                    <tr v-for="(item, index) in dataDetails.items" :key="index" class="list-items">
+                    <tr v-for="(item, index) in dataDetails.products" :key="index" class="list-items">
                         <td class="align-middle">
-                            <p class="bold-600">{{ item.name }} <span class="bold-400">({{ item.quantity }} {{ item.quantity > 1 ? 'unidades' : 'unidade' }})</span></p>
-                            <p v-for="(subitem, i) in item.subitem" :key="i">{{ subitem }}</p>
+                            <p class="bold-600">{{ item.product.name }} <span class="bold-400">({{ item.quantity }} {{ item.quantity > 1 ? 'unidades' : 'unidade' }})</span></p>
                         </td>
                         <td class="align-middle text-end">
-                            <span class="bold-500">R$ {{ item.amount.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}</span>
+                            <span class="bold-500">R$ {{ parseFloat(item.price).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}</span>
                         </td>
                     </tr>
                 </tbody>
@@ -39,7 +38,7 @@
                                 <span class="bold-700">Valor total</span>
                             </td>
                             <td class="align-middle text-end">
-                                <span class="bold-700">R$ {{ dataDetails.amount.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}</span>
+                                <span class="bold-700">R$ {{ parseFloat(dataDetails.total).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}</span>
                             </td>
                         </tr>
                     </tbody>
@@ -62,7 +61,7 @@
                             <span class="bold-600">Cliente</span>
                         </td>
                         <td class="align-middle text-end">
-                            <span>{{ dataDetails.customer }}</span>
+                            <span>{{ dataDetails.user.name }}</span>
                         </td>
                     </tr>
                     <tr>
@@ -70,7 +69,7 @@
                             <span class="bold-600">Data e hora</span>
                         </td>
                         <td class="align-middle text-end">
-                            <span>{{ dataDetails.dateCreate }} às {{ dataDetails.timeCreate }}</span>
+                            <span>{{ dataDetails.date }} às {{ dataDetails.time }}</span>
                         </td>
                     </tr>
                     <tr>
@@ -78,57 +77,31 @@
                             <span class="bold-600">Valor</span>
                         </td>
                         <td class="align-middle text-end">
-                            <span>{{ dataDetails.amount.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}</span>
+                            <span>{{ parseFloat(dataDetails.total).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}</span>
                         </td>
                     </tr>
-                    <tr v-if="typeof dataDetails.timeDelivered === 'string'">
+                    <tr v-if="dataDetails.status === '5'">
                         <td class="align-middle">
-                            <span class="bold-600">Horário da retirada</span>
+                            <span class="bold-600">Horário da entrega</span>
                         </td>
                         <td class="align-middle text-end">
-                            <span>{{ dataDetails.timeDelivered }}</span>
+                            <span>{{ dataDetails.delivery_datetime }}</span>
                         </td>
                     </tr>
-                    <tr v-if="typeof dataDetails.payment === 'object' && typeof dataDetails.payment.type === 'string'">
+                    <tr v-if="dataDetails.payment_method">
                         <td class="align-middle">
                             <span class="bold-600">Forma de pagamento</span>
                         </td>
                         <td class="align-middle text-end">
-                            <span>{{ dataDetails.payment.type }}</span>
+                            <span>{{ dataDetails.payment_method }}</span>
                         </td>
                     </tr>
-                    <tr v-if="typeof dataDetails.payment === 'object' && typeof dataDetails.payment.brand === 'string'">
-                        <td class="align-middle">
-                            <span class="bold-600">{{ dataDetails.payment.brand }}</span>
-                        </td>
-                        <td class="align-middle text-end" v-if="typeof dataDetails.payment.card === 'string'">
-                            <span>{{ dataDetails.payment.card }}</span>
-                        </td>
-                    </tr>
-                    <tr v-if="dataDetails.status === 'rejected'" class="row-reason">
-                        <td class="align-middle">
-                            <span class="bold-600">Motivo da recusa</span>
-                        </td>
-                        <td class="align-middle text-end">
-                            <span>{{ dataDetails.timeRejected }}</span>
-                        </td>
-                    </tr>
-                    <tr v-if="dataDetails.status === 'rejected'">
-                        <td class="align-middle" colspan="2">
-                            <span>{{ dataDetails.reason }}</span>
-                        </td>
-                    </tr>
-                    <tr v-if="dataDetails.status === 'canceled'" class="row-reason">
+                    <tr v-if="dataDetails.status === '6' && dataDetails.user_rejection_reason">
                         <td class="align-middle">
                             <span class="bold-600">Motivo do cancelamento</span>
                         </td>
                         <td class="align-middle text-end">
-                            <span>{{ dataDetails.timeCanceled }}</span>
-                        </td>
-                    </tr>
-                    <tr v-if="dataDetails.status === 'canceled'">
-                        <td class="align-middle" colspan="2">
-                            <span>{{ dataDetails.reason }}</span>
+                            <span>{{ dataDetails.user_rejection_reason }}</span>
                         </td>
                     </tr>
                 </tbody>
@@ -138,22 +111,32 @@
 </template>
 
 <script>
-    export default {
-        name: "FormDetails",
-        emits: ["closeModal", "saveModal"],
-        data() {
-            return {
-                selectTab: "details"
-            }
-        },
-        props: {
-            dataDetails: Object,
-            statusLabel: Object
-        },
-    };
+export default {
+    name: "FormDetails",
+    emits: ["closeModal", "saveModal"],
+    data() {
+        return {
+            selectTab: "details"
+        }
+    },
+    props: {
+        dataDetails: Object,
+        statusLabel: Object
+    }
+};
 </script>
-
 <style lang="scss" scoped>
+.icon-5 { /* Pago */
+    background-color: #baedbd;
+}
+
+.icon-6 { /* Cancelado */
+    background-color: #fb9f9f;
+}
+
+.icon-7 { /* Recusado */
+    background-color: #c6c7f8;
+}
     .modal-container form {
         width: 500px !important;
     }
@@ -224,4 +207,5 @@
             }
         }
     }
+  
 </style>
