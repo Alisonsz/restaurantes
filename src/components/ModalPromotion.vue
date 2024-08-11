@@ -3,29 +3,53 @@
     <div v-if="show" class="modal-mask">
       <div class="modal-container">
         <div class="modal-header">
-          <button class="icon-back2" @click="$emit('close')" v-if="noClose !== true">
+          <button class="icon-back2" @click="$emit('close')" v-if="!noClose">
             <img src="@/assets/img/back.svg" alt="Voltar" />
           </button>
           <h3>{{ getPromotionTitle(formData.type) }}</h3>
         </div>
-        <hr class="hr-header">
+        <hr class="hr-header" />
         <div class="modal-body">
           <div class="form-row top-row">
             <div class="form-group name-group">
               <label for="promotionName">Nome da Promoção</label>
-              <input type="text" id="promotionName" v-model="formData.name" class="form-input" />
+              <input
+                type="text"
+                id="promotionName"
+                v-model="formData.name"
+                class="form-input"
+              />
             </div>
-            <div v-if="formData.type === 2" class="form-group additional-group">
+            <div
+              v-if="formData.type === 2"
+              class="form-group additional-group"
+            >
               <label for="selectedProducts">Produto Selecionado</label>
-              <select id="selectedProducts" v-model="formData.selectedProducts" class="form-select">
-                <option v-for="product in filteredProducts" :key="product.id" :value="product.id">
+              <select
+                id="selectedProducts"
+                v-model="formData.selectedProducts"
+                class="form-select"
+              >
+                <option
+                  v-for="product in filteredProducts"
+                  :key="product.id"
+                  :value="product.id"
+                >
                   {{ product.name }}
                 </option>
               </select>
             </div>
-            <div v-if="formData.type === 3" class="form-group additional-group">
+            <div
+              v-if="formData.type === 3"
+              class="form-group additional-group"
+            >
               <label for="couponCode">Código do Cupom</label>
-              <input type="text" id="couponCode" v-model="formData.couponCode" class="form-input" />
+              <input
+                type="text"
+                id="couponCode"
+                v-model="formData.couponCode"
+                class="form-input"
+              />
             </div>
           </div>
 
@@ -33,7 +57,10 @@
             <div class="form-group percentage-group">
               <label for="promotionPercentage">Porcentagem de Desconto (%)</label>
               <div class="form-time">
-                <button class="btn btn-minus" @click="changePercentage('minus')">
+                <button
+                  class="btn btn-minus"
+                  @click="changePercentage('minus')"
+                >
                   <span class="add-item add-right add-minus"></span>
                 </button>
                 <input
@@ -50,7 +77,12 @@
 
             <div class="form-group date-group">
               <label for="promotionStart">Data de Início</label>
-              <input type="date" id="promotionStart" v-model="formData.start" class="form-input date-input" />
+              <input
+                type="date"
+                id="promotionStart"
+                v-model="formData.start"
+                class="form-input date-input"
+              />
             </div>
             <div class="form-group date-group">
               <label for="promotionEnd">Data de Término</label>
@@ -60,6 +92,7 @@
                 v-model="formData.end"
                 class="form-input date-input"
                 :disabled="formData.noEnd"
+                :required="!formData.noEnd"
               />
             </div>
           </div>
@@ -68,13 +101,23 @@
         <div class="modal-footer">
           <div class="left-footer">
             <div class="inline-checkbox">
-              <input type="checkbox" id="noEndCheckbox" v-model="formData.noEnd" />
+              <input
+                type="checkbox"
+                id="noEndCheckbox"
+                v-model="formData.noEnd"
+              />
               <label for="noEndCheckbox">Não expirar</label>
             </div>
           </div>
           <div class="right-footer">
             <button @click="savePromotion" class="btn-save">Salvar</button>
-            <button v-if="isEditing" @click="deletePromotion" class="btn-delete">Deletar</button>
+            <button
+              v-if="isEditing"
+              @click="deletePromotion"
+              class="btn-delete"
+            >
+              Deletar
+            </button>
           </div>
         </div>
       </div>
@@ -113,11 +156,14 @@ const store = useStore();
 
 async function fetchProducts() {
   try {
-    const response = await axios.get('https://api.prattuapp.com.br/api/restaurants/1', {
-      headers: {
-        Authorization: `Bearer ${store.state.token}`,
-      },
-    });
+    const response = await axios.get(
+      'https://api.prattuapp.com.br/api/restaurants/1',
+      {
+        headers: {
+          Authorization: `Bearer ${store.state.token}`,
+        },
+      }
+    );
 
     products.value = response.data.products;
   } catch (error) {
@@ -134,14 +180,14 @@ watch(
   (newPromotion) => {
     if (newPromotion && newPromotion !== null) {
       formData.value.name = newPromotion.name;
-
-      // Use a chave correta para a porcentagem
-      formData.value.percentage = newPromotion.percentage !== undefined 
-        ? newPromotion.percentage 
-        : 0;
-
-      formData.value.start = newPromotion.start ? newPromotion.start.split(' ')[0] : '';
-      formData.value.end = newPromotion.end ? newPromotion.end.split(' ')[0] : '';
+      formData.value.percentage =
+        newPromotion.percentage !== undefined ? newPromotion.percentage : 0;
+      formData.value.start = newPromotion.start
+        ? newPromotion.start.split(' ')[0]
+        : '';
+      formData.value.end = newPromotion.end
+        ? newPromotion.end.split(' ')[0]
+        : '';
       formData.value.type = newPromotion.type;
       formData.value.couponCode = newPromotion.code || '';
       formData.value.selectedProducts = newPromotion.product_id || '';
@@ -151,8 +197,6 @@ watch(
     }
   }
 );
-
-
 
 function resetFormData() {
   formData.value = {
@@ -186,7 +230,6 @@ function changePercentage(operation) {
     }
   }
 }
-
 
 async function savePromotion() {
   try {
@@ -228,11 +271,14 @@ async function savePromotion() {
 
 async function deletePromotion() {
   try {
-    await axios.delete(`https://api.prattuapp.com.br/api/discounts/${formData.value.id}/${formData.value.type}`, {
-      headers: {
-        Authorization: `Bearer ${store.state.token}`,
-      },
-    });
+    await axios.delete(
+      `https://api.prattuapp.com.br/api/discounts/${formData.value.id}/${formData.value.type}`,
+      {
+        headers: {
+          Authorization: `Bearer ${store.state.token}`,
+        },
+      }
+    );
 
     emit('delete', formData.value);
     emit('close');
@@ -244,14 +290,16 @@ async function deletePromotion() {
 
 const filteredProducts = computed(() => {
   const query = searchQuery.value.toLowerCase();
-  return products.value.filter((product) => product.name.toLowerCase().includes(query));
+  return products.value.filter((product) =>
+    product.name.toLowerCase().includes(query)
+  );
 });
 
 const isEditing = computed(() => {
   return !!props.promotion && !!props.promotion.id;
 });
-
 </script>
+
 
 <style scoped>
 .modal-mask {
