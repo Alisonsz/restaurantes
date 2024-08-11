@@ -134,18 +134,24 @@ watch(
   (newPromotion) => {
     if (newPromotion && newPromotion !== null) {
       formData.value.name = newPromotion.name;
-      formData.value.percentage = newPromotion.value || newPromotion.discount_percentage;
-      formData.value.start = newPromotion.valid_from ? newPromotion.valid_from.split(' ')[0] : '';
-      formData.value.end = newPromotion.valid_until ? newPromotion.valid_until.split(' ')[0] : '';
+
+      // Use a chave correta para a porcentagem
+      formData.value.percentage = newPromotion.percentage !== undefined 
+        ? newPromotion.percentage 
+        : 0;
+
+      formData.value.start = newPromotion.start ? newPromotion.start.split(' ')[0] : '';
+      formData.value.end = newPromotion.end ? newPromotion.end.split(' ')[0] : '';
       formData.value.type = newPromotion.type;
-      formData.value.selectedProducts = newPromotion.product_id || '';  // Atribui o product_id
-      formData.value.couponCode = newPromotion.code || '';  // Atribui o código do cupom
-      formData.value.noEnd = !newPromotion.valid_until;
+      formData.value.couponCode = newPromotion.code || '';
+      formData.value.selectedProducts = newPromotion.product_id || '';
+      formData.value.noEnd = !newPromotion.end;
     } else {
       resetFormData();
     }
   }
 );
+
 
 
 function resetFormData() {
@@ -172,14 +178,15 @@ function getPromotionTitle(type) {
 
 function changePercentage(operation) {
   if (operation === 'plus') {
-    formData.value.percentage += 1;
+    formData.value.percentage = (formData.value.percentage || 0) + 1;
   } else if (operation === 'minus') {
-    formData.value.percentage -= 1;
+    formData.value.percentage = (formData.value.percentage || 0) - 1;
     if (formData.value.percentage < 0) {
       formData.value.percentage = 0;
     }
   }
 }
+
 
 async function savePromotion() {
   try {
@@ -241,8 +248,9 @@ const filteredProducts = computed(() => {
 });
 
 const isEditing = computed(() => {
-  return formData.value.name !== '';
+  return !!props.promotion && !!props.promotion.id;
 });
+
 </script>
 
 <style scoped>
