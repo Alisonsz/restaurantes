@@ -54,35 +54,102 @@
             </div>
             <div class="form-group date-group">
               <label for="promotionEnd">Data de Término</label>
-              <input type="date" id="promotionEnd" v-model="formData.end" class="form-input date-input" />
+              <input
+                type="date"
+                id="promotionEnd"
+                v-model="formData.end"
+                class="form-input date-input"
+                :disabled="formData.noEnd"
+              />
             </div>
           </div>
         </div>
 
         <div class="modal-footer">
-          <button @click="savePromotion" class="btn-save">Salvar</button>
-          <button v-if="isEditing" @click="deletePromotion" class="btn-delete">Deletar</button>
+          <div class="left-footer">
+            <div class="inline-checkbox">
+              <input type="checkbox" id="noEndCheckbox" v-model="formData.noEnd" />
+              <label for="noEndCheckbox">Não expirar</label>
+            </div>
+          </div>
+          <div class="right-footer">
+            <button @click="savePromotion" class="btn-save">Salvar</button>
+            <button v-if="isEditing" @click="deletePromotion" class="btn-delete">Deletar</button>
+          </div>
         </div>
       </div>
     </div>
   </Transition>
 </template>
 
-  
-  <script setup>
-  import { ref, watch, onMounted, computed } from 'vue';
-  import { useStore } from 'vuex';  
-  import axios from 'axios';
-  
-  const props = defineProps({
-    show: Boolean,
-    promotion: Object,
-    noClose: Boolean,
-  });
-  
-  const emit = defineEmits(['close', 'save', 'delete']);
-  
-  const formData = ref({
+<script setup>
+import { ref, watch, onMounted, computed } from 'vue';
+import { useStore } from 'vuex';
+import axios from 'axios';
+
+const props = defineProps({
+  show: Boolean,
+  promotion: Object,
+  noClose: Boolean,
+});
+
+const emit = defineEmits(['close', 'save', 'delete']);
+
+const formData = ref({
+  name: '',
+  percentage: 0,
+  start: '',
+  end: '',
+  couponCode: '',
+  type: null,
+  selectedProducts: '',
+  noEnd: false,
+});
+
+const products = ref([]);
+const searchQuery = ref('');
+
+const store = useStore();
+
+async function fetchProducts() {
+  try {
+    const response = await axios.get('https://api.prattuapp.com.br/api/restaurants/1', {
+      headers: {
+        Authorization: `Bearer ${store.state.token}`,
+      },
+    });
+
+    products.value = response.data.products;
+  } catch (error) {
+    console.error('Erro ao carregar produtos:', error);
+  }
+}
+
+onMounted(() => {
+  fetchProducts();
+});
+
+watch(
+  () => props.promotion,
+  (newPromotion) => {
+    if (newPromotion && newPromotion !== null) {
+      formData.value.name = newPromotion.name;
+      formData.value.percentage = newPromotion.value || newPromotion.discount_percentage;
+      formData.value.start = newPromotion.valid_from ? newPromotion.valid_from.split(' ')[0] : '';
+      formData.value.end = newPromotion.valid_until ? newPromotion.valid_until.split(' ')[0] : '';
+      formData.value.type = newPromotion.type;
+      formData.value.selectedProducts = newPromotion.product_id || '';  // Atribui o product_id
+      formData.value.couponCode = newPromotion.code || '';  // Atribui o código do cupom
+      formData.value.noEnd = !newPromotion.valid_until;
+    } else {
+      resetFormData();
+    }
+  }
+);
+
+
+function resetFormData() {
+  formData.value = {
     name: '',
     percentage: 0,
     start: '',
@@ -90,319 +157,268 @@
     couponCode: '',
     type: null,
     selectedProducts: '',
-  });
-  
-  const products = ref([]);
-  const searchQuery = ref('');
-  
-  const store = useStore();
-  
-  // Buscar produtos do restaurante
-  async function fetchProducts() {
-    try {
-      const response = await axios.get('https://api.prattuapp.com.br/api/restaurants/1', {
-        headers: {
-          'Authorization': `Bearer ${store.state.token}`
-        }
-      });
-  
-      products.value = response.data.products;
-    } catch (error) {
-      console.error('Erro ao carregar produtos:', error);
-    }
-  }
-  
-  // Monta o componente e busca os produtos
-  onMounted(() => {
-    fetchProducts();
-  });
-  
-  // Atualiza o formData ao detectar mudanças na promoção selecionada
-  watch(() => props.promotion, (newPromotion) => {
-    if (newPromotion && newPromotion !== null) {
-      formData.value = { ...newPromotion };
-      if (newPromotion.type === 2 && newPromotion.product_id) {
-        formData.value.selectedProducts = newPromotion.product_id;
-      }
-    } else {
-      resetFormData();
-    }
-  });
-  
-  // Reseta os dados do formulário quando uma nova promoção é criada
-  function resetFormData() {
-    formData.value = {
-      name: '',
-      percentage: 0,
-      start: '',
-      end: '',
-      couponCode: '',
-      type: null,
-      selectedProducts: '',
-    };
-  }
-  
-  // Retorna o título apropriado com base no tipo de promoção
-  function getPromotionTitle(type) {
-    const titles = {
-      1: 'Desconto em toda loja',
-      2: 'Desconto em produto',
-      3: 'Cupom de desconto',
-    };
-    return titles[type] || 'Nova Promoção';
-  }
-  
-  // Função para aumentar ou diminuir a porcentagem de desconto
-  function changePercentage(operation) {
-    if (operation === 'plus') {
-      formData.value.percentage += 1;
-    } else if (operation === 'minus') {
-      formData.value.percentage -= 1;
-      if (formData.value.percentage < 0) {
-        formData.value.percentage = 0;
-      }
-    }
-  }
-  
-  // Salva ou atualiza a promoção e fecha o modal
-  async function savePromotion() {
-    try {
-      const url = formData.value.id
-        ? `https://api.prattuapp.com.br/api/discounts/${formData.value.id}/${formData.value.type}`
-        : 'https://api.prattuapp.com.br/api/discounts';
-      
-      const method = formData.value.id ? 'put' : 'post';
-      const data = {
-        type: formData.value.type,
-        name: formData.value.name,
-        discount_percentage: formData.value.percentage,
-        valid_from: formData.value.start,
-        valid_until: formData.value.end,
-        status: true
-      };
-  
-      if (formData.value.type === 2) {
-        data.product_id = formData.value.selectedProducts;
-        data.value = formData.value.percentage;
-      } else if (formData.value.type === 3) {
-        data.code = formData.value.couponCode;
-        data.value = formData.value.percentage;
-      }
-  
-      await axios[method](url, data, {
-        headers: {
-          'Authorization': `Bearer ${store.state.token}`
-        }
-      });
-  
-      emit('save', formData.value);
-      emit('close');
-      window.location.reload(); // Atualiza a página após salvar
-    } catch (error) {
-      console.error('Erro ao salvar a promoção:', error);
-    }
-  }
-  
-  // Deleta a promoção e fecha o modal
-  async function deletePromotion() {
-    try {
-      await axios.delete(`https://api.prattuapp.com.br/api/discounts/${formData.value.id}/${formData.value.type}`, {
-        headers: {
-          'Authorization': `Bearer ${store.state.token}`
-        }
-      });
-  
-      emit('delete', formData.value);
-      emit('close');
-      window.location.reload(); // Atualiza a página após deletar
-    } catch (error) {
-      console.error('Erro ao deletar a promoção:', error);
-    }
-  }
-  
-  // Computed para filtrar produtos com base na pesquisa
-  const filteredProducts = computed(() => {
-    const query = searchQuery.value.toLowerCase();
-    return products.value.filter(product =>
-      product.name.toLowerCase().includes(query)
-    );
-  });
-  
-  // Computed para verificar se estamos editando uma promoção existente
-  const isEditing = computed(() => {
-    return formData.value.name !== '';
-  });
-  </script>
-  
-  
-  <style scoped>
-  .modal-mask {
-    position: fixed;
-    z-index: 9998;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .modal-container {
-    width: 700px; /* Aumentei a largura do modal */
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 16px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
-    transition: all 0.3s ease;
-  }
-  
-  .modal-header {
-    display: flex;
-    align-items: center;
-    gap: 30px;
-  }
-  
-  .modal-header h3 {
-    margin: 0;
-    font-size: 20px;
-    font-weight: bold;
-  }
-  
-  .modal-body {
-    margin: 20px 0;
-  }
-  
-  .form-group {
-    margin-bottom: 20px;
-    width: 100%;
-  }
-  
-  .form-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 500;
-  }
-  
-  .form-input {
-    width: 100%;
-    padding: 8px;
-    box-sizing: border-box;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  .form-row {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-  }
-  
-  .top-row {
-    display: flex;
-    justify-content: space-between;
-  }
-  
-  .name-group,
-  .additional-group {
-    flex: 1;
-    margin-right: 20px;
-  }
-  
-  .date-group {
-    flex: 1;
-  }
-  
-  .bottom-row {
-    display: flex;
-    gap: 20px;
-  }
-  
-  .percentage-group {
-    flex: 1;
-  }
-  
-  .form-time {
-    display: flex;
-    align-items: center;
-  }
-  
-  .btn-minus,
-  .text,
-  .btn-plus {
-    display: inline-block;
-    margin-right: 10px;
-  }
-  
-  .btn-minus,
-  .btn-plus {
-    border: 1px solid #ccc;
-    background-color: #f5f5f5;
-    padding: 10px 10px;
-    cursor: pointer;
-    border-radius: 4px;
-  }
-  
-  .text {
-    width: 120px; /* Aumentei um pouco o tamanho do input */
-    text-align: center;
-
-  }
-  
-  .btn-save {
-    padding: 10px 20px;
-    background-color: #7ED957;
-    border: none;
-    border-radius: 100px;
-    color: black;
-    cursor: pointer;
-    font-size: 16px;
-  }
-  
-  .btn-save:hover {
-    background-color: darkgreen;
-  }
-  
-  .modal-footer {
-    display: flex;
-    justify-content: flex-end;
-  }
-  
-  .modal-fade-enter-active,
-  .modal-fade-leave-active {
-    transition: opacity 0.3s;
-  }
-  
-  .modal-fade-enter,
-  .modal-fade-leave-to {
-    opacity: 0;
-  }
-  
-  .icon-back2 img {
-    width: 20px;
-    height: 20px;
-  }
-  .search-group {
-  margin-bottom: 20px;
+    noEnd: false,
+  };
 }
 
-.search-group label {
+function getPromotionTitle(type) {
+  const titles = {
+    1: 'Desconto em toda loja',
+    2: 'Desconto em produto',
+    3: 'Cupom de desconto',
+  };
+  return titles[type] || 'Nova Promoção';
+}
+
+function changePercentage(operation) {
+  if (operation === 'plus') {
+    formData.value.percentage += 1;
+  } else if (operation === 'minus') {
+    formData.value.percentage -= 1;
+    if (formData.value.percentage < 0) {
+      formData.value.percentage = 0;
+    }
+  }
+}
+
+async function savePromotion() {
+  try {
+    const url = formData.value.id
+      ? `https://api.prattuapp.com.br/api/discounts/${formData.value.id}/${formData.value.type}`
+      : 'https://api.prattuapp.com.br/api/discounts';
+
+    const method = formData.value.id ? 'put' : 'post';
+    const data = {
+      type: formData.value.type,
+      name: formData.value.name,
+      discount_percentage: formData.value.percentage,
+      valid_from: formData.value.start,
+      valid_until: formData.value.noEnd ? null : formData.value.end,
+      status: true,
+    };
+
+    if (formData.value.type === 2) {
+      data.product_id = formData.value.selectedProducts;
+      data.value = formData.value.percentage;
+    } else if (formData.value.type === 3) {
+      data.code = formData.value.couponCode;
+      data.value = formData.value.percentage;
+    }
+
+    await axios[method](url, data, {
+      headers: {
+        Authorization: `Bearer ${store.state.token}`,
+      },
+    });
+
+    emit('save', formData.value);
+    emit('close');
+    window.location.reload();
+  } catch (error) {
+    console.error('Erro ao salvar a promoção:', error);
+  }
+}
+
+async function deletePromotion() {
+  try {
+    await axios.delete(`https://api.prattuapp.com.br/api/discounts/${formData.value.id}/${formData.value.type}`, {
+      headers: {
+        Authorization: `Bearer ${store.state.token}`,
+      },
+    });
+
+    emit('delete', formData.value);
+    emit('close');
+    window.location.reload();
+  } catch (error) {
+    console.error('Erro ao deletar a promoção:', error);
+  }
+}
+
+const filteredProducts = computed(() => {
+  const query = searchQuery.value.toLowerCase();
+  return products.value.filter((product) => product.name.toLowerCase().includes(query));
+});
+
+const isEditing = computed(() => {
+  return formData.value.name !== '';
+});
+</script>
+
+<style scoped>
+.modal-mask {
+  position: fixed;
+  z-index: 9998;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-container {
+  width: 700px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
+  transition: all 0.3s ease;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.modal-body {
+  margin: 20px 0;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.form-group label {
   display: block;
   margin-bottom: 8px;
   font-weight: 500;
 }
 
-.search-group .form-input {
+.form-input {
   width: 100%;
   padding: 8px;
   box-sizing: border-box;
   border: 1px solid #ccc;
   border-radius: 4px;
 }
+
+.form-row {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.left-footer,
+.right-footer {
+  display: flex;
+  align-items: center;
+}
+
+.left-footer {
+  flex-grow: 1;
+}
+
+.inline-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.top-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.name-group,
+.additional-group {
+  flex: 1;
+  margin-right: 20px;
+}
+
+.date-group {
+  flex: 1;
+}
+
+.bottom-row {
+  display: flex;
+  gap: 20px;
+}
+
+.percentage-group {
+  flex: 1;
+}
+
+.form-time {
+  display: flex;
+  align-items: center;
+}
+
+.btn-minus,
+.text,
+.btn-plus {
+  display: inline-block;
+  margin-right: 10px;
+}
+
+.btn-minus,
+.btn-plus {
+  border: 1px solid #ccc;
+  background-color: #f5f5f5;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.text {
+  width: 120px;
+  text-align: center;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.btn-save {
+  padding: 10px 20px;
+  background-color: #7ED957;
+  border: none;
+  border-radius: 100px;
+  color: black;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.btn-save:hover {
+  background-color: darkgreen;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: opacity 0.3s;
+}
+
+.modal-fade-enter,
+.modal-fade-leave-to {
+  opacity: 0;
+}
+
+.icon-back2 img {
+  width: 20px;
+  height: 20px;
+}
+
 .btn-delete {
   padding: 10px 20px;
-  background-color: #f44336; /* Cor de fundo vermelho para o botão de deletar */
+  background-color: #f44336;
   border: none;
   border-radius: 100px;
   color: white;
@@ -415,5 +431,12 @@
 .btn-delete:hover {
   background-color: darkred;
 }
-  </style>
-  
+
+.add-item {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-bottom: 5px;
+
+}
+</style>

@@ -155,7 +155,8 @@ async function loadPromotions() {
       used: discount.times_used,
       type: 2,
       status: discount.status,
-      created_at: discount.created_at
+      created_at: discount.created_at,
+      product_id: discount.product_id  // Incluindo o product_id
     }));
 
     const storePromotions = response.data.store_promotions.map(promotion => ({
@@ -179,7 +180,8 @@ async function loadPromotions() {
       used: coupon.times_used,
       type: 3,
       status: coupon.status,
-      created_at: coupon.created_at
+      created_at: coupon.created_at,
+      code: coupon.code  // Incluindo o code
     }));
 
     promotions.value = [...productDiscounts, ...storePromotions, ...coupons];
@@ -191,6 +193,7 @@ async function loadPromotions() {
     console.error('Erro ao carregar promoções:', error);
   }
 }
+
 
 
 onMounted(() => {
@@ -248,6 +251,7 @@ function openModal(type, promo = null) {
   }
   showModal.value = true;
 }
+
 
 function updateSearch(event) {
   searchTerm.value = event.target.value;
