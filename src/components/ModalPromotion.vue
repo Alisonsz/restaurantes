@@ -139,6 +139,7 @@ const props = defineProps({
 const emit = defineEmits(['close', 'save', 'delete']);
 
 const formData = ref({
+  id: null, // Garantimos que o id seja parte do formData
   name: '',
   percentage: 0,
   start: '',
@@ -171,35 +172,32 @@ async function fetchProducts() {
   }
 }
 
-onMounted(() => {
-  fetchProducts();
-});
-
+// Este watcher irá garantir que o formData seja atualizado corretamente
 watch(
   () => props.promotion,
   (newPromotion) => {
-    if (newPromotion && newPromotion !== null) {
-      formData.value.name = newPromotion.name;
-      formData.value.percentage =
-        newPromotion.percentage !== undefined ? newPromotion.percentage : 0;
-      formData.value.start = newPromotion.start
-        ? newPromotion.start.split(' ')[0]
-        : '';
-      formData.value.end = newPromotion.end
-        ? newPromotion.end.split(' ')[0]
-        : '';
-      formData.value.type = newPromotion.type;
-      formData.value.couponCode = newPromotion.code || '';
-      formData.value.selectedProducts = newPromotion.product_id || '';
-      formData.value.noEnd = !newPromotion.end;
+    if (newPromotion) {
+      formData.value = {
+        id: newPromotion.id || null, // Atribui o ID ao formData
+        name: newPromotion.name || '',
+        percentage: newPromotion.percentage || 0,
+        start: newPromotion.start ? newPromotion.start.split(' ')[0] : '',
+        end: newPromotion.end ? newPromotion.end.split(' ')[0] : '',
+        couponCode: newPromotion.code || '',
+        type: newPromotion.type || null,
+        selectedProducts: newPromotion.product_id || '',
+        noEnd: !newPromotion.end,
+      };
     } else {
       resetFormData();
     }
-  }
+  },
+  { immediate: true } // Executa imediatamente ao montar o componente
 );
 
 function resetFormData() {
   formData.value = {
+    id: null, // Reseta o id
     name: '',
     percentage: 0,
     start: '',
@@ -270,6 +268,13 @@ async function savePromotion() {
 }
 
 async function deletePromotion() {
+  console.log('ID da promoção antes de deletar:', formData.value.id);
+
+  if (!formData.value.id) {
+    console.error('ID da promoção está indefinido. Não é possível deletar.');
+    return;
+  }
+
   try {
     await axios.delete(
       `https://api.prattuapp.com.br/api/discounts/${formData.value.id}/${formData.value.type}`,
@@ -284,7 +289,7 @@ async function deletePromotion() {
     emit('close');
     window.location.reload();
   } catch (error) {
-    console.error('Erro ao deletar a promoção:', error);
+    console.error('Erro ao deletar a promoção:', error.response ? error.response.data : error.message);
   }
 }
 
@@ -296,9 +301,10 @@ const filteredProducts = computed(() => {
 });
 
 const isEditing = computed(() => {
-  return !!props.promotion && !!props.promotion.id;
+  return !!(formData.value.id); 
 });
 </script>
+
 
 
 <style scoped>
