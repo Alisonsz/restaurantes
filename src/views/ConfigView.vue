@@ -258,7 +258,7 @@ const hasChanges = computed(() => {
            passwordData.value.confirmNewPassword;
 });
 
-const completeConfig = ref(true);
+const completeConfig = ref(false);
 const currentConfigStep = ref(5);
 const countConfigSteps = ref(5);
 const successMessage = ref('');

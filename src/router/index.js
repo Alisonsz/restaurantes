@@ -108,6 +108,11 @@ const routes = [
         path: '/gestao-de-pedidos',
         name: 'orders',
         component: () => import(/* webpackChunkName: "login" */ '../views/Orders')
+    },
+    {
+        path: '/promocoes',
+        name: 'promotions',
+        component: () => import(/* webpackChunkName: "login" */ '../views/Promotions')
     }
 ]
 
