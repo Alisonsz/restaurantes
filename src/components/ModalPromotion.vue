@@ -139,7 +139,7 @@ const props = defineProps({
 const emit = defineEmits(['close', 'save', 'delete']);
 
 const formData = ref({
-  id: null, // Garantimos que o id seja parte do formData
+  id: null,
   name: '',
   percentage: 0,
   start: '',
@@ -165,20 +165,23 @@ async function fetchProducts() {
         },
       }
     );
-
     products.value = response.data.products;
   } catch (error) {
     console.error('Erro ao carregar produtos:', error);
   }
 }
 
-// Este watcher irá garantir que o formData seja atualizado corretamente
+// Carrega os produtos quando o componente é montado
+onMounted(() => {
+  fetchProducts();
+});
+
 watch(
   () => props.promotion,
   (newPromotion) => {
     if (newPromotion) {
       formData.value = {
-        id: newPromotion.id || null, // Atribui o ID ao formData
+        id: newPromotion.id || null,
         name: newPromotion.name || '',
         percentage: newPromotion.percentage || 0,
         start: newPromotion.start ? newPromotion.start.split(' ')[0] : '',
@@ -192,12 +195,12 @@ watch(
       resetFormData();
     }
   },
-  { immediate: true } // Executa imediatamente ao montar o componente
+  { immediate: true }
 );
 
 function resetFormData() {
   formData.value = {
-    id: null, // Reseta o id
+    id: null,
     name: '',
     percentage: 0,
     start: '',
@@ -301,7 +304,7 @@ const filteredProducts = computed(() => {
 });
 
 const isEditing = computed(() => {
-  return !!(formData.value.id); 
+  return !!(formData.value.id);
 });
 </script>
 
