@@ -1,4 +1,5 @@
 const { defineConfig } = require('@vue/cli-service')
+
 module.exports = defineConfig({
     transpileDependencies: true,
     css: {
@@ -11,5 +12,18 @@ module.exports = defineConfig({
                 `
             }
         }
+    },
+    devServer: {
+        proxy: {
+            '/api': {
+                target: 'https://api.prattuapp.com.br', // URL do servidor Laravel
+                changeOrigin: true,
+                pathRewrite: { '^/api': '' }, // Opcionalmente remove /api da URL se necessário
+            },
+            '/broadcasting/auth': {
+                target: 'https://api.prattuapp.com.br', // URL do servidor Laravel
+                changeOrigin: true,
+            },
+        },
     }
 })

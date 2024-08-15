@@ -504,4 +504,21 @@ const isEditing = computed(() => {
   margin-bottom: 5px;
 
 }
+/* Remove as setas de incremento/decremento em navegadores Webkit (Chrome, Safari) */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Remove as setas de incremento/decremento em navegadores Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Remove as setas de incremento/decremento em navegadores modernos que suportam a propriedade 'appearance' */
+input[type="number"] {
+  appearance: none;
+}
+
 </style>
