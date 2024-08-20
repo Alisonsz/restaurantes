@@ -35,19 +35,19 @@
                 },
                 dataOrders: {
                     deliveredOrder: {
-                        sevenDays: { value: 123, compare: -18 },
-                        oneMonth: { value: 450, compare: 15 },
-                        sixMonths: { value: 620, compare: 14 }
+                        sevenDays: { value: 0, compare: 0 },
+                        oneMonth: { value: 0, compare: 0 },
+                        sixMonths: { value: 0, compare: 0 }
                     },
                     delayedOrder: {
-                        sevenDays: { value: 345, compare: 32 },
-                        oneMonth: { value: 504, compare: 18 },
-                        sixMonths: { value: 1053, compare: 21 }
+                        sevenDays: { value: 0, compare: 0 },
+                        oneMonth: { value: 0, compare: 0 },
+                        sixMonths: { value: 0, compare: 0 }
                     },
                     errorOrder: {
-                        sevenDays: { value: 85, compare: -19 },
-                        oneMonth: { value: 182, compare: -21 },
-                        sixMonths: { value: 359, compare: 10 }
+                        sevenDays: { value: 0, compare: 0 },
+                        oneMonth: { value: 0, compare: 0 },
+                        sixMonths: { value: 0, compare: 0 }
                     }
                 }
             }

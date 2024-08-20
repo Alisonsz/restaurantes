@@ -75,7 +75,7 @@ export default {
   width: 100%;
   padding: 24px;
   box-sizing: border-box;
-  height: 70vh;
+  height: 300px; /* Altura fixa para manter consistência */
   display: flex;
   flex-direction: column;
 }
@@ -179,5 +179,50 @@ export default {
 .closed-status {
   background-color: #FF6347;
   color: white;
+}
+
+/* Media Queries para telas de 14 e 13 polegadas */
+@media (max-width: 1400px) {
+  .conversation-title {
+    font-size: 16px;
+  }
+  .conversation {
+    padding: 12px;
+  }
+  .conversation-id {
+    font-size: 16px;
+  }
+  .conversation-title-text {
+    font-size: 14px;
+  }
+  .conversation-date {
+    font-size: 12px;
+  }
+  .conversation-status {
+    font-size: 9px;
+    padding: 4px 8px;
+  }
+}
+
+@media (max-width: 1280px) {
+  .conversation-title {
+    font-size: 14px;
+  }
+  .conversation {
+    padding: 10px;
+  }
+  .conversation-id {
+    font-size: 14px;
+  }
+  .conversation-title-text {
+    font-size: 12px;
+  }
+  .conversation-date {
+    font-size: 10px;
+  }
+  .conversation-status {
+    font-size: 8px;
+    padding: 3px 6px;
+  }
 }
 </style>

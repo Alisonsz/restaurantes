@@ -61,7 +61,7 @@
                 <template #footer>
                     <div class="detail-footer">
                         <hr>
-                        <router-link to="/" class="btn btn-contact" aria-current="page">
+                        <router-link to="/chamados" class="btn btn-contact" aria-current="page">
                             <span class="icon-contact"></span>Contatar suporte
                         </router-link>
                     </div>
@@ -180,7 +180,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-/* Styles for status icons */
+
 .icon-status {
     display: inline-block;
     height: 34px;

@@ -8,11 +8,19 @@
                 <img src="~@/assets/img/logo_principal.png" class="logo">
             </div>
             <div class="col p-0 text-end">
-                <a class="navbar-brand icon-bell" href="#" v-if="typeof notifications === 'number'">
-                    <span class="badge" v-if="notifications > 0">{{ notifications }}</span>
+                <a class="navbar-brand icon-bell" href="#" v-if="typeof navbarData.notifications === 'number'">
+                    <span class="badge" v-if="navbarData.notifications > 0">{{ navbarData.notifications }}</span>
                 </a>
-                <a class="navbar-brand open-time input-base btn-round bg-light-blue no-hover" href="#" v-if="typeof time === 'string'">
-                    <span class="text">Aberto à</span> <span class="time">{{ time }}</span>
+                <a class="navbar-brand open-time input-base btn-round no-hover" href="#" v-if="navbarData.time" :class="navbarData.open ? 'open' : 'close'">
+                    <span class="text">{{ navbarData.open ? 'Aberto' : 'Reabre às' }}: </span> 
+                    <span class="time bold-500">{{ navbarData.time }}</span>
+                </a>
+                <a v-if="navbarData.open && navbarData.preparation" class="navbar-brand open-time input-base btn-round no-hover preparation-data" :class="'preparation-'+navbarData.preparationStatus">
+                    <span class="text">Preparo: </span> 
+                    <span class="time bold-500">
+                        <span class="preparation-icon" :class="'icon-'+navbarData.preparationStatus"></span>
+                        {{ navbarData.preparation }}
+                    </span>
                 </a>
             </div>
         </div>
@@ -20,35 +28,23 @@
 </template>
 
 <script>
-    export default {
-        name: "Navbar",
-        data() {
-            return {
-                time: null,
-                notifications: null
-            } 
-        },
-        props: {
-            navbarData: Object,
-            withSidebar: Boolean,
-            withBack: Boolean
-        },
-        methods: {
-            backStep() {
-                this.$emit('backStep');
-            }
-        },
-        created() {
-            if (typeof this.navbarData === 'object') {
-                if (typeof this.navbarData.time === 'string') {
-                    this.time = this.navbarData.time;
-                }
-                if (typeof this.navbarData.notifications === 'number') {
-                    this.notifications = this.navbarData.notifications;
-                }
-            }
+import { mapState } from 'vuex';
+
+export default {
+    name: "Navbar",
+    props: {
+        withSidebar: Boolean,
+        withBack: Boolean
+    },
+    computed: {
+        ...mapState(['navbarData']),
+    },
+    methods: {
+        backStep() {
+            this.$emit('backStep');
         }
     }
+};
 </script>
 
 <style lang="scss" scoped>
@@ -90,7 +86,7 @@
     .navbar .icon-bell .badge {
         font-size: 12px;
         color: $black-primary;
-        background-color: $light-blue;
+        background-color: $light-green;
         width: 17px;
         height: 17px;
         padding: 2px 3px 1px 1px;
@@ -106,11 +102,40 @@
         position: relative;
         top: -10px;
     }
+    .open-time.open {
+        background-color: $light-green;
+    }
+    .open-time.close {
+        background-color: $red-primary;
+    }
     .navbar .open-time .text {
         font-weight: normal;
     }
     .navbar .logo {
         height: 35px;
         margin-top: 3px;
+    }
+    .preparation-data {
+        background-color: $white-primary;
+    }
+    .preparation-default .time {
+        color: $light-green;
+    }
+    .preparation-paused .time {
+        color: $red-primary;
+    }
+    .preparation-adjusted .time {
+        color: $blue-secondary;
+    }
+
+    .preparation-icon {
+        width: 15px;
+        height: 15px;
+        display: inline-block;
+        position: relative;
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-size: 14px 14px;
+        margin-bottom: -3px;
     }
 </style>

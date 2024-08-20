@@ -81,13 +81,13 @@
                 dataRefuseds: {
                     byDay: {
                         sevenDays: [
-                            { time: "01/06/2024", value: 4 },
-                            { time: "02/06/2024", value: 18 },
-                            { time: "03/06/2024", value: 25 },
-                            { time: "04/06/2024", value: 15 },
-                            { time: "05/06/2024", value: 27 },
-                            { time: "06/06/2024", value: 25 },
-                            { time: "07/06/2024", value: 3 }
+                            { time: "01/06/2024", value: 0 },
+                            { time: "02/06/2024", value: 0 },
+                            { time: "03/06/2024", value: 0 },
+                            { time: "04/06/2024", value: 0 },
+                            { time: "05/06/2024", value: 0 },
+                            { time: "06/06/2024", value: 0 },
+                            { time: "07/06/2024", value: 0 }
                         ],
                         oneMonth: [
                             { time: "01-05/Jun", value: 20 },
@@ -108,23 +108,23 @@
                     },
                     byReason: {
                         sevenDays: [
-                            { reason: "Pedido incorreto ou incompleto", amount: 32 },
-                            { reason: "Qualidade inadequada da comida", amount: 18 },
-                            { reason: "Atraso excessivo na entrega", amount: 55 }
+                            { reason: "Pedido incorreto ou incompleto", amount: 0 },
+                            { reason: "Qualidade inadequada da comida", amount: 0 },
+                            { reason: "Atraso excessivo na entrega", amount: 0 }
                         ],
                         oneMonth: [
-                            { reason: "Pedido incorreto ou incompleto", amount: 72 },
-                            { reason: "Qualidade inadequada da comida", amount: 81 },
-                            { reason: "Atraso excessivo na entrega", amount: 128 },
-                            { reason: "Qualidade do produto", amount: 12 }
+                            { reason: "Pedido incorreto ou incompleto", amount: 0 },
+                            { reason: "Qualidade inadequada da comida", amount: 0 },
+                            { reason: "Atraso excessivo na entrega", amount: 0 },
+                            { reason: "Qualidade do produto", amount: 0 }
                         ],
                         sixMonths: [
-                            { reason: "Pedido incorreto ou incompleto", amount: 221 },
-                            { reason: "Qualidade inadequada da comida", amount: 174 },
-                            { reason: "Atraso excessivo na entrega", amount: 502 },
-                            { reason: "Qualidade do produto", amount: 18 },
-                            { reason: "Taxas de entrega elevadas", amount: 52 },
-                            { reason: "Preferência por outra opção", amount: 35 }
+                            { reason: "Pedido incorreto ou incompleto", amount: 0 },
+                            { reason: "Qualidade inadequada da comida", amount: 0 },
+                            { reason: "Atraso excessivo na entrega", amount: 0 },
+                            { reason: "Qualidade do produto", amount: 0 },
+                            { reason: "Taxas de entrega elevadas", amount: 0 },
+                            { reason: "Preferência por outra opção", amount: 0 }
                         ]
                     }
                 }

@@ -56,7 +56,7 @@
                   sixMonths: "6 meses"
               },
               intervalsLastLabel: {
-                  sevenDays: "ultimos 7 dias",
+                  sevenDays: "Últimos 7 dias",
                   oneMonth: "mês passado",
                   sixMonths: "6 meses anteriores"
               },

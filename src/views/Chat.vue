@@ -96,13 +96,14 @@
               </div>
             </div>
             <div class="message-input-container">
-              <input
+              <textarea
                 v-model="newMessage"
-                @keyup.enter="sendMessage"
+                @keydown.enter="handleKeyDown"
                 class="message-input"
                 placeholder="Digite sua mensagem"
                 :disabled="isNewConversation"
-              />
+                rows="1"
+              ></textarea>
               <label for="file-upload" class="file-input-label">
                 <img src="@/assets/img/chips_text.svg" alt="Enviar arquivo" class="file-input-icon"/>
               </label>
@@ -292,7 +293,7 @@ export default {
         await axios.post('https://api.prattuapp.com.br/api/messages', formData, {
           headers: {
             'Authorization': `Bearer ${this.token}`,
-          'Content-Type': 'multipart/form-data',
+            'Content-Type': 'multipart/form-data',
           },
         });
 
@@ -306,6 +307,12 @@ export default {
     },
     isImage(fileType) {
       return fileType && fileType.startsWith('image/');
+    },
+    handleKeyDown(event) {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        this.sendMessage();
+      }
     },
     async sendMessage() {
       if (!this.newMessage.trim() && !this.selectedFile) return;
@@ -371,7 +378,7 @@ export default {
         console.error('Erro ao enviar mensagem:', error);
       }
     },
-    async startNewConversation(title, bot) {
+    async  NewConversation(title, bot) {
       try {
         const response = await axios.post('https://api.prattuapp.com.br/api/conversations', {
           title: title,
@@ -430,7 +437,7 @@ export default {
       }
 
       const audio = new Audio(notificationSound);
-  audio.play();
+      audio.play();
 
       document.title = "💬 Nova mensagem!";
 
@@ -465,7 +472,7 @@ export default {
 
 .content {
   flex-grow: 1;
-  padding: 20px; /* Adiciona um padding para espaçamento interno */
+  padding: 20px;
 }
 
 /* Estilo do cabeçalho */
@@ -475,9 +482,9 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
-  padding: 10px; /* Adiciona padding para garantir que o conteúdo não fique colado nas bordas */
-  margin-top: 100px;
+  margin-bottom: 30px;
+ 
+  margin-top: 90px;
 }
 
 .page-header h1 {
@@ -485,7 +492,7 @@ export default {
   padding: 0 10px;
   font-size: 24px;
   font-weight: bold;
-  color: black; /* Certifique-se de que o texto seja visível */
+  color: black;
 }
 
 .new-ticket-btn {
@@ -508,34 +515,39 @@ export default {
 /* Estilo dos containers de conversa e chat */
 .conversation-container {
   display: flex;
-  gap: 30px; /* Espaçamento horizontal entre os containers */
+  gap: 30px;
 }
 
 .conversation-list {
   flex-basis: 30%;
-  background-color: #ffffff; /* Fundo branco para a lista de conversas */
+  background-color: #ffffff;
   border-radius: 16px;
   padding: 20px;
+  height: 700px; /* Altura fixa para manter consistência */
 }
-
+@media (max-width: 1280px) { /* Ajuste o valor conforme necessário */
+  .conversation-list, .chat-container {
+    height: 500px !important; /* Altura ajustada para telas menores */
+  }
+}
 .chat-container {
   flex-basis: 70%;
-  background-color: #ffffff; /* Fundo branco para o chat */
+  background-color: #ffffff;
   border-radius: 16px;
-  padding: 48px 48px 24px; /* Padding superior de 48px, laterais de 24px e inferior de 20px */
-  margin: 0 auto;
+  padding: 48px 48px 24px;
   display: flex;
   flex-direction: column;
-  border: none; /* Remove a borda do chat */
+  border: none;
+  height: 700px; /* Altura fixa para manter consistência */
 }
 
 .chat-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end; /* Alinha itens na parte inferior */
+  align-items: flex-end;
   margin-bottom: 20px;
-  border-bottom: 1px solid #DCDCDC; /* Borda inferior no cabeçalho */
-  padding-bottom: 24px; /* Espaço para a margem inferior do conteúdo */
+  border-bottom: 1px solid #DCDCDC;
+  padding-bottom: 24px;
 }
 
 .chat-header h2 {
@@ -549,8 +561,8 @@ export default {
   font-weight: 500;
   padding: 10px 15px;
   border-radius: 100px;
-  margin-bottom: 0; /* Remove a margem inferior */
-  align-self: flex-end; /* Alinha o status na parte inferior */
+  margin-bottom: 0;
+  align-self: flex-end;
 }
 
 .in-progress-status {
@@ -565,7 +577,6 @@ export default {
 
 .messages {
   flex-grow: 1;
-  height: 300px;
   overflow-y: auto;
   padding: 10px;
   border-radius: 8px;
@@ -584,16 +595,15 @@ export default {
 .sent {
   align-self: flex-end;
   text-align: right;
-
 }
 
 .received {
-  background-color: #ffffff; /* Fundo branco para mensagens recebidas */
+  background-color: #ffffff;
   align-self: flex-start;
 }
 
 .message-image {
-  max-width: 150px; /* Reduz o tamanho máximo das imagens */
+  max-width: 150px;
   max-height: 150px;
   margin-top: 10px;
   border-radius: 8px;
@@ -602,9 +612,9 @@ export default {
 .message-input-container {
   display: flex;
   align-items: center;
-  background-color: #ffffff !important; /* Fundo branco com !important */
+  background-color: #ffffff !important;
   padding: 24px 0;
-  border-top: 1px solid #dcdcdc; /* Linha superior */
+  border-top: 1px solid #dcdcdc;
   margin-top: 10px;
 }
 
@@ -613,12 +623,15 @@ export default {
   padding: 10px;
   border: none !important;
   border-radius: 5px;
-  background-color: #ffffff !important; /* Fundo branco com !important */
+  background-color: #ffffff !important;
+  resize: none;
+  overflow-y: hidden; /* Oculta a barra de rolagem */
+  max-height: 150px; /* Limita a altura máxima */
 }
 
 .message-input:focus {
-  outline: none; /* Remove a borda padrão de foco */
-  box-shadow: none; /* Remove a sombra padrão de foco */
+  outline: none;
+  box-shadow: none;
 }
 
 .file-input-label {
@@ -632,7 +645,7 @@ export default {
 }
 
 .file-input {
-  display: none; /* Esconde o input de arquivo */
+  display: none;
 }
 
 .send-button {
@@ -646,10 +659,10 @@ export default {
 }
 
 .send-button:hover {
-background-color: #8ad868;
-border-color: #7ED957;
-border: 1px;
-color: white;
+  background-color: #8ad868;
+  border-color: #7ED957;
+  border: 1px;
+  color: white;
 }
 
 .bot-message {
@@ -671,28 +684,29 @@ color: white;
 
 .problem-button {
   margin: 5px;
-  padding: 20px; /* Certifique-se de que o padding é consistente */
-  display: flex; /* Utiliza o layout flexível */
-  align-items: center; /* Alinha o conteúdo verticalmente no centro */
-  justify-content: center; /* Alinha o conteúdo horizontalmente no centro */
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: #000;
-  border: 1px solid #7ED957; /* Borda verde */
+  border: 1px solid #7ED957;
   border-radius: 8px;
   cursor: pointer;
-  text-align: center; /* Alinha o texto horizontalmente no centro */
+  text-align: center;
 }
 
 .problem-button:focus {
   outline: none;
-  box-shadow: 0 0 0 2px #34a853; /* Destaque na borda ao focar */
+  box-shadow: 0 0 0 2px #34a853;
 }
+
 .problem-button:hover {
-  
   border-color: white;
 }
+
 .problem-button:disabled {
-  border: 1px solid #ccc; /* Borda cinza para botões desabilitados */
-  color: #797878; /* Texto cinza para botões desabilitados */
+  border: 1px solid #ccc;
+  color: #797878;
 }
 
 .no-conversations-container {
@@ -721,9 +735,10 @@ color: white;
   font-weight: 400 !important;
   text-align: center;
 }
+
 .centered-image {
   margin-bottom: 20px;
-  max-width: 100%; /* Garante que a imagem ocupe a largura total do container */
+  max-width: 100%;
   height: auto;
 }
 
@@ -732,10 +747,89 @@ color: white;
   font-size: 16px;
   color: #333;
   text-align: center;
-  line-height: 1.5; /* Melhor espaçamento entre as linhas */
+  line-height: 1.5;
 }
+
 .conversation-title-text {
   font-weight: 400;
 }
 
+/* Media Queries para telas de 14 e 13 polegadas */
+@media (max-width: 1400px) {
+  .page-header h1 {
+    font-size: 20px;
+  }
+  .new-ticket-btn {
+    font-size: 12px;
+    padding: 15px;
+  }
+  .chat-header h2 {
+    font-size: 18px;
+  }
+  .status {
+    font-size: 10px;
+    padding: 8px 12px;
+  }
+  .messages {
+    padding: 8px;
+  }
+  .message {
+    padding: 8px;
+    margin-bottom: 8px;
+  }
+  .message-input-container {
+    padding: 16px 0;
+  }
+  .message-input {
+    padding: 8px;
+  }
+  .send-button {
+    padding: 8px 16px;
+  }
+  .problem-button {
+    padding: 16px;
+  }
+  .support-text {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 1280px) {
+  .page-header h1 {
+    font-size: 18px;
+  }
+  .new-ticket-btn {
+    font-size: 10px;
+    padding: 10px;
+  }
+  .chat-header h2 {
+    font-size: 16px;
+  }
+  .status {
+    font-size: 8px;
+    padding: 6px 10px;
+  }
+  .messages {
+    padding: 6px;
+  }
+  .message {
+    padding: 6px;
+    margin-bottom: 6px;
+  }
+  .message-input-container {
+    padding: 12px 0;
+  }
+  .message-input {
+    padding: 6px;
+  }
+  .send-button {
+    padding: 6px 12px;
+  }
+  .problem-button {
+    padding: 14px;
+  }
+  .support-text {
+    font-size: 12px;
+  }
+}
 </style>
