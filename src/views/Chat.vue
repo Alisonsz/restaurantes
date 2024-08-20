@@ -402,7 +402,7 @@ export default {
       }
     },
     handleProblemButtonClick(problemTitle, bot) {
-      this.startNewConversation(problemTitle, bot);
+      this.NewConversation(problemTitle, bot);
     },
     openNewTicket() {
       this.selectConversation('new');

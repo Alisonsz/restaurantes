@@ -24,37 +24,57 @@
 </template>
 
 <script>
-    export default {
-        name: "FormCategories",
-        data() {
-            return {
-                invalidCategories: false,
-                categoryName: "",
-                allCategories: []
-            }            
-        },
-        methods: {
-            addCategories() {
-                if (typeof this.categoryName === "string" && this.categoryName.trim() !== "") {
-                    this.allCategories.push({name: this.categoryName.trim(), items: [], active: true}); 
-                    this.categoryName = "";
-                    this.invalidCategories = false;
-                }
-            },
-            removeCategory(index) {
-                this.allCategories.splice(index, 1);
-            },
-            save() {
-                if (this.allCategories.length === 0) {
-                    this.invalidCategories = true;
-                } else {
-                    this.$emit('saveCategories', this.allCategories);
-                }
-            }
-        },
-        emits: ["skipCategories", "saveCategories"],
-        props: {
-            dataMenu: Object
-        }
+import axios from 'axios';
+
+export default {
+  name: "FormCategories",
+  data() {
+    return {
+      invalidCategories: false,
+      categoryName: "",
+      allCategories: []
     };
+  },
+  methods: {
+    addCategories() {
+      if (typeof this.categoryName === "string" && this.categoryName.trim() !== "") {
+        this.allCategories.push({ name: this.categoryName.trim(), items: [], active: true }); 
+        this.categoryName = "";
+        this.invalidCategories = false;
+      }
+    },
+    removeCategory(index) {
+      this.allCategories.splice(index, 1);
+    },
+    async save() {
+      if (this.allCategories.length === 0) {
+        this.invalidCategories = true;
+      } else {
+        try {
+          // Cria cada categoria para o menu específico
+          for (const category of this.allCategories) {
+            await axios.post(`https://api.prattuapp.com.br/api/menus/${this.menuId}/categories`, {
+              name: category.name
+            }, {
+              headers: {
+                'Authorization': `Bearer ${this.$store.state.token}`
+              }
+            });
+          }
+
+          this.$emit('saveCategories', this.allCategories); // Notifica o pai que as categorias foram salvas
+        } catch (error) {
+          console.error('Erro ao criar categorias:', error);
+        }
+      }
+    }
+  },
+  props: {
+    menuId: {
+      type: Number,
+      required: true
+    }
+  },
+  emits: ["skipCategories", "saveCategories"]
+};
 </script>

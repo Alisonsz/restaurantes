@@ -8,6 +8,7 @@ const store = createStore({
     tokenTimestamp: null,
     navbarData: null,
     sidebarData: null,
+    restaurantId: null, // Novo estado para armazenar o restaurant_id
   },
   mutations: {
     setToken(state, { token, timestamp }) {
@@ -20,7 +21,7 @@ const store = createStore({
     },
     setNavbarAndSidebarData(state, data) {
       state.navbarData = {
-        notifications: 4, // Se for fixo
+        notifications: 4,
         open: data.is_open,
         time: data.is_open
           ? `${data.opening_time.split(':')[0]}h às ${data.closing_time.split(':')[0]}h`
@@ -33,7 +34,10 @@ const store = createStore({
         company: data.restaurant_name,
         address: data.address,
       };
-    }
+    },
+    setRestaurantId(state, restaurantId) {
+      state.restaurantId = restaurantId;
+    },
   },
   actions: {
     saveToken({ commit }, token) {
@@ -64,6 +68,18 @@ const store = createStore({
         console.error('Erro ao buscar navbar e sidebar data:', error);
       }
     },
+    async fetchRestaurantId({ commit, state }) {
+      try {
+        const response = await axios.get('https://api.prattuapp.com.br/api/users/me', {
+          headers: {
+            Authorization: `Bearer ${state.token}`
+          }
+        });
+        commit('setRestaurantId', response.data.restaurant_id);
+      } catch (error) {
+        console.error('Erro ao obter o restaurant_id:', error);
+      }
+    },
     async preloadData({ dispatch }) {
       await dispatch('fetchNavbarAndSidebarData');
     }
@@ -76,6 +92,7 @@ const store = createStore({
         tokenTimestamp: state.tokenTimestamp,
         navbarData: state.navbarData,
         sidebarData: state.sidebarData,
+        restaurantId: state.restaurantId,
       }),
     }),
   ],
