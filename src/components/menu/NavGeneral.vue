@@ -7,7 +7,7 @@
             {{ selectedMenuName }}
           </button>
           <ul class="dropdown-menu">
-            <li v-for="(menu, index) in dataGeneral.menus" :key="index">
+            <li v-for="(menu, index) in menus" :key="menu.id">
               <a class="dropdown-item" href="#" @click="changeMenu(index)">{{ menu.name }}</a>
             </li>
           </ul>
@@ -34,33 +34,33 @@
         </button>
       </div>
     </div>
-    <div v-if="currentMenuCategories.length > 0">
-      <draggable v-model="currentMenuCategories" tag="div">
+    <div v-if="filteredCategories.length > 0">
+      <draggable v-model="filteredCategories" tag="div">
         <template #item="{ element: category, index }">
-          <div class="table-data mb-5" v-show="category.products.length > 0 || searchTerm === ''">
+          <div class="table-data mb-5" v-show="category.items.length > 0 || searchTerm === ''">
             <p class="bold-500"><span class="add-item add-inline icon-drag ml-1"></span> {{ category.name }}</p>
             <hr/>
-            <span class="btn-add-item" @click="showModalFormAddItem = true; selectCategory(index); selectItem(false)">
+            <span class="btn-add-item" @click="showModalFormAddItem = true; selectCategory(index); selectItem(false, false)">
               <span class="add-item add-inline add-black ml-1"></span>Clique aqui para adicionar um novo item
             </span>
             <hr/>
-            <div v-if="category.products.length > 0">
-              <draggable v-model="category.products" tag="div">
-                <template #item="{ element: item }">
+            <div v-if="category.items.length > 0">
+              <draggable v-model="category.items" tag="div">
+                <template #item="{ element: itemId }">
                   <div>
                     <div class="row table-row">
                       <div class="col-6">
                         <span class="add-item add-inline icon-drag ml-1"></span>
-                        <img v-if="item.products_photo" :src="item.products_photo" class="thumb-table">
+                        <img v-if="items[itemId].image" :src="items[itemId].image" class="thumb-table">
                         <img v-else src="~@/assets/img/img.svg" class="thumb-table">
-                        {{ item.name }}
+                        {{ items[itemId].name }}
                       </div>
                       <div class="col-6 table-actions">
                         <label class="switch ml-1">
-                          <input type="checkbox" v-model="item.active">
+                          <input type="checkbox" v-model="items[itemId].active" @change="toggleAvailability(items[itemId])">
                           <span class="slider round"></span>
                         </label>
-                        <button class="btn btn-round input-base edit-button" @click="showModalFormItem = true; selectCategory(index); selectItem(item)">
+                        <button class="btn btn-round input-base edit-button" @click="showModalFormItem = true; selectCategory(index); selectItem(itemId, false)">
                           <span class="edit-data"></span> 
                           <span class="text">Editar</span>
                         </button>
@@ -86,23 +86,23 @@
         <span class="add-item add-inline add-black ml-1"></span>Clique aqui para adicionar um novo item
       </span>
       <hr/>
-      <div v-if="searchDataCross.length > 0">
-        <draggable v-model="searchDataCross" tag="div">
-          <template #item="{ element: item }">
+      <div v-if="filteredCrossSellItems.length">
+        <draggable v-model="filteredCrossSellItems" tag="div">
+          <template #item="{ element: itemId }">
             <div>
               <div class="row table-row">
                 <div class="col-6">
                   <span class="add-item add-inline icon-drag ml-1"></span>
-                  <img v-if="item.products_photo" :src="item.products_photo" class="thumb-table">
+                  <img v-if="items[itemId].image" :src="items[itemId].image" class="thumb-table">
                   <img v-else src="~@/assets/img/img.svg" class="thumb-table">
-                  {{ item.name }}
+                  {{ items[itemId].name }}
                 </div>
                 <div class="col-6 table-actions">
                   <label class="switch ml-1">
-                    <input type="checkbox" v-model="item.active">
+                    <input type="checkbox" v-model="items[itemId].active" @change="toggleAvailability(items[itemId])">
                     <span class="slider round"></span>
                   </label>
-                  <button class="btn btn-round input-base edit-button" @click="showModalFormItem = true; selectItem(item, true)">
+                  <button class="btn btn-round input-base edit-button" @click="showModalFormItem = true; selectItem(itemId, true)">
                     <span class="edit-data"></span> 
                     <span class="text">Editar</span>
                   </button>
@@ -124,7 +124,7 @@
       <ModalFormCategory :show="showModalFormCategory" @close="showModalFormCategory = false">
         <template #header>Nova categoria</template>
         <template #body>
-          <FormCategory @close-modal="showModalFormCategory = false" @save-category="saveCategory" :dataMenu="dataGeneral.menus" :selectedMenuIndex="selectedMenuIndex"/>
+          <FormCategory @close-modal="showModalFormCategory = false" @save-category="saveCategory" :dataMenu="dataGeneral" :selectedMenuIndex="selectedMenuIndex"/>
         </template>
       </ModalFormCategory>
       <ModalFormAddItem :show="showModalFormAddItem" @close="showModalFormAddItem = false">
@@ -148,7 +148,7 @@
       <ModalFormOpeningHours :show="showModalFormOpeningHours" @close="showModalFormOpeningHours = false">
         <template #header>Editar horário de funcionamento</template>
         <template #body>
-          <FormOpeningHours @close-modal="showModalFormOpeningHours = false" @save-opening-hours="saveOpeningHours" :dataMenu="dataGeneral.menus" :selectedMenuIndex="selectedMenuIndex" :openingEditData="openingData"/>
+          <FormOpeningHours @close-modal="showModalFormOpeningHours = false" @save-opening-hours="saveOpeningHours" :dataMenu="dataGeneral" :selectedMenuIndex="selectedMenuIndex" :openingEditData="openingData"/>
         </template>
       </ModalFormOpeningHours>
     </Teleport>
@@ -156,8 +156,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import axios from 'axios';
+import { ref } from 'vue';
 import draggable from 'vuedraggable';
 import ModalFormMenu from "../ModalBase.vue";
 import ModalFormCategory from "../ModalBase.vue";
@@ -172,327 +171,181 @@ const showModalFormAddItem = ref(false);
 const showModalFormSearchItem = ref(false);
 const showModalFormItem = ref(false);
 const showModalFormOpeningHours = ref(false);
+</script>
 
-const searchTerm = ref('');
-const dataGeneral = ref({ menus: [], opening_hours: [] });
+<script>
+import { mapState } from 'vuex';
+import axios from 'axios';
+import FormMenu from "./FormMenu.vue";
+import FormCategory from "./FormCategory.vue";
+import FormAddItem from "./FormAddItem.vue";
+import FormSearchItem from "./FormSearchItem.vue";
+import FormItem from "./FormItem.vue";
+import FormOpeningHours from "./FormOpeningHours.vue";
 
-const selectedMenuIndex = ref(0);
-const selectedMenuName = ref("");
-const selectedCategoryIndex = ref("");
-const selectedCategoryName = ref("");
-const allCategories = ref([]);
-const allComplement = ref([]);
-const allItems = ref([]);
-const itemData = ref({});
-const openingData = ref({});
-const textOpeningHours = ref("Definir horário disponível");
-const itemsCrossSell = ref([]);
-
-const currentMenuCategories = computed(() => {
-  if (!dataGeneral.value.menus || dataGeneral.value.menus.length === 0) return [];
-  if (!dataGeneral.value.menus[selectedMenuIndex.value]) return [];
-  if (searchTerm.value === '') {
-    return dataGeneral.value.menus[selectedMenuIndex.value].categories;
-  }
-  return dataGeneral.value.menus[selectedMenuIndex.value].categories.map(category => {
+export default {
+  name: "NavGeneral",
+  components: {
+    FormMenu,
+    FormCategory,
+    FormAddItem,
+    FormSearchItem,
+    FormItem,
+    FormOpeningHours
+  },
+  data() {
     return {
-      ...category,
-      products: category.products.filter(product => product.name.toLowerCase().includes(searchTerm.value.toLowerCase()))
+      selectedMenuIndex: 0,
+      selectedCategoryIndex: "",
+      searchTerm: "",
+      selectedMenuName: "",
+      textOpeningHours: "Definir horário disponível",
+      itemData: {}
     };
-  }).filter(category => category.products.length > 0);
-});
-
-const searchDataCross = computed(() => {
-  if (searchTerm.value === '') {
-    return itemsCrossSell.value;
-  }
-  return itemsCrossSell.value.filter(item => item.name.toLowerCase().includes(searchTerm.value.toLowerCase()));
-});
-
-const fetchData = async () => {
-  try {
-    console.log('Fetching user data...');
-    const userResponse = await axios.get('https://api.prattuapp.com.br/api/users/me', {
-      headers: {
-        Authorization: `Bearer ${this.$store.state.token}`
+  },
+  computed: {
+    ...mapState(['menus', 'items', 'crossSellItems']),
+    filteredCategories() {
+      const categories = this.menus[this.selectedMenuIndex]?.categories || [];
+      if (this.searchTerm === '') {
+        return categories;
       }
-    });
-    console.log('User data:', userResponse.data);
-    const restaurantId = userResponse.data.restaurant_id;
-
-    console.log('Fetching restaurant data...');
-    const response = await axios.get(`https://api.prattuapp.com.br/api/restaurants/${restaurantId}/detailed`, {
-      headers: {
-        Authorization: `Bearer ${this.$store.state.token}`
+      return categories.map(category => ({
+        ...category,
+        items: category.items.filter(itemId => 
+          this.items[itemId].name.toLowerCase().includes(this.searchTerm.toLowerCase())
+        )
+      }));
+    },
+    filteredCrossSellItems() {
+      if (this.searchTerm === '') {
+        return this.crossSellItems.map(item => item.id);
       }
-    });
-    console.log('Restaurant data:', response.data);
-    dataGeneral.value = response.data;
-    if (dataGeneral.value.menus.length > 0) {
-      selectedMenuName.value = dataGeneral.value.menus[0].name;
-      selectedMenuIndex.value = 0;
+      return this.crossSellItems
+        .filter(item => item.name.toLowerCase().includes(this.searchTerm.toLowerCase()))
+        .map(item => item.id);
     }
-  } catch (error) {
-    console.error('Erro ao buscar os dados do restaurante:', error);
-  }
-};
-
-const showModal = (modalName) => {
-  switch (modalName) {
-    case 'menu':
-      showModalFormMenu.value = true;
-      break;
-    case 'category':
-      showModalFormCategory.value = true;
-      break;
-    case 'addItem':
-      showModalFormAddItem.value = true;
-      break;
-    case 'searchItem':
-      showModalFormSearchItem.value = true;
-      break;
-    case 'editItem':
-      showModalFormItem.value = true;
-      break;
-    case 'openingHours':
-      showModalFormOpeningHours.value = true;
-      break;
-  }
-};
-
-const closeModal = (modalName) => {
-  switch (modalName) {
-    case 'menu':
-      showModalFormMenu.value = false;
-      break;
-    case 'category':
-      showModalFormCategory.value = false;
-      break;
-    case 'addItem':
-      showModalFormAddItem.value = false;
-      break;
-    case 'searchItem':
-      showModalFormSearchItem.value = false;
-      break;
-    case 'editItem':
-      showModalFormItem.value = false;
-      break;
-    case 'openingHours':
-      showModalFormOpeningHours.value = false;
-      break;
-  }
-};
-
-const saveMenuName = (menuName) => {
-  if (typeof menuName === "string" && menuName.trim() !== "") {
-    dataGeneral.value.menus.push({ name: menuName.trim(), categories: [] });
-    changeMenu(dataGeneral.value.menus.length - 1);
-  }
-};
-
-const saveCategory = (categoryData) => {
-  if (typeof categoryData.categoryName === "string" && categoryData.categoryName.trim() !== "") {
-    dataGeneral.value.menus[selectedMenuIndex.value].categories.push({
-      name: categoryData.categoryName.trim(),
-      products: [],
-      active: true
-    });
-  }
-};
-
-const saveItem = (itemData, categoriesData) => {
-  if (typeof itemData === "object") {
-    let idItem;
-    if (typeof itemData.id == "number") {
-      idItem = itemData.id;
-      allItems.value[itemData.id] = itemData;
-    } else {
-      idItem = allItems.value.push(itemData) - 1;
-      allItems.value[idItem]["id"] = idItem;
-    }
-    if (typeof itemData.cross == "boolean" && itemData.cross) {
-      if (!itemsCrossSell.value.includes(idItem)) {
-        itemsCrossSell.value.push(idItem);
+  },
+  methods: {
+    changeMenu(index) {
+      this.selectedMenuIndex = index;
+      this.selectedMenuName = this.menus[index].name;
+      this.updateOpeningHoursText();
+    },
+    updateOpeningHoursText() {
+      const openingHours = this.menus[this.selectedMenuIndex]?.opening_hours || [];
+      if (openingHours.length === 0) {
+        this.textOpeningHours = "Definir horário disponível";
+        return;
       }
-    } else {
-      if (!dataGeneral.value.menus[selectedMenuIndex.value].categories[selectedCategoryIndex.value].products.includes(idItem)) {
-        dataGeneral.value.menus[selectedMenuIndex.value].categories[selectedCategoryIndex.value].products.push(idItem);
-      }
-    }
-    if (typeof categoriesData === "object") {
-      categoriesData.forEach((categoryData) =>
-        dataGeneral.value.menus.forEach((menu, idMenu) => {
-          menu.categories.forEach((category, idCategory) => {
-            if (categoryData.name == category.name) {
-              if (!dataGeneral.value.menus[idMenu].categories[idCategory].products.includes(idItem)) {
-                dataGeneral.value.menus[idMenu].categories[idCategory].products.push(idItem);
-              }
-            }
-          })
-        })
-      );
-    }
-  }
-  selectedCategoryIndex.value = "";
-  selectedCategoryName.value = "";
-  itemData.value.cross = false;
-  allItems.value = allItems.value;
-  itemsCrossSell.value = itemsCrossSell.value;
-};
-
-const changeMenu = (index) => {
-  selectedMenuIndex.value = index;
-  selectedMenuName.value = dataGeneral.value.menus[index].name;
-};
-
-const selectItem = (item, cross = false) => {
-  if (item) {
-    itemData.value = item;
-    itemData.value['cross'] = cross;
-  } else {
-    itemData.value = { cross: cross };
-  }
-};
-
-const selectCategory = (index) => {
-  selectedCategoryIndex.value = index;
-  selectedCategoryName.value = dataGeneral.value.menus[selectedMenuIndex.value].categories[index].name;
-};
-
-const mountAllCategories = () => {
-  let removeDuplicates = [];
-  if (Array.isArray(dataGeneral.value.menus)) {
-    dataGeneral.value.menus.forEach((menu) => {
-      menu.categories.forEach((category) => {
-        removeDuplicates.push(category.name);
-      });
-    });
-  }
-  allCategories.value = removeDuplicates.filter((value, index, self) => {
-    return self.indexOf(value) === index;
-  });
-};
-
-const saveOpeningHours = (openingEditData) => {
-  openingData.value = openingEditData;
-  createTextOpeningHours();
-};
-
-const createTextOpeningHours = () => {
-  let seq = true;
-  let last = "";
-  let size = -1;
-  let text = "";
-  const allDays = { seg: "segunda", ter: "terça", qua: "quarta", qui: "quinta", sex: "sexta", sab: "sábado", dom: "domingo" };
-  if (typeof openingData.value === "object" && Object.keys(openingData.value).length > 0) {
-    openingData.value.weekday.filter((dataDay, index) => {
-      if (dataDay.active) {
-        size = size + 1;
-        if (last === "") {
-          last = index;
-        } else {
-          if (index > last + 1) {
-            seq = false;
+      // Implementar a lógica para formatar o texto de horário de funcionamento
+    },
+    selectCategory(index) {
+      this.selectedCategoryIndex = index;
+    },
+    selectItem(itemId, crossSell) {
+      this.itemData = crossSell 
+        ? this.crossSellItems.find(item => item.id === itemId) 
+        : this.items[itemId];
+    },
+    toggleAvailability(item) {
+      try {
+        axios.patch(
+          `https://api.prattuapp.com.br/api/products/${item.id}/availability`,
+          { is_available: item.active },
+          {
+            headers: {
+              Authorization: `Bearer ${this.$store.state.token}`,
+              'Content-Type': 'application/json',
+            },
           }
-          last = index;
-        }
-        return dataDay.day;
+        ).then(() => {
+          console.log(`Disponibilidade do item ${item.id} alterada para ${item.active}`);
+        }).catch(error => {
+          console.error('Erro ao alterar disponibilidade:', error);
+        });
+      } catch (error) {
+        console.error('Erro ao tentar alterar disponibilidade:', error);
       }
-    }).filter((day, index) => {
-      if (index == 0) {
-        text = text + allDays[day.day];
-      } else {
-        if (index == size) {
-          text = text + (seq ? " à " : " e ") + allDays[day.day];
-        } else {
-          if (!seq) {
-            text = text + ", " + allDays[day.day];
-          }
-        }
-      }
-      textOpeningHours.value = text + " - " + openingData.value.startHour + " " + openingData.value.endHour;
-    });
-  } else {
-    textOpeningHours.value = "Definir horário disponível";
+    }
+  },
+  mounted() {
+    this.selectedMenuName = this.menus[this.selectedMenuIndex]?.name || "";
+    this.updateOpeningHoursText();
   }
-  textOpeningHours.value = textOpeningHours.value.charAt(0).toUpperCase() + textOpeningHours.value.slice(1);
 };
-
-onMounted(() => {
-  fetchData();
-});
 </script>
 
 <style lang="scss" scoped>
-.search-items {
-  text-align: right;
-  .search-term {
-    width: calc(100% - 150px);
-    margin-right: 20px;
-    padding-right: 20px;
-    padding-left: 20px;
+  .search-items {
+    text-align: right;
+    .search-term {
+      width: calc(100% - 150px);
+      margin-right: 20px;
+      padding-right: 20px;
+      padding-left: 20px;
+    }
+    .btn-search .icon-search {
+      margin-left: 8px;
+      margin-right: 8px;
+    }
   }
-  .btn-search .icon-search {
-    margin-left: 8px;
-    margin-right: 8px;
+
+  .create-new {
+    text-align: right;
+    .new-menu {
+      border: 1px solid $gray-line;
+      margin-right: 20px;
+    }
+    button {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
   }
-}
 
-.create-new {
-  text-align: right;
-  .new-menu {
-    border: 1px solid $gray-line;
-    margin-right: 20px;
+  .dropdown-toggle::after {
+    color: $light-green;
+    font-size: 20px;
   }
-  button {
-    padding-left: 20px;
-    padding-right: 20px;
+
+  .dropdown {
+    display: inline-block;
+    margin-right: 18px;
   }
-}
 
-.dropdown-toggle::after {
-  color: $light-green;
-  font-size: 20px;
-}
+  .opening-hours {
+    position: relative;
+    top: 8px;
+  }
 
-.dropdown {
-  display: inline-block;
-  margin-right: 18px;
-}
+  .opening-hours::first-letter {
+    text-transform: uppercase;
+  }
 
-.opening-hours {
-  position: relative;
-  top: 8px;
-}
+  .opening-hours .edit-data {
+    top: 3px;
+    left: 7px;
+  }
 
-.opening-hours::first-letter {
-  text-transform: uppercase;
-}
+  .switch {
+    top: -5px;
+  }
 
-.opening-hours .edit-data {
-  top: 3px;
-  left: 7px;
-}
+  .table-data hr {
+    margin: 18px 0;
+  }
 
-.switch {
-  top: -5px;
-}
+  .table-row {
+    margin-top: 0px !important;
+    margin-bottom: 0px;
+  }
 
-.table-data hr {
-  margin: 18px 0;
-}
+  .table-actions {
+    padding-top: 8px;
+    text-align: right;
+  }
 
-.table-row {
-  margin-top: 0px !important;
-  margin-bottom: 0px;
-}
-
-.table-actions {
-  padding-top: 8px;
-  text-align: right;
-}
-
-.btn-add-item, .opening-hours {
-  cursor: pointer;
-}
+  .btn-add-item, .opening-hours {
+    cursor: pointer;
+  }
 </style>

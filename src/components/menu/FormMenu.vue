@@ -15,19 +15,17 @@
     </form>
   </div>
 </template>
+
 <script>
 import axios from 'axios';
 
 export default {
   name: "FormMenu",
   props: {
-    restaurantId: {
-      type: Number,
-      required: true
-    },
     dataMenu: {
       type: Array,
-      required: true
+      required: false,  // Tornamos o dataMenu não obrigatório
+      default: () => [] // Define um array vazio como valor padrão
     }
   },
   data() {
@@ -41,27 +39,36 @@ export default {
       if (this.menuName.trim() === "") {
         this.invalidMenuName = true;
       } else {
+        const restaurantId = this.$store.state.restaurantId;
+        
+        if (!restaurantId) {
+          console.error('Erro: restaurantId não está definido!');
+          return;
+        }
+
         try {
           const response = await axios.post('https://api.prattuapp.com.br/api/menus', {
             name: this.menuName,
-            restaurant_id: this.restaurantId
+            restaurant_id: restaurantId
           }, {
             headers: {
               'Authorization': `Bearer ${this.$store.state.token}`
             }
           });
 
-          // Extraia corretamente o menuId da resposta
           const menuId = response.data.menu.id;
 
-          // Adiciona o novo menu ao dataMenu local
+          // Certifique-se de que dataMenu está definido
+          if (!this.dataMenu) {
+            this.dataMenu = [];
+          }
+
           this.dataMenu.push({ 
             id: menuId,
             name: this.menuName.trim(),
             categories: []
           });
 
-          // Emite o menuId para o componente pai
           this.$emit('menuCreated', menuId);
         } catch (error) {
           console.error('Erro ao criar o cardápio:', error);
@@ -71,7 +78,6 @@ export default {
   }
 };
 </script>
-
 
 <style scoped>
 .modal-body .container-data {

@@ -17,14 +17,14 @@
                     <p class="bold-500 mb-0 pb-0">Cardápios</p>
                 </div>
             </div>
-            <div v-if="Object.keys(allCategories).length === 0">
+            <div v-if="allCategories.length === 0">
                 <hr><p class="mt-4">Você ainda não adicionou nenhuma categoria ao seu cardápio. Comece agora para atrair cada vez mais clientes!</p>
             </div>
             <div class="table-data" v-for="(category, index) in allCategories" :key="index">
                 <hr>
                 <div class="row mt-4 mb-0">
                     <div class="col-6">
-                        <p class="mb-0 pb-0">{{ category.category }}</p>
+                        <p class="mb-0 pb-0">{{ category.name }}</p>
                     </div>
                     <div class="col-6 create-new text-end">
                         <span class="mb-0 pb-0 btn-round input-base" v-for="(menu, i) in category.menus" :key="i">{{ menu.name }}</span>
@@ -42,64 +42,96 @@
         </Teleport>
     </div>
 </template>
-
 <script setup>
-    import { ref } from 'vue'
+import { ref } from 'vue';
+import draggable from 'vuedraggable';
+import ModalFormMenu from "../ModalBase.vue";
+import ModalFormCategory from "../ModalBase.vue";
+import ModalFormAddItem from "../ModalBase.vue";
+import ModalFormSearchItem from "../ModalBase.vue";
+import ModalFormItem from "../ModalBase.vue";
+import ModalFormOpeningHours from "../ModalBase.vue";
 
-    import ModalFormCategory from "../ModalBase.vue"
-    const showModalFormCategory = ref(false)
+const showModalFormMenu = ref(false);
+const showModalFormCategory = ref(false);
+const showModalFormAddItem = ref(false);
+const showModalFormSearchItem = ref(false);
+const showModalFormItem = ref(false);
+const showModalFormOpeningHours = ref(false);
 </script>
-
 <script>
-    import FormCategory from "./FormCategory.vue"
+import { mapState } from 'vuex';
+import FormCategory from "./FormCategory.vue";
 
-    export default {
-        name: "NavCategories",
-        data() {
-            return {
-                allCategories: [],
-                allMenus: [
-                    {name: "Cardápio Árabe", id: 1},
-                    {name: "Cardápio Japonês", id: 2},
-                    {name: "Cardápio Italiano", id: 3},
-                    {name: "Cardápio de Saladas", id: 4}
-                ]
-            }            
-        },
-        methods: {
-            searchCategory(term) {
-                for (let i = 0; i < Object.keys(this.allCategories).length; i++) {
-                    if (this.allCategories[i].category === term) {
-                        return i;
+export default {
+    name: "NavCategories",
+    data() {
+        return {
+            showModalFormCategory: false,
+        };
+    },
+    computed: {
+        ...mapState(['menus']),
+        allCategories() {
+            let categoriesMap = {};
+
+            this.menus.forEach(menu => {
+                menu.categories.forEach(category => {
+                    if (!categoriesMap[category.name]) {
+                        categoriesMap[category.name] = {
+                            name: category.name,
+                            menus: []
+                        };
                     }
-                }
-                return -1;
-            },
-            saveCategory(categoryData) {
-                if (typeof categoryData.categoryName === "string" && categoryData.categoryName.trim() !== "" && typeof categoryData.selectedMenu === "object") {
-                    if (!this.allCategories.some(category => category.category.toLowerCase() === categoryData.categoryName.trim().toLowerCase())) {
-                        this.allCategories.push({
-                            category: categoryData.categoryName.trim(), 
-                            menus: categoryData.selectedMenu
-                        });
-                    } else {
-                        categoryData.selectedMenu.filter((menu) => {
-                            if (!this.allCategories[this.searchCategory(categoryData.categoryName.trim())].menus.includes(menu)) {
-                                this.allCategories[this.searchCategory(categoryData.categoryName.trim())].menus.push(menu);
-                            }
+                    categoriesMap[category.name].menus.push({ name: menu.name });
+                });
+            });
+
+            console.log("Mapa de categorias construído:", categoriesMap);
+
+            return Object.values(categoriesMap);
+        },
+        allMenus() {
+            return this.menus.map(menu => ({
+                name: menu.name,
+                id: menu.id
+            }));
+        }
+    },
+    methods: {
+        saveCategory(categoryData) {
+            if (categoryData && categoryData.categoryName && categoryData.selectedMenu) {
+                let menuIndex = this.menus.findIndex(menu => menu.name === categoryData.selectedMenu.name);
+                if (menuIndex !== -1) {
+                    let categoryIndex = this.menus[menuIndex].categories.findIndex(cat => cat.name.toLowerCase() === categoryData.categoryName.trim().toLowerCase());
+                    if (categoryIndex === -1) {
+                        this.menus[menuIndex].categories.push({
+                            name: categoryData.categoryName.trim(),
+                            items: []
                         });
                     }
                 }
             }
-        },
-        components: {
-            FormCategory
-        },
-        props: {
-            dataMenu: Object
+        }
+    },
+    components: {
+        FormCategory
+    },
+    mounted() {
+        console.log("Categorias processadas (mounted):", this.allCategories);
+        this.$nextTick(() => {
+            console.log("Renderizou após montagem. Categorias:", this.allCategories);
+        });
+    },
+    watch: {
+        showModalFormCategory(newValue) {
+            console.log("Mudança em showModalFormCategory:", newValue);
         }
     }
+}
 </script>
+
+
 
 <style lang="scss" scoped>
     .create-new {
