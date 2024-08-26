@@ -36,7 +36,7 @@
           <tr v-for="(item, index) in filteredItems" :key="index">
             <td class="bold-400">
               <img v-if="item.image" :src="item.image" class="thumb-table" />
-              <img v-else :src="noImage" class="thumb-table" />
+              <img v-else :src="semImage" class="thumb-table" />
               {{ item.name }}
             </td>
             <td>{{ getMenuNameByItem(item.id) }}</td>
@@ -81,6 +81,8 @@
       </ModalFormItem>
     </Teleport>
   </div>
+
+
 </template>
 
 <script setup>
@@ -95,7 +97,9 @@ import { mapState, mapActions, mapMutations } from 'vuex';
 import FormItem from "./FormItem.vue";
 import axios from 'axios';
 import Pagination from '@/components/Pagination.vue';
-import noImage from '@/assets/img/sem-foto.jpg';
+import semImage from '@/assets/img/simboloverde.png';
+
+
 
 export default {
   name: "NavItems",
@@ -105,6 +109,8 @@ export default {
   },
   data() {
     return {
+     
+
       itemData: {
         id: null,
         active: true,

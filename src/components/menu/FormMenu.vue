@@ -18,14 +18,15 @@
 
 <script>
 import axios from 'axios';
+import { mapState, mapActions, mapMutations } from 'vuex';
 
 export default {
   name: "FormMenu",
   props: {
     dataMenu: {
       type: Array,
-      required: false,  // Tornamos o dataMenu não obrigatório
-      default: () => [] // Define um array vazio como valor padrão
+      required: false,
+      default: () => []
     }
   },
   data() {
@@ -40,7 +41,7 @@ export default {
         this.invalidMenuName = true;
       } else {
         const restaurantId = this.$store.state.restaurantId;
-        
+
         if (!restaurantId) {
           console.error('Erro: restaurantId não está definido!');
           return;
@@ -58,7 +59,6 @@ export default {
 
           const menuId = response.data.menu.id;
 
-          // Certifique-se de que dataMenu está definido
           if (!this.dataMenu) {
             this.dataMenu = [];
           }
@@ -69,7 +69,12 @@ export default {
             categories: []
           });
 
-          this.$emit('menuCreated', menuId);
+          this.$store.dispatch('fetchMenusAndItems');
+
+
+          // Fecha o modal
+          this.$emit('close-modal');
+
         } catch (error) {
           console.error('Erro ao criar o cardápio:', error);
         }

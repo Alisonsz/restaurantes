@@ -43,7 +43,7 @@ export default {
   name: "MenuView",
   data() {
     return {
-      completeConfig: false,
+      completeConfig: true,
       currentConfigStep: 2,
       countConfigSteps: 5,
       selectedMenu: 0,

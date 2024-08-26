@@ -224,6 +224,44 @@ export default {
       return this.crossSellItems
         .filter(item => item.name.toLowerCase().includes(this.searchTerm.toLowerCase()))
         .map(item => item.id);
+    },
+    formattedOpeningHours() {
+      const daysOfWeek = [
+        "Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"
+      ];
+
+      // Obter os horários de funcionamento do menu selecionado
+      const openingHours = this.menus[this.selectedMenuIndex]?.opening_hours || [];
+
+      if (openingHours.length === 0) {
+        return "Definir horário disponível";
+      }
+
+      // Mapear horários únicos com os respectivos dias da semana
+      const hoursMap = openingHours.reduce((acc, curr) => {
+        const key = `${curr.start_time}-${curr.end_time}-${curr.is_closed}`;
+        if (!acc[key]) {
+          acc[key] = [];
+        }
+        acc[key].push(curr.day);
+        return acc;
+      }, {});
+
+      // Gerar o texto formatado
+      const formattedHours = Object.entries(hoursMap).map(([time, days]) => {
+        const [start_time, end_time, is_closed] = time.split('-');
+
+        // Se o estabelecimento estiver fechado, ignore a entrada
+        if (is_closed === 'true') return null;
+
+        // Formatar os dias da semana
+        const dayRanges = this.formatDayRanges(days, daysOfWeek);
+        const formattedTime = `${this.formatTime(start_time)} às ${this.formatTime(end_time)}`;
+
+        return `${dayRanges} - ${formattedTime}`;
+      }).filter(Boolean); // Remover entradas nulas
+
+      return formattedHours.join('. ');
     }
   },
   methods: {
@@ -233,12 +271,7 @@ export default {
       this.updateOpeningHoursText();
     },
     updateOpeningHoursText() {
-      const openingHours = this.menus[this.selectedMenuIndex]?.opening_hours || [];
-      if (openingHours.length === 0) {
-        this.textOpeningHours = "Definir horário disponível";
-        return;
-      }
-      // Implementar a lógica para formatar o texto de horário de funcionamento
+      this.textOpeningHours = this.formattedOpeningHours;
     },
     selectCategory(index) {
       this.selectedCategoryIndex = index;
@@ -267,6 +300,31 @@ export default {
       } catch (error) {
         console.error('Erro ao tentar alterar disponibilidade:', error);
       }
+    },
+    formatDayRanges(days, daysOfWeek) {
+      // Ordenar dias para garantir a consistência
+      days.sort((a, b) => a - b);
+
+      const ranges = [];
+      let rangeStart = days[0];
+
+      for (let i = 1; i <= days.length; i++) {
+        if (days[i] !== days[i - 1] + 1) {
+          const rangeEnd = days[i - 1];
+          if (rangeStart === rangeEnd) {
+            ranges.push(daysOfWeek[rangeStart]);
+          } else {
+            ranges.push(`${daysOfWeek[rangeStart]} a ${daysOfWeek[rangeEnd]}`);
+          }
+          rangeStart = days[i];
+        }
+      }
+
+      return ranges.join(', ');
+    },
+    formatTime(timeString) {
+      // Formatar o tempo de HH:mm:ss para HH:mm
+      return timeString.slice(0, 5);
     }
   },
   mounted() {
@@ -274,6 +332,7 @@ export default {
     this.updateOpeningHoursText();
   }
 };
+
 </script>
 
 <style lang="scss" scoped>
@@ -315,7 +374,7 @@ export default {
 
   .opening-hours {
     position: relative;
-    top: 8px;
+ 
   }
 
   .opening-hours::first-letter {
@@ -348,4 +407,5 @@ export default {
   .btn-add-item, .opening-hours {
     cursor: pointer;
   }
+
 </style>
