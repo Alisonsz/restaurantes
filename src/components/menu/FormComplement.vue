@@ -83,7 +83,7 @@
                           <a
                             class="dropdown-item"
                             href="#"
-                            @click="showModalFormItem = true, editItem(index)"
+                            @click="editItem(index)"
                             >Editar</a
                           >
                         </li>
@@ -99,7 +99,7 @@
                           <a
                             class="dropdown-item"
                             href="#"
-                            @click="showModalFormAddItem = true, addItem(index)"
+                            @click="addItem(index)"
                             >Adicionar complemento</a
                           >
                         </li>
@@ -144,7 +144,7 @@
                                     <a
                                       class="dropdown-item"
                                       href="#"
-                                      @click="showModalFormItem = true, editItem(i)"
+                                      @click="editSubItem(i, index)"
                                       >Editar</a
                                     >
                                   </li>
@@ -152,7 +152,7 @@
                                     <a
                                       class="dropdown-item"
                                       href="#"
-                                      @click="removeItem(i)"
+                                      @click="removeSubItem(i, index)"
                                       >Excluir</a
                                     >
                                   </li>
@@ -189,6 +189,7 @@
           type="number"
           class="form-control number"
           v-model="dataComplement.selectNumber"
+          @input="validateNumber('selectNumber')"
         />
         <p class="text">
           O usuário pode selecionar um item mais de uma vez?
@@ -203,6 +204,7 @@
             type="number"
             class="form-control number"
             v-model="dataComplement.moreNumber"
+            @input="validateNumber('moreNumber')"
           />
         </div>
       </div>
@@ -219,7 +221,7 @@
       </div>
       <div class="col-lg-2 d-grid gap-2">
         <button
-          @click.prevent="save()"
+          @click.prevent="save"
           type="submit"
           class="btn btn-save"
         >
@@ -260,7 +262,7 @@
       >
         <template #header>Novo item</template>
         <template #body>
-          <FormItem
+          <FormItem2
             @close-modal="showModalFormItem = false"
             @save-item="saveItem"
             :itemEditData="itemEditData"
@@ -272,14 +274,14 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import draggable from 'vuedraggable';
 import ModalFormAddItem from "../ModalBase.vue";
 import ModalFormSearchItem from "../ModalBase.vue";
 import ModalFormItem from "../ModalBase.vue";
 import FormAddItem from "./FormAddItem.vue";
 import FormSearchItem from "./FormSearchItem.vue";
-import FormItem from "./FormItem.vue";
+import FormItem2 from "./FormItem2.vue";
 import { useStore } from 'vuex';
 import axios from 'axios';
 
@@ -292,7 +294,7 @@ export default {
     ModalFormItem,
     FormAddItem,
     FormSearchItem,
-    FormItem,
+    FormItem2,
   },
   setup() {
     const store = useStore();
@@ -342,25 +344,28 @@ export default {
   },
   data() {
     return {
-      itemEditData: [],
+      itemEditData: {}, // Inicializa com um objeto vazio
       invalid: {
         name: false,
       },
-      dataComplement: {
-        name: "",
-        active: true,
-        items: [],
-        selectOne: true,
-        selectNumber: 1,
-        selectMore: false,
-        moreNumber: 1,
-      },
+      dataComplement: this.resetFormData(), // Inicializa com dados resetados
     };
   },
   props: {
     complementEditData: Object,
-    allComplement: Object,
-    dataMenu: Object,
+  },
+  watch: {
+    complementEditData: {
+      immediate: true,
+      handler(newData) {
+        if (newData && Object.keys(newData).length > 0) {
+          this.dataComplement = {
+            ...this.resetFormData(), // Reseta antes de atribuir novos dados
+            ...newData, // Sobrescreve os valores com os dados de edição
+          };
+        }
+      },
+    },
   },
   methods: {
     orderList(dataList) {
@@ -380,34 +385,41 @@ export default {
     },
     saveItem(itemData) {
       if (typeof itemData === "object") {
-        if (typeof itemData.id == "number") {
-          this.dataComplement.items[itemData.id] = itemData;
-        } else if (typeof itemData.idAdd == "number") {
-          if (typeof this.dataComplement.items[itemData.idAdd]["items"] === "object") {
-            this.dataComplement.items[itemData.idAdd].items.push(itemData);
+        const existingItemIndex = this.dataComplement.items.findIndex(
+          item => item.id === itemData.id
+        );
+
+        if (existingItemIndex !== -1) {
+          this.dataComplement.items[existingItemIndex] = itemData; // Atualiza o item existente diretamente no array
+        } else if (typeof itemData.idAdd === "number") {
+          if (Array.isArray(this.dataComplement.items[itemData.idAdd].items)) {
+            this.dataComplement.items[itemData.idAdd].items.push(itemData); // Adiciona subitem
           } else {
-            this.dataComplement.items[itemData.idAdd].items = [itemData];
+            this.dataComplement.items[itemData.idAdd].items = [itemData]; // Cria novo array de subitens
           }
         } else {
-          this.dataComplement.items.push(itemData);
+          this.dataComplement.items.push(itemData); // Adiciona novo item
         }
       }
     },
     editItem(index) {
-      if (typeof index == "number") {
-        this.itemEditData = this.dataComplement.items[index];
-        this.itemEditData.id = index;
+      if (typeof index === "number") {
+        this.itemEditData = { ...this.dataComplement.items[index] }; 
+        this.showModalFormItem = true;  
       }
     },
-    addItem(index) {
-      if (typeof index == "number") {
-        this.itemEditData = [];
-        this.itemEditData.idAdd = index;
-      }
+    addItem() {
+      this.resetFormData(); // Resetar os dados ao adicionar um novo item
+      this.showModalFormItem = true;  
     },
     removeItem(index) {
-      if (typeof index == "number") {
+      if (typeof index === "number") {
         this.dataComplement.items.splice(index, 1);
+      }
+    },
+    removeSubItem(i, index) {
+      if (typeof index === "number" && typeof i === "number") {
+        this.dataComplement.items[index].items.splice(i, 1);
       }
     },
     toggleRequiredSelection() {
@@ -417,6 +429,11 @@ export default {
       } else {
         this.dataComplement.min_selections = 0;
         this.dataComplement.is_required = false;
+      }
+    },
+    validateNumber(field) {
+      if (this.dataComplement[field] < 0) {
+        this.dataComplement[field] = 0;
       }
     },
     valid(data) {
@@ -437,68 +454,75 @@ export default {
         }
       }
     },
-async save() {
-  if (this.valid(this.dataComplement)) {
-    // Mapeia os IDs dos itens, garantindo que sejam válidos e no formato correto
-    const itemsIds = this.dataComplement.items
-      .map(item => item.id) // Pega o ID de cada item
-      .filter(id => id && id !== 0); // Remove IDs inválidos (0 ou undefined)
+    resetFormData() {
+      // Reseta todos os campos do formulário ao adicionar um novo item
+      return {
+        name: "",
+        active: true,
+        items: [],
+        selectOne: true,
+        selectNumber: 1,
+        selectMore: false,
+        moreNumber: 1,
+      };
+    },
+    async save() {
+      if (this.valid(this.dataComplement)) {
+        const itemsIds = this.dataComplement.items
+          .map(item => item.id)
+          .filter(id => id && id !== 0);
 
-    // Verifica se há pelo menos um item válido selecionado
-    if (itemsIds.length === 0) {
-      console.error("Nenhum item válido selecionado.");
-      return;
-    }
-
-    try {
-      const response = await axios.post(
-        "https://api.prattuapp.com.br/api/products/component-items",
-        {
-          component_name: this.dataComplement.name,
-          max_selections: this.dataComplement.selectNumber,
-          min_selections: this.dataComplement.selectOne ? 1 : 0,
-          max_item_select: this.dataComplement.selectMore ? this.dataComplement.moreNumber : 1,
-          is_required: this.dataComplement.selectOne,
-          restaurant_id: this.$store.state.restaurantId,
-          items: itemsIds, // Envia os IDs dos itens no formato correto
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${this.$store.state.token}`,
-          },
+        if (itemsIds.length === 0) {
+          console.error("Nenhum item válido selecionado.");
+          return;
         }
-      );
 
-      // Emite o evento de salvar complemento com os dados da resposta da API
-      this.$emit('saveComplement', response.data);
+        try {
+          const response = await axios.post(
+            "https://api.prattuapp.com.br/api/products/component-items",
+            {
+              component_name: this.dataComplement.name,
+              max_selections: this.dataComplement.selectNumber,
+              min_selections: this.dataComplement.selectOne ? 1 : 0,
+              max_item_select: this.dataComplement.selectMore ? this.dataComplement.moreNumber : 1,
+              is_required: this.dataComplement.selectOne,
+              restaurant_id: this.$store.state.restaurantId,
+              items: itemsIds,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${this.$store.state.token}`,
+              },
+            }
+          );
 
-      // Atualiza os dados no Vuex Store ao despachar as ações necessárias
-      await this.$store.dispatch('fetchFormCategoriesAndComplements'); // Atualiza as categorias e complementos
-      await this.$store.dispatch('fetchMenusAndItems'); // Atualiza os itens e menus
+          this.$emit('saveComplement', response.data);
 
-      this.$emit('closeModal'); // Fecha o modal após salvar
-    } catch (error) {
-      console.error("Erro ao salvar complemento:", error);
+          await this.$store.dispatch('fetchFormCategoriesAndComplements');
+          await this.$store.dispatch('fetchMenusAndItems');
+
+          this.$emit('closeModal');
+        } catch (error) {
+          console.error("Erro ao salvar complemento:", error);
+        }
+      }
     }
-  }
-}
-
-,
   },
   created() {
     if (this.complementEditData && this.complementEditData.name) {
-      this.dataComplement.id = this.complementEditData.id;
-      this.dataComplement.name = this.complementEditData.name;
-      this.dataComplement.active = this.complementEditData.active;
-      this.dataComplement.items = this.complementEditData.items;
-      this.dataComplement.selectOne = this.complementEditData.selectOne;
-      this.dataComplement.selectNumber = this.complementEditData.selectNumber;
-      this.dataComplement.selectMore = this.complementEditData.selectMore;
-      this.dataComplement.moreNumber = this.complementEditData.moreNumber;
+      this.dataComplement = {
+        ...this.resetFormData(), // Reseta antes de atribuir novos dados
+        ...this.complementEditData, // Sobrescreve os valores com os dados de edição
+      };
     }
   },
 };
 </script>
+
+
+
+
+
 
 <style lang="scss" scoped>
 .modal-body .container-data {

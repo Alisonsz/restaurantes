@@ -1,20 +1,36 @@
 <template>
   <div>
     <div class="row mb-3 mt-3">
+      <!-- Busca e ordenação -->
       <div class="col-4">
         <div class="input-group mb-3 item-filter">
-          <input type="text" class="form-control input-form" placeholder="Buscar produto" v-model="complementTerm" />
-          <span class="input-group-text input-form" id="basic-addon1"><span class="add-item add-inline icon-search"></span></span>
+          <input
+            type="text"
+            class="form-control input-form"
+            placeholder="Buscar produto"
+            v-model="complementTerm"
+          />
+          <span class="input-group-text input-form" id="basic-addon1">
+            <span class="add-item add-inline icon-search"></span>
+          </span>
         </div>
       </div>
       <div class="col-4">
-        <select class="form-select item-order input-form" v-model="orderBy" @change="orderList">
+        <select
+          class="form-select item-order input-form"
+          v-model="orderBy"
+          @change="orderList"
+        >
           <option value="">Organizar por</option>
           <option value="name">Nome</option>
         </select>
       </div>
       <div class="col-4 create-new text-end">
-        <button @click="toggleModal(true)" type="button" class="btn btn-green new-category">
+        <button
+          @click="toggleModal(true)"
+          type="button"
+          class="btn btn-green new-category"
+        >
           <span class="add-item add-inline add-black ml-1"></span> Criar complemento
         </button>
       </div>
@@ -36,10 +52,17 @@
             </td>
             <td class="item-actions">
               <label class="switch ml-1">
-                <input type="checkbox" v-model="complement.active" />
+                <input
+                  type="checkbox"
+                  v-model="complement.is_available"
+                  @change="toggleStatus(index)"
+                />
                 <span class="slider round"></span>
               </label>
-              <button class="btn btn-round input-base edit-button" @click="editComplement(index)">
+              <button
+                class="btn btn-round input-base edit-button"
+                @click="editComplement(index)"
+              >
                 <span class="edit-data"></span>
                 <span class="text">Editar</span>
               </button>
@@ -48,14 +71,20 @@
         </tbody>
       </table>
       <div v-if="Object.keys(allComplement).length === 0">
-        <p class="mt-4">Você ainda não adicionou nenhum complemento ao seu cardápio. Comece agora para atrair cada vez mais clientes!</p>
+        <p class="mt-4">
+          Você ainda não adicionou nenhum complemento ao seu cardápio. Comece agora para atrair cada vez mais clientes!
+        </p>
       </div>
     </div>
     <Teleport to="body">
       <ModalFormComplement :show="showModalFormComplement" @close="toggleModal(false)">
         <template #header>Adicionar complemento</template>
         <template #body>
-          <FormComplement @close-modal="toggleModal(false)" @save-complement="saveComplement" :complementEditData="complementEditData" />
+          <FormComplement
+            @close-modal="toggleModal(false)"
+            @save-complement="saveComplement"
+            :complementEditData="complementEditData"
+          />
         </template>
       </ModalFormComplement>
     </Teleport>
@@ -78,7 +107,7 @@ export default {
     return {
       showModalFormComplement: false,
       allComplement: [],
-      complementEditData: {},
+      complementEditData: {}, // Objeto para armazenar os dados de edição
       complementTerm: '',
       orderBy: '',
       complementList: [],
@@ -101,34 +130,52 @@ export default {
   methods: {
     async fetchComponents() {
       try {
-        const response = await axios.get(`https://api.prattuapp.com.br/api/components?restaurant_id=${this.restaurantId}`, {
-          headers: {
-            Authorization: `Bearer ${this.token}`,
-          },
-        });
+        const response = await axios.get(
+          `https://api.prattuapp.com.br/api/components?restaurant_id=${this.restaurantId}`, 
+          {
+            headers: {
+              Authorization: `Bearer ${this.token}`,
+            },
+          }
+        );
         this.allComplement = response.data.data;
-        this.complementList = this.allComplement; // Inicializa a lista de complementos
+        this.complementList = [...this.allComplement]; // Inicializa a lista de complementos
       } catch (error) {
         console.error('Erro ao buscar os componentes:', error);
       }
     },
     saveComplement(complementData) {
       if (typeof complementData === 'object') {
-        if (typeof complementData.id == 'number') {
-          this.allComplement[complementData.id] = complementData;
+        const index = this.complementList.findIndex(comp => comp.id === complementData.id);
+        if (index !== -1) {
+          // Atualiza o complemento existente diretamente
+          this.complementList[index] = { ...complementData };
         } else {
-          this.allComplement.push(complementData);
+          // Adiciona um novo complemento
+          this.complementList.push(complementData);
         }
       }
       this.complementEditData = {};
       this.toggleModal(false); // Fecha o modal após salvar
-      this.fetchComponents(); // Refaz a requisição ao salvar o complemento
     },
     selectItem(index) {
-      if (typeof index == 'number') {
-        this.complementEditData = this.allComplement[index];
-        this.complementEditData['id'] = index;
-      }
+      const selectedComplement = this.allComplement[index];
+
+      // Preencha todos os campos do formulário com os dados do complemento selecionado
+      this.complementEditData = {
+        ...selectedComplement,
+        items: selectedComplement.items.map(item => ({
+          ...item,
+          price: item.extravalue || 0, // Usa `extravalue` como preço ou 0 se não houver
+        })),
+        selectOne: selectedComplement.min_selections === 1, // Define se o campo de seleção obrigatória deve estar marcado
+        selectNumber: selectedComplement.max_selections,
+        selectMore: selectedComplement.max_item_select > 1, // Marca se o usuário pode selecionar mais de uma vez
+        moreNumber: selectedComplement.max_item_select,
+      };
+
+      // Debugging: Verifique se os dados estão sendo corretamente setados
+      console.log('Complemento selecionado para edição:', this.complementEditData);
     },
     orderList() {
       switch (this.orderBy) {
@@ -144,12 +191,44 @@ export default {
           break;
       }
     },
-    toggleModal(state) {
+    toggleModal(state, resetData = true) {
+      if (resetData) {
+        this.complementEditData = {}; // Reseta os dados ao abrir o modal para adicionar novo complemento
+      }
       this.showModalFormComplement = state;
+
+      // Se o modal foi fechado, atualize os complementos
+      if (!state) {
+        this.fetchComponents();
+      }
     },
     editComplement(index) {
-      this.selectItem(index);
-      this.toggleModal(true);
+      this.selectItem(index); // Seleciona os dados para edição
+      this.toggleModal(true, false); // Abre o modal e não reseta os dados (false)
+    },
+    async toggleStatus(index) {
+      try {
+        const complement = this.complementList[index];
+        const newStatus = !complement.is_available;
+
+        await axios.patch(
+          `https://api.prattuapp.com.br/api/components/${complement.id}`,
+          { is_available: newStatus },
+          {
+            headers: {
+              Authorization: `Bearer ${this.token}`,
+            },
+          }
+        );
+
+        // Atualiza o estado local após a resposta do backend
+        this.complementList[index] = {
+          ...complement,
+          is_available: newStatus,
+        };
+      } catch (error) {
+        console.error('Erro ao atualizar o status do complemento:', error);
+      }
     },
   },
   created() {
@@ -157,6 +236,7 @@ export default {
   },
 };
 </script>
+
 
 <style lang="scss" scoped>
 .create-new {
