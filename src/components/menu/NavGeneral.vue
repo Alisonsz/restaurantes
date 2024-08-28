@@ -230,14 +230,12 @@ export default {
         "Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"
       ];
 
-      // Obter os horários de funcionamento do menu selecionado
       const openingHours = this.menus[this.selectedMenuIndex]?.opening_hours || [];
 
       if (openingHours.length === 0) {
         return "Definir horário disponível";
       }
 
-      // Mapear horários únicos com os respectivos dias da semana
       const hoursMap = openingHours.reduce((acc, curr) => {
         const key = `${curr.start_time}-${curr.end_time}-${curr.is_closed}`;
         if (!acc[key]) {
@@ -247,19 +245,16 @@ export default {
         return acc;
       }, {});
 
-      // Gerar o texto formatado
       const formattedHours = Object.entries(hoursMap).map(([time, days]) => {
         const [start_time, end_time, is_closed] = time.split('-');
 
-        // Se o estabelecimento estiver fechado, ignore a entrada
         if (is_closed === 'true') return null;
 
-        // Formatar os dias da semana
         const dayRanges = this.formatDayRanges(days, daysOfWeek);
         const formattedTime = `${this.formatTime(start_time)} às ${this.formatTime(end_time)}`;
 
         return `${dayRanges} - ${formattedTime}`;
-      }).filter(Boolean); // Remover entradas nulas
+      }).filter(Boolean);
 
       return formattedHours.join('. ');
     }
@@ -302,7 +297,8 @@ export default {
       }
     },
     formatDayRanges(days, daysOfWeek) {
-      // Ordenar dias para garantir a consistência
+      days = days.map(day => (day === 0 ? 7 : day)); // Transforma domingo (0) em 7
+
       days.sort((a, b) => a - b);
 
       const ranges = [];
@@ -312,9 +308,9 @@ export default {
         if (days[i] !== days[i - 1] + 1) {
           const rangeEnd = days[i - 1];
           if (rangeStart === rangeEnd) {
-            ranges.push(daysOfWeek[rangeStart]);
+            ranges.push(daysOfWeek[rangeStart - 1]); // Ajustar o índice ao array `daysOfWeek`
           } else {
-            ranges.push(`${daysOfWeek[rangeStart]} a ${daysOfWeek[rangeEnd]}`);
+            ranges.push(`${daysOfWeek[rangeStart - 1]} a ${daysOfWeek[rangeEnd - 1]}`);
           }
           rangeStart = days[i];
         }
@@ -323,7 +319,6 @@ export default {
       return ranges.join(', ');
     },
     formatTime(timeString) {
-      // Formatar o tempo de HH:mm:ss para HH:mm
       return timeString.slice(0, 5);
     }
   },
@@ -332,6 +327,7 @@ export default {
     this.updateOpeningHoursText();
   }
 };
+
 
 </script>
 

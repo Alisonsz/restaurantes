@@ -172,7 +172,7 @@ export default {
 
     // Função para formatar o valor de preço
     const formatCurrency = (value) => {
-      if (!value) return '';
+      if (!value) return '0,00';
       return parseFloat(value).toLocaleString('pt-BR', {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
@@ -240,7 +240,7 @@ export default {
     // Converte o preço formatado de volta para um número utilizável
     const parsePrice = () => {
       const parsedValue = formattedPrice.value.replace(/\./g, '').replace(',', '.');
-      itemData.value.price = parseFloat(parsedValue);
+      itemData.value.price = parsedValue ? parseFloat(parsedValue) : 0;
     };
 
     // Formata o preço enquanto o usuário digita
@@ -314,8 +314,8 @@ export default {
     // Validação básica dos campos obrigatórios
     const valid = (data) => {
       let isValid = true;
-      invalid.value.name = !data.name;
-      invalid.value.price = !data.price;
+      invalid.value.name = !data.name; // Nome não pode estar vazio
+      invalid.value.price = data.price === null || data.price === ''; // Permitir preço 0
       isValid = !invalid.value.name && !invalid.value.price;
       return isValid;
     };
@@ -420,12 +420,15 @@ export default {
     }),
   },
 };
+
+
 </script>
 
 
 
 
 <style lang="scss" scoped>
+
 .modal-body .container-data {
   min-width: 900px;
   padding: 0 !important;

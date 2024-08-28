@@ -147,9 +147,7 @@
       <div class="col-lg-2 d-grid gap-2" v-if="itemData.id">
         <button @click.prevent="deleteProduct" type="button" class="btn btn-danger">Excluir</button>
       </div>
-      <div class="col-lg-2 d-grid gap-2">
-        <button @click.prevent="closeModal" type="button" class="btn btn-cancel">Cancelar</button>
-      </div>
+     
       <div class="col-lg-2 d-grid gap-2">
         <button @click.prevent="save" type="button" class="btn btn-save">Salvar</button>
       </div>

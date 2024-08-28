@@ -1,58 +1,59 @@
 <template>
-    <div class="container-data">
-      <form @submit.prevent="save">
-        <div>
-          <div class="d-grid gap-2 mb-4">
-            <label class="form-label bold-500 mb-0">Adicione a um cardápio</label>
-            <select class="form-select" v-model="openingData.selectedMenu">
-              <option value="">Selecione um cardápio</option>
-              <option v-for="menu in menus" :key="menu.id" :value="menu.id">{{ menu.name }}</option>
-            </select>
-            <label class="form-label bold-500 mt-2 mb-0">Cardápio sempre disponível?</label>
-            <label class="switch-yn mt-0">
-              <input type="checkbox" v-model="openingData.alwaysAvailable" @change="toggleAlwaysAvailable">
-              <span class="slider round"></span>
-            </label>
-            <div v-show="!openingData.alwaysAvailable">
-              <label class="form-label bold-500 mt-2 mb-0">Dias da semana</label>
-              <div class="mb-2">
-                <label class="weekday ml-1" v-for="(day, index) in openingData.weekday" :key="index">
-                  <input type="checkbox" v-model="day.active">
-                  <span class="checkmark">{{ day.day }}</span>
-                </label>
-              </div>
-              <label class="form-label bold-500 mt-2 mb-2">Horário</label>
-              <div class="select-time">
-                <select class="form-select" v-model="openingData.startHour">
-                  <option v-for="hour in hours" :key="hour">{{ hour }}</option>
-                </select>
-                <span>Ás</span>
-                <select class="form-select" v-model="openingData.endHour">
-                  <option v-for="hour in hours" :key="hour">{{ hour }}</option>
-                </select>
-              </div>
+  <div class="container-data">
+    <form @submit.prevent="save">
+      <div>
+        <div class="d-grid gap-2 mb-4">
+          <label class="form-label bold-500 mb-0">Selecione um cardápio</label>
+          <select class="form-select" v-model="openingData.selectedMenu" @change="fetchAvailableHours">
+            <option value="">Selecione um cardápio</option>
+            <option v-for="menu in menus" :key="menu.id" :value="menu.id">{{ menu.name }}</option>
+          </select>
+          <label class="form-label bold-500 mt-2 mb-0">Cardápio sempre disponível?</label>
+          <label class="switch-yn mt-0">
+            <input type="checkbox" v-model="openingData.alwaysAvailable" @change="toggleAlwaysAvailable">
+            <span class="slider round"></span>
+          </label>
+          <div v-show="!openingData.alwaysAvailable">
+            <label class="form-label bold-500 mt-2 mb-0">Dias da semana</label>
+            <div class="mb-2">
+              <label class="weekday ml-1" v-for="(day, index) in openingData.weekday" :key="index">
+                <input type="checkbox" v-model="day.active">
+                <span class="checkmark">{{ day.day }}</span>
+              </label>
             </div>
-          </div>
-          <div v-if="message.text" :class="['alert', message.type === 'error' ? 'alert-danger' : 'alert-success']">
-            {{ message.text }}
-          </div>
-          <div class="row">
-            <div class="col-lg-6 d-grid gap-2">
-              <button @click="$emit('closeModal')" type="button" class="btn btn-cancel">Cancelar</button>
-            </div>
-            <div class="col-lg-6 d-grid gap-2">
-              <button type="submit" class="btn btn-save">Salvar</button>
+            <label class="form-label bold-500 mt-2 mb-2">Horários</label>
+            <div class="select-time">
+              <select class="form-select" v-model="openingData.startHour">
+                <option v-for="hour in hours" :key="hour">{{ hour }}</option>
+              </select>
+              <span>às</span>
+              <select class="form-select" v-model="openingData.endHour">
+                <option v-for="hour in hours" :key="hour">{{ hour }}</option>
+              </select>
             </div>
           </div>
         </div>
-      </form>
-    </div>
-  </template>
-  
-  <script>
-  import axios from 'axios';
-  import { mapState } from 'vuex'; // Importa mapState
-  export default {
+        <div v-if="message.text" :class="['alert', message.type === 'error' ? 'alert-danger' : 'alert-success']">
+          {{ message.text }}
+        </div>
+        <div class="row">
+          <div class="col-lg-6 d-grid gap-2">
+            <button @click="$emit('closeModal')" type="button" class="btn btn-cancel">Cancelar</button>
+          </div>
+          <div class="col-lg-6 d-grid gap-2">
+            <button type="submit" class="btn btn-save">Salvar</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</template>
+
+<script>
+import axios from 'axios';
+import { mapState } from 'vuex';
+
+export default {
   name: "FormOpeningHours",
   data() {
     return {
@@ -64,7 +65,7 @@
       ],
       openingData: {
         selectedMenu: "",
-        alwaysAvailable: true,
+        alwaysAvailable: false, // Cardápio sempre disponível vem marcado como não por padrão
         weekday: [
           { day: "D", active: false },
           { day: "S", active: false },
@@ -85,37 +86,41 @@
   },
   computed: {
     ...mapState({
-      token: state => state.token, // Acessa o token do store
-      restaurantId: state => state.restaurantId, // Acessa o restaurantId do store
-      menus: state => state.menus // Acessa os menus do store
+      token: state => state.token,
+      restaurantId: state => state.restaurantId,
+      menus: state => state.menus
     })
   },
   methods: {
     async fetchAvailableHours() {
+      if (!this.openingData.selectedMenu) return; // Se nenhum cardápio for selecionado, sair da função
+
       try {
         const response = await axios.get(
-          `https://api.prattuapp.com.br/api/menu/${this.openingData.selectedMenu}/available-hours`,
+          `https://api.prattuapp.com.br/api/menu/${this.openingData.selectedMenu}/opening-hours`,
           {
             headers: { Authorization: `Bearer ${this.token}` }
           }
         );
-        this.updateWeekdays(response.data.available_hours);
+        this.updateWeekdays(response.data.opening_hours);
       } catch (error) {
         const errorMessage = 'Erro ao buscar horários disponíveis.';
-        console.log(errorMessage); // Passa no log
+        console.log(errorMessage);
         this.message = {
           text: errorMessage,
           type: 'error'
         };
       }
     },
-    updateWeekdays(availableHours) {
+    updateWeekdays(openingHours) {
       this.openingData.weekday.forEach((day, index) => {
-        const hours = availableHours.find(hour => hour.day_of_week === index + 1);
+        const hours = openingHours.find(hour => hour.day_of_week === index + 1);
         if (hours) {
           day.active = true;
           this.openingData.startHour = hours.open_time.slice(0, 2) + 'h';
           this.openingData.endHour = hours.close_time.slice(0, 2) + 'h';
+        } else {
+          day.active = false;
         }
       });
     },
@@ -130,16 +135,15 @@
     },
     async save() {
       try {
-        console.log('Menu selecionado:', this.openingData.selectedMenu); // Verifica o menu selecionado antes de salvar
+        console.log('Menu selecionado:', this.openingData.selectedMenu);
 
-        // Filtra apenas os dias que estão ativos
         const selectedDays = this.openingData.weekday
-          .map((day, index) => day.active ? index + 1 : null) // Mapeia dias ativos
-          .filter(day => day !== null); // Remove dias não ativos
+          .map((day, index) => day.active ? index + 1 : null)
+          .filter(day => day !== null);
 
         if (!selectedDays.length) {
           const noDaysMessage = 'Selecione pelo menos um dia.';
-          console.log(noDaysMessage); // Passa no log
+          console.log(noDaysMessage);
           this.message = {
             text: noDaysMessage,
             type: 'error'
@@ -162,17 +166,21 @@
         );
 
         const successMessage = 'Horários de funcionamento do cardápio criados com sucesso.';
-        console.log(successMessage); // Passa no log
+        console.log(successMessage);
         this.message = {
           text: successMessage,
           type: 'success'
         };
+
+        // Dispara a action para recarregar menus e itens
+        await this.$store.dispatch('fetchMenusAndItems');
+
         this.$emit('saveOpeningHours', this.openingData);
         this.$emit('closeModal');
       } catch (error) {
-        // Extrai e exibe a mensagem de erro específica para `open_time`
-        const apiErrorMessage = error.response?.data?.errors?.open_time?.[0] || 'Erro ao salvar horários de funcionamento.';
-        console.log(apiErrorMessage); // Passa no log
+        // Exibe a mensagem de erro específica se existir
+        const apiErrorMessage = error.response?.data?.errors?.error?.[0] || 'Erro ao salvar horários de funcionamento.';
+        console.log(apiErrorMessage);
         this.message = {
           text: apiErrorMessage,
           type: 'error'
@@ -182,32 +190,32 @@
   },
   mounted() {
     if (this.menus.length > 0) {
-      this.openingData.selectedMenu = this.menus[0].id; // Seleciona o primeiro cardápio por padrão
-      this.fetchAvailableHours(); // Busca os horários do cardápio selecionado
+      this.openingData.selectedMenu = this.menus[0].id;
+      this.fetchAvailableHours();
     }
   }
 };
+</script>
 
-  </script>
-  
+
 <style lang="scss" scoped>
-    .modal-body .container-data {
-        max-width: 450px !important;
-        padding: 0 !important;
-    }
+  .modal-body .container-data {
+    max-width: 450px !important;
+    padding: 0 !important;
+  }
 
-    .modal-container {
-        min-width: 350px !important;
-    }
+  .modal-container {
+    min-width: 350px !important;
+  }
 
-    .select-time {
-        select {
-            width: 90px;
-            display: inline-block;
-        }
-        span {
-            margin-left: 15px;
-            margin-right: 15px;
-        }
+  .select-time {
+    select {
+      width: 90px;
+      display: inline-block;
     }
+    span {
+      margin-left: 15px;
+      margin-right: 15px;
+    }
+  }
 </style>
