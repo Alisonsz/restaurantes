@@ -136,5 +136,8 @@
     padding-bottom: 9px !important;
     white-space: nowrap;
   }
+  .edit-button{
+    margin-left: 5px;
+  }
   </style>
   
