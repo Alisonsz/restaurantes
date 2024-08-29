@@ -7,7 +7,7 @@
           <input
             type="text"
             class="form-control input-form"
-            placeholder="Buscar produto"
+            placeholder="Buscar complemento"
             v-model="complementTerm"
           />
           <span class="input-group-text input-form" id="basic-addon1">

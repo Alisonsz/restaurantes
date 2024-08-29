@@ -55,6 +55,12 @@ import { mapState } from 'vuex';
 
 export default {
   name: "FormOpeningHours",
+  props: {
+    selectedMenuIndex: {
+      type: Number,
+      required: true
+    }
+  },
   data() {
     return {
       hours: [
@@ -65,7 +71,7 @@ export default {
       ],
       openingData: {
         selectedMenu: "",
-        alwaysAvailable: false, // Cardápio sempre disponível vem marcado como não por padrão
+        alwaysAvailable: false,
         weekday: [
           { day: "D", active: false },
           { day: "S", active: false },
@@ -93,7 +99,7 @@ export default {
   },
   methods: {
     async fetchAvailableHours() {
-      if (!this.openingData.selectedMenu) return; // Se nenhum cardápio for selecionado, sair da função
+      if (!this.openingData.selectedMenu) return;
 
       try {
         const response = await axios.get(
@@ -135,22 +141,11 @@ export default {
     },
     async save() {
       try {
-        console.log('Menu selecionado:', this.openingData.selectedMenu);
-
         const selectedDays = this.openingData.weekday
           .map((day, index) => day.active ? index + 1 : null)
           .filter(day => day !== null);
 
-        if (!selectedDays.length) {
-          const noDaysMessage = 'Selecione pelo menos um dia.';
-          console.log(noDaysMessage);
-          this.message = {
-            text: noDaysMessage,
-            type: 'error'
-          };
-          return;
-        }
-
+        // O array `selectedDays` pode ser vazio, o que resultará na exclusão dos horários
         await axios.post(
           `https://api.prattuapp.com.br/api/menu/${this.openingData.selectedMenu}/opening-hours`,
           {
@@ -165,20 +160,17 @@ export default {
           }
         );
 
-        const successMessage = 'Horários de funcionamento do cardápio criados com sucesso.';
+        const successMessage = 'Horários de funcionamento do cardápio criados ou atualizados com sucesso.';
         console.log(successMessage);
         this.message = {
           text: successMessage,
           type: 'success'
         };
 
-        // Dispara a action para recarregar menus e itens
         await this.$store.dispatch('fetchMenusAndItems');
-
         this.$emit('saveOpeningHours', this.openingData);
         this.$emit('closeModal');
       } catch (error) {
-        // Exibe a mensagem de erro específica se existir
         const apiErrorMessage = error.response?.data?.errors?.error?.[0] || 'Erro ao salvar horários de funcionamento.';
         console.log(apiErrorMessage);
         this.message = {
@@ -190,7 +182,7 @@ export default {
   },
   mounted() {
     if (this.menus.length > 0) {
-      this.openingData.selectedMenu = this.menus[0].id;
+      this.openingData.selectedMenu = this.menus[this.selectedMenuIndex].id;
       this.fetchAvailableHours();
     }
   }
