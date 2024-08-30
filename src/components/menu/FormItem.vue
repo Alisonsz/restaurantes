@@ -15,7 +15,9 @@
       <hr class="hr-title">
       <div class="row">
         <div class="col-lg-6 d-grid">
-          <label class="form-label bold-500" for="name">Nome</label>
+          <label class="form-label bold-500" for="name">Nome
+            <span class="char-limit">50 caracteres</span>
+          </label>
         </div>
       </div>
       <div class="row">
@@ -47,10 +49,11 @@
               <input type="file" id="file" class="inputfile" accept="image/*" @change="onFileChange" ref="fileInput">
               <label for="file">
                 <span class="file-box">
-                  <p>{{ imageName.trim() !== '' ? imageName : "Adicionar imagem" }}</p>
+                  <p>{{ imageName.trim() !== '' ? imageName : "JPEG, JPG e PNG até 12MB. Resolução mínima: 325x300" }}</p>
                 </span>
                 <span class="file-button" v-if="itemData.image && typeof itemData.image === 'string'">
                   <img :src="itemData.image">
+                  <button type="button" @click.stop.prevent="removeImage" class="btn-remove-image">X</button>
                 </span>
                 <span class="file-button" v-else>
                   <img src="~@/assets/img/img.svg">
@@ -60,23 +63,27 @@
           </div>
         </div>
         <div class="col-lg-8 d-grid">
-          <label for="description" class="bold-500">Descrição do produto</label>
+          <label for="description" class="bold-500">Descrição do produto
+            <span class="char-limit">250 caracteres</span>
+          </label>
+          
           <div class="form-floating">
-            <textarea class="form-control item-description" placeholder="Deixe um comentário aqui" id="description" v-model="itemData.description"></textarea>
-            <label for="description">Ex: Hamburger de 200g com pão australiano.</label>
+            <textarea class="form-control item-description" placeholder="Deixe um comentário aqui" id="description" v-model="itemData.description" maxlength="250"></textarea>
+            <label for="description">Ex: Hamburguer de 200g com pão australiano.</label>
           </div>
+          <p class="mb-0 required-alert" v-show="invalid.description">*Descrição não pode exceder 250 caracteres</p>
         </div>
       </div>
 
-      <!-- Seções de Categoria e Complementos são exibidas apenas ao editar -->
-      <template v-if="itemData.id">
+      <!-- Seções de Categoria e Complementos são exibidas ao editar ou criar -->
+      <template v-if="itemData.id || !itemData.id">
         <div class="row mt-1">
           <div class="col-lg-12 d-grid">
             <div class="accordion" id="accordionCategory">
               <div class="accordion-item">
                 <h2 class="accordion-header" id="headingOne">
                   <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCategory" aria-expanded="false" aria-controls="collapseCategory">
-                    <span class="bold-500 ml-1">Categoria</span>
+                    <span class="bold-500 ml-1">Categoria</span><span>(opcional)</span>
                   </button>
                 </h2>
                 <div id="collapseCategory" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionCategory">
@@ -90,7 +97,7 @@
                         </select>
                       </div>
                       <div class="col-lg-3 d-grid">
-                        <button @click.prevent="associateCategory" type="button" class="btn btn-save" :disabled="!selectCategory">
+                        <button @click.prevent="addCategory" type="button" class="btn btn-save" :disabled="!selectCategory">
                           <span class="add-item add-inline add-black ml-1"></span> Adicionar
                         </button>
                       </div>
@@ -126,14 +133,14 @@
                         </select>
                       </div>
                       <div class="col-lg-3 d-grid">
-                        <button @click.prevent="associateComplement" type="button" class="btn btn-save">
+                        <button @click.prevent="addComplement" type="button" class="btn btn-save" :disabled="!selectComplement">
                           <span class="add-item add-inline add-black ml-1"></span> Adicionar
                         </button>
                       </div>
                     </div>
-                    <div v-if="itemData.complement && itemData.complement.length > 0" class="mt-4 mb-2">
+                    <div v-if="selectedComplements.length" class="mt-4 mb-2">
                       <span class="ml-1">Complementos adicionados:</span>
-                      <span v-for="(complement, index) in itemData.complement" :key="index" class="btn-round input-base edit-button bold-500 ml-1">{{ complement.name }}</span>
+                      <span v-for="(complement, index) in selectedComplements" :key="index" class="btn-round input-base edit-button bold-500 ml-1">{{ complement.name }}</span>
                     </div>
                   </div>
                 </div>
@@ -149,7 +156,12 @@
       </div>
      
       <div class="col-lg-2 d-grid gap-2">
-        <button @click.prevent="save" type="button" class="btn btn-save">Salvar</button>
+        <button 
+          @click.prevent="save" 
+          type="button" 
+          class="btn btn-save">
+          Salvar
+        </button>
       </div>
     </div>
   </div>
@@ -163,29 +175,33 @@ import { useStore } from 'vuex';
 
 export default {
   props: {
-    itemEditData: Object, // Recebe o ID do produto para edição
+    itemEditData: Object,
   },
   setup(props, { emit }) {
     const store = useStore();
+    const initialAvailability = ref(true);
     const itemData = ref({
       id: "",
       active: true,
       name: "",
-      price: "",
+      price: 0,
       image: "",
       description: "",
       complement: [],
     });
-    const formattedPrice = ref(""); // Campo para formatação do preço
+    const formattedPrice = ref("");
     const imageName = ref("");
     const fileInput = ref(null);
     const selectCategory = ref("");
     const selectComplement = ref("");
-    const categorySelected = ref(null); // Armazena a categoria selecionada
+    const categorySelected = ref(null);
+    const selectedComplements = ref([]);
     const invalid = ref({
       name: false,
       price: false,
+      description: false,
     });
+    const imageRemoved = ref(false);
 
     const loadProductData = async (productId) => {
       try {
@@ -199,18 +215,21 @@ export default {
         itemData.value = {
           id: product.id,
           name: product.name,
-          price: product.price, // Recebe o valor com ponto
+          price: product.price,
           image: product.products_photo,
           description: product.description,
           active: product.is_available,
           complement: product.components.map((comp) => comp),
         };
-        formattedPrice.value = formatCurrency(product.price); // Converte o valor para o formato com vírgula
+        formattedPrice.value = formatCurrency(product.price);
         imageName.value = product.products_photo ? product.products_photo.split('/').pop() : '';
+        initialAvailability.value = product.is_available;
 
-        // Definindo a categoria selecionada
         categorySelected.value = store.state.formCategories.find(category => category.id === product.category_product_id);
-        selectCategory.value = categorySelected.value; // Define o valor selecionado no select
+        selectCategory.value = categorySelected.value;
+
+        selectedComplements.value = [...itemData.value.complement];
+
       } catch (error) {
         console.error('Erro ao carregar os dados do produto:', error);
       }
@@ -218,13 +237,12 @@ export default {
 
     onMounted(() => {
       if (props.itemEditData && props.itemEditData.id) {
-        loadProductData(props.itemEditData.id); // Carregar os dados do produto ao montar o componente
+        loadProductData(props.itemEditData.id);
       }
     });
 
     const formatCurrency = (value) => {
-      if (!value) return '';
-      // Formata o número para o padrão brasileiro (com vírgula como separador decimal)
+      if (value === null || value === undefined) return '0,00';
       return parseFloat(value).toLocaleString('pt-BR', {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
@@ -232,15 +250,15 @@ export default {
     };
 
     const parsePrice = () => {
-      // Converte o valor de volta para o formato com ponto
       const parsedValue = formattedPrice.value.replace(/\./g, '').replace(',', '.');
-      itemData.value.price = parseFloat(parsedValue);
+      const parsedFloat = parseFloat(parsedValue);
+      itemData.value.price = isNaN(parsedFloat) ? 0 : parsedFloat;
     };
 
     const formatPrice = () => {
-      // Remove qualquer formatação anterior e aplica novamente
       const rawValue = formattedPrice.value.replace(/\D/g, '');
-      formattedPrice.value = formatCurrency(rawValue / 100);
+      const value = rawValue ? rawValue / 100 : 0;
+      formattedPrice.value = formatCurrency(value);
     };
 
     const onFileChange = (e) => {
@@ -258,11 +276,27 @@ export default {
       reader.readAsDataURL(file);
     };
 
+    const removeImage = () => {
+      imageRemoved.value = true;
+      itemData.value.image = null;
+      imageName.value = "";
+    };
+
+    const addCategory = () => {
+      categorySelected.value = selectCategory.value;
+    };
+
+    const addComplement = () => {
+      if (selectComplement.value && !selectedComplements.value.includes(selectComplement.value)) {
+        selectedComplements.value.push(selectComplement.value);
+      }
+    };
+
     const associateCategory = async () => {
-      if (selectCategory.value && itemData.value.id) {
+      if (categorySelected.value && itemData.value.id) {
         try {
           await axios.post(
-            `https://api.prattuapp.com.br/api/category/${selectCategory.value.id}/add-product`,
+            `https://api.prattuapp.com.br/api/category/${categorySelected.value.id}/add-product`,
             { product_id: itemData.value.id },
             {
               headers: {
@@ -270,7 +304,6 @@ export default {
               },
             }
           );
-          categorySelected.value = selectCategory.value; // Atualiza a categoria selecionada
         } catch (error) {
           console.error('Erro ao associar a categoria:', error);
         }
@@ -278,23 +311,20 @@ export default {
     };
 
     const associateComplement = async () => {
-      if (selectComplement.value && itemData.value.id) {
+      if (selectedComplements.value.length && itemData.value.id) {
         try {
-          await axios.post(
-            `https://api.prattuapp.com.br/api/components/${selectComplement.value.id}/products/${itemData.value.id}/associate`,
-            { restaurant_id: store.state.restaurantId },
-            {
-              headers: {
-                Authorization: `Bearer ${store.state.token}`,
-                'Content-Type': 'application/json',
-              },
-            }
-          );
-          if (!itemData.value.complement) {
-            itemData.value.complement = [];
+          for (const complement of selectedComplements.value) {
+            await axios.post(
+              `https://api.prattuapp.com.br/api/components/${complement.id}/products/${itemData.value.id}/associate`,
+              { restaurant_id: store.state.restaurantId },
+              {
+                headers: {
+                  Authorization: `Bearer ${store.state.token}`,
+                  'Content-Type': 'application/json',
+                },
+              }
+            );
           }
-          itemData.value.complement.push(selectComplement.value);
-          selectComplement.value = "";
         } catch (error) {
           console.error('Erro ao associar o complemento:', error);
         }
@@ -304,8 +334,9 @@ export default {
     const valid = (data) => {
       let isValid = true;
       invalid.value.name = !data.name;
-      invalid.value.price = !data.price;
-      isValid = !invalid.value.name && !invalid.value.price;
+      invalid.value.price = data.price === null || data.price === undefined || isNaN(data.price);
+      invalid.value.description = data.description && data.description.length > 250;
+      isValid = !invalid.value.name && !invalid.value.price && !invalid.value.description;
       return isValid;
     };
 
@@ -314,7 +345,7 @@ export default {
 
       const formData = new FormData();
       formData.append('name', itemData.value.name);
-      formData.append('price', itemData.value.price); // Salva o valor com ponto
+      formData.append('price', itemData.value.price);
       formData.append('description', itemData.value.description);
       formData.append('restaurant_id', store.state.restaurantId);
       formData.append('is_available', itemData.value.active ? 1 : 0);
@@ -326,7 +357,6 @@ export default {
       try {
         let response;
         if (itemData.value.id) {
-          // Editar produto
           response = await axios.post(
             `https://api.prattuapp.com.br/api/restaurants/products/update/${itemData.value.id}`,
             formData,
@@ -338,7 +368,6 @@ export default {
             }
           );
         } else {
-          // Criar novo produto
           response = await axios.post(
             'https://api.prattuapp.com.br/api/restaurants/products/create',
             formData,
@@ -349,13 +378,34 @@ export default {
               },
             }
           );
-          itemData.value.id = response.data.id; // Armazena o ID do produto criado
+          itemData.value.id = response.data.id;
         }
 
-        // Despachar uma ação para o Vuex store
-        store.dispatch('fetchMenusAndItems');
+        if (imageRemoved.value && itemData.value.id) {
+          await axios.delete(`https://api.prattuapp.com.br/api/products/${itemData.value.id}/remove-photo`, {
+            headers: {
+              Authorization: `Bearer ${store.state.token}`,
+            },
+          });
+        }
 
-        // Emitir evento para fechar o modal
+        await associateCategory();
+        await associateComplement();
+
+        if (initialAvailability.value !== itemData.value.active) {
+          await axios.patch(
+            `https://api.prattuapp.com.br/api/products/${itemData.value.id}/availability`,
+            { is_available: itemData.value.active },
+            {
+              headers: {
+                Authorization: `Bearer ${store.state.token}`,
+                'Content-Type': 'application/json',
+              },
+            }
+          );
+        }
+
+        store.dispatch('fetchMenusAndItems');
         emit('close-modal');
       } catch (error) {
         console.error('Erro ao salvar o produto:', error);
@@ -369,7 +419,6 @@ export default {
             Authorization: `Bearer ${store.state.token}`,
           },
         });
-        // Atualiza o Vuex store e fecha o modal após a exclusão
         store.dispatch('fetchMenusAndItems');
         emit('close-modal');
       } catch (error) {
@@ -389,16 +438,20 @@ export default {
       selectCategory,
       selectComplement,
       categorySelected,
+      selectedComplements,
       invalid,
       onFileChange,
+      addCategory,
+      addComplement,
       associateCategory,
       associateComplement,
       save,
-      deleteProduct, // Função de exclusão
+      deleteProduct,
       closeModal,
       formatCurrency,
       parsePrice,
       formatPrice,
+      removeImage,
     };
   },
   computed: {
@@ -467,4 +520,79 @@ export default {
 .row.mt-4.justify-content-end {
   justify-content: flex-end !important;
 }
+
+
+.ellipsis {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #000;
+  animation: ellipsis 1s infinite;
+}
+
+.ellipsis:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.ellipsis:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes ellipsis {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.5);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.btn-remove-image {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 15px !important;
+  height: 15px !important;
+  background-color: red;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 10px !important;
+  line-height: 1px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px !important;
+  z-index: 9999;
+}
+.d-grid {
+  position: relative;
+}
+.char-limit {
+  position: absolute;
+  right: 0; /* Alinha à direita do container pai */
+  top: 10px; /* Alinha na parte superior do container pai */
+  color: #6c757d; /* Cor de texto para o limite de caracteres */
+  font-size: 0.7em; /* Tamanho da fonte um pouco menor */
+  margin-right: 20px; /* Espaçamento à direita */
+  font-weight: 400;
+}
+.form-floating label[for="description"] .char-limit {
+  position: absolute;
+  right: 10px;
+  top: -40px;
+}
+
+.inputfile-box {
+  p {
+    font-size: 0.85em; /* Ajusta o tamanho da fonte */
+    color: #6c757d; /* Cor do texto */
+    margin: 0; /* Remove margens desnecessárias */
+  }
+}
+
 </style>

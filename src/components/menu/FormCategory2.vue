@@ -1,84 +1,92 @@
 <template>
-    <div class="container-data">
-      <form>
-        <div>
-          <div class="d-grid mt-2 mb-3">
-            <label for="name" class="form-label bold-500 mb-0">Nome da categoria</label>
+  <div class="container-data">
+    <form>
+      <div>
+        <div class="d-grid mt-2 mb-3">
+          <label for="name" class="form-label bold-500 mb-0">Nome da categoria</label>
+          <input
+            type="text"
+            class="form-control"
+            id="name"
+            v-model="categoryData.categoryName"
+            placeholder="Ex: Prato principal"
+          />
+          <p class="mb-0 required-alert" v-show="invalid.categoryName">
+            *Campo obrigatório
+          </p>
+        </div>
+
+        <div class="d-grid">
+          <label for="menuSearch" class="form-label bold-500 mb-0 mt-1">
+            Adicione a um cardápio
+          </label>
+          <div class="autocomplete-local">
             <input
               type="text"
               class="form-control"
-              id="name"
-              v-model="categoryData.categoryName"
-              placeholder="Ex: Prato principal"
+              id="menuSearch"
+              placeholder="Digite..."
+              v-model="menuTerm"
             />
-            <p class="mb-0 required-alert" v-show="invalid.categoryName">
-              *Campo obrigatório
-            </p>
-          </div>
-  
-          <div class="d-grid">
-            <label for="menuSearch" class="form-label bold-500 mb-0 mt-1">
-              Adicione a um cardápio
-            </label>
-            <div class="autocomplete-local">
-              <input
-                type="text"
-                class="form-control"
-                id="menuSearch"
-                placeholder="Digite..."
-                v-model="menuTerm"
-              />
-              <ul
-                v-if="menuTerm.length > 0 && searchMenus.length > 0"
-                class="w-full rounded search-list"
-                role="list"
-              >
-                <li v-for="(menu, index) in searchMenus" :key="index">
-                  <span>{{ menu.name }}</span>
-                  <span
-                    role="button"
-                    class="add-item add-right add-on"
-                    @click="addMenu(menu); menuTerm = ''"
-                  ></span>
-                </li>
-              </ul>
-            </div>
-            <div class="search-space"></div>
-            <p class="mb-0 required-alert" v-show="invalid.selectedMenu">
-              *Campo obrigatório
-            </p>
-          </div>
-  
-          <div
-            class="selected-menus"
-            v-if="categoryData.selectedMenu.length > 0"
-          >
-            <span
-              v-for="(menu, index) in categoryData.selectedMenu"
-              :key="index"
+            <ul
+              v-if="menuTerm.length > 0 && searchMenus.length > 0"
+              class="w-full rounded search-list"
+              role="list"
             >
-              {{ menu.name }}
-              <button
-                type="button"
-                @click="removeMenu(menu)"
-                class="btn btn-remove-menu"
-              >
-                X
-              </button>
-            </span>
+              <li v-for="(menu, index) in searchMenus" :key="index">
+                <span>{{ menu.name }}</span>
+                <span
+                  role="button"
+                  class="add-item add-right add-on"
+                  @click="addMenu(menu); menuTerm = ''"
+                ></span>
+              </li>
+            </ul>
           </div>
-          <div class="d-grid mt-3">
-            <button @click.prevent="save" type="submit" class="btn btn-save">
-              {{ isEditing ? 'Salvar' : 'Criar nova categoria' }}
-            </button>
-          </div>
+          <div class="search-space"></div>
+          <p class="mb-0 required-alert" v-show="invalid.selectedMenu">
+            *Campo obrigatório
+          </p>
         </div>
-      </form>
-    </div>
-  </template>
-  
-  
-  <script>
+
+        <div
+          class="selected-menus"
+          v-if="categoryData.selectedMenu.length > 0"
+        >
+          <span
+            v-for="(menu, index) in categoryData.selectedMenu"
+            :key="index"
+          >
+            {{ menu.name }}
+            <button
+              type="button"
+              @click="removeMenu(menu)"
+              class="btn btn-remove-menu"
+            >
+              X
+            </button>
+          </span>
+        </div>
+        <div class="d-flex justify-content-end mt-3 button-group">
+          <button
+            v-if="isEditing"
+            @click.prevent="deleteCategory"
+            type="button"
+            class="btn btn-danger"
+          >
+            Excluir
+          </button>
+          <button @click.prevent="save" type="submit" class="btn btn-save me-2">
+            {{ isEditing ? 'Salvar' : 'Criar nova categoria' }}
+          </button>
+         
+        </div>
+      </div>
+    </form>
+  </div>
+</template>
+
+<script>
 import { ref, computed, watch } from 'vue';
 import { useStore } from 'vuex';
 import axios from 'axios';
@@ -148,6 +156,9 @@ export default {
               name: fullMenu.name
             };
           });
+        } else {
+          this.categoryData.categoryName = ""; // Resetar campo
+          this.categoryData.selectedMenu = []; // Resetar campo
         }
       }
     }
@@ -251,78 +262,102 @@ export default {
         console.error('Campos obrigatórios não preenchidos.');
       }
     },
+    async deleteCategory() {
+      if (this.isEditing && this.selectedCategory) {
+        try {
+          await axios.delete(
+            `https://api.prattuapp.com.br/api/categoriesproduct/${this.selectedCategory.id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${this.store.state.token}`,
+                'Content-Type': 'application/json',
+              },
+            }
+          );
+          console.log('Categoria deletada com sucesso');
+          await this.store.dispatch('fetchMenusAndItems');
+          this.$emit('closeModal'); // Fechar modal após exclusão
+        } catch (error) {
+          console.error('Erro ao deletar a categoria:', error.response ? error.response.data : error.message);
+        }
+      }
+    },
   },
 };
+</script>
 
+<style lang="scss" scoped>
+.modal-body .container-data {
+  width: 330px !important;
+  padding: 0 !important;
+}
 
-  </script>
-  
-  
-  <style lang="scss" scoped>
-  .modal-body .container-data {
-    width: 330px !important;
-    padding: 0 !important;
+.modal-container {
+  min-width: 350px !important;
+}
+
+.autocomplete-local {
+  position: absolute;
+  width: 100%;
+  margin-top: 28px;
+}
+
+.autocomplete-local .search-list {
+  top: 48px;
+}
+
+.search-space {
+  margin-top: 0;
+  margin-bottom: 0;
+  height: 43px;
+}
+
+.selected-menus {
+  width: 100% !important;
+  padding-top: 8px;
+  position: relative;
+  height: auto !important;
+}
+
+.selected-menus span {
+  position: relative;
+  white-space: nowrap;
+  display: inline-block;
+  background-color: #f0f0f0;
+  margin: 0 10px 7px 0;
+  font-size: 14px;
+  padding: 7px 15px;
+  border-radius: 20px;
+}
+
+.btn-remove-menu {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 15px;
+  height: 15px !important;
+  background-color: red;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 10px !important;
+  line-height: 1px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+}
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  width: 100%;
+
+  .btn-save,
+  .btn-danger {
+    flex: 1;
   }
-  
-  .modal-container {
-    min-width: 350px !important;
-  }
-  
-  .autocomplete-local {
-    position: absolute;
-    width: 100%;
-    margin-top: 28px;
-  }
-  
-  .autocomplete-local .search-list {
-    top: 48px;
-  }
-  
-  .search-space {
-    margin-top: 0;
-    margin-bottom: 0;
-    height: 43px;
-  }
-  
-  .selected-menus {
-    width: 100% !important;
-    padding-top: 8px;
-    position: relative;
-    height: auto !important;
-  }
-  
-  .selected-menus span {
-    position: relative;
-    white-space: nowrap;
-    display: inline-block;
-    background-color: $light-blue;
-    margin: 0 10px 7px 0;
-    font-size: 14px;
-    padding: 7px 15px;
-    border-radius: 20px;
-  }
-  
-  .btn-remove-menu {
-    position: absolute;
-    top: -4px; /* Ajusta a posição do botão acima do conteúdo */
-    right: -4px; /* Ajusta a posição do botão à direita do conteúdo */
-    width: 15px; /* Ajuste o tamanho do botão */
-    height: 15px !important; /* Ajuste o tamanho do botão */
-    background-color: red;
-    border: none;
-    color: white;
-    cursor: pointer;
-    font-size: 10px !important; /* Ajuste o tamanho do X */
-    line-height: 1px; /* Centraliza o X verticalmente */
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-   
-    padding: 5px;
-  }
-  
- 
-  </style>
-  
-  
+}
+
+</style>
