@@ -22,8 +22,16 @@
       </div>
       <div class="row">
         <div class="col-lg-6 d-grid">
-          <input type="text" class="form-control mb-2" id="name" v-model="itemData.name" placeholder="Ex: Hamburguer">
-          <p class="mb-0 required-alert" v-show="invalid.name">*Campo obrigatório</p>
+          <input 
+      type="text" 
+      class="form-control mb-2" 
+      id="name" 
+      v-model="itemData.name" 
+      placeholder="Ex: Hamburguer"
+      maxlength="50">
+    <p class="mb-0 required-alert" v-show="invalid.name || itemData.name.length > 50">
+      *Campo obrigatório (máximo 50 caracteres)
+    </p>
         </div>
         <div class="col-lg-6">
           <div class="input-group mb-1">

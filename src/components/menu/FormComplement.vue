@@ -9,6 +9,7 @@
             class="form-control"
             v-model="dataComplement.name"
             placeholder="Ex: Hamburguer"
+            maxlength="50"
           />
           <p class="mb-0 mt-1 required-alert" v-show="invalid.name">
             *Campo obrigatório
@@ -95,25 +96,10 @@
                             >Excluir</a
                           >
                         </li>
-                        <li>
-                          <a
-                            class="dropdown-item"
-                            href="#"
-                            @click="addItem(index)"
-                            >Adicionar complemento</a
-                          >
-                        </li>
+                       
                       </ul>
                     </div>
                   </span>
-                  <button
-                    class="accordion-button collapsed"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    :data-bs-target="('#item-'+index)"
-                    aria-expanded="false"
-                    :aria-controls="('item-'+index)"
-                  ></button>
                 </h2>
                 <div
                   :id="('item-'+index)"
@@ -210,13 +196,14 @@
       </div>
     </form>
     <div class="row mb-3 mt-4 modal-footer">
-      <div class="offset-lg-8 col-lg-2 d-grid gap-2">
+      <div class="col-lg-2 d-grid gap-2">
         <button
-          @click.prevent="$emit('closeModal')"
-          type="submit"
-          class="btn btn-cancel"
+          v-if="dataComplement.id"
+          @click.prevent="deleteComponent"
+          type="button"
+          class="btn btn-danger"
         >
-          Cancelar
+          Excluir
         </button>
       </div>
       <div class="col-lg-2 d-grid gap-2">
@@ -228,6 +215,7 @@
           Salvar
         </button>
       </div>
+      
     </div>
     <Teleport to="body">
       <ModalFormAddItem
@@ -455,7 +443,6 @@ export default {
       }
     },
     resetFormData() {
-      // Reseta todos os campos do formulário ao adicionar um novo item
       return {
         name: "",
         active: true,
@@ -478,23 +465,43 @@ export default {
         }
 
         try {
-          const response = await axios.post(
-            "https://api.prattuapp.com.br/api/products/component-items",
-            {
-              component_name: this.dataComplement.name,
-              max_selections: this.dataComplement.selectNumber,
-              min_selections: this.dataComplement.selectOne ? 1 : 0,
-              max_item_select: this.dataComplement.selectMore ? this.dataComplement.moreNumber : 1,
-              is_required: this.dataComplement.selectOne,
-              restaurant_id: this.$store.state.restaurantId,
-              items: itemsIds,
-            },
-            {
-              headers: {
-                Authorization: `Bearer ${this.$store.state.token}`,
+          let response;
+          if (this.dataComplement.id) {
+            response = await axios.put(
+              `https://api.prattuapp.com.br/api/componentsproduct/${this.dataComplement.id}`,
+              {
+                component_name: this.dataComplement.name,
+                max_selections: this.dataComplement.selectNumber,
+                min_selections: this.dataComplement.selectOne ? 1 : 0,
+                max_item_select: this.dataComplement.selectMore ? this.dataComplement.moreNumber : 1,
+                is_required: this.dataComplement.selectOne,
+                items: itemsIds,
               },
-            }
-          );
+              {
+                headers: {
+                  Authorization: `Bearer ${this.$store.state.token}`,
+                },
+              }
+            );
+          } else {
+            response = await axios.post(
+              "https://api.prattuapp.com.br/api/componentsproduct",
+              {
+                component_name: this.dataComplement.name,
+                max_selections: this.dataComplement.selectNumber,
+                min_selections: this.dataComplement.selectOne ? 1 : 0,
+                max_item_select: this.dataComplement.selectMore ? this.dataComplement.moreNumber : 1,
+                is_required: this.dataComplement.selectOne,
+                restaurant_id: this.$store.state.restaurantId,
+                items: itemsIds,
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${this.$store.state.token}`,
+                },
+              }
+            );
+          }
 
           this.$emit('saveComplement', response.data);
 
@@ -506,16 +513,31 @@ export default {
           console.error("Erro ao salvar complemento:", error);
         }
       }
+    },
+
+    async deleteComponent() {
+      if (this.dataComplement.id) {
+        try {
+          await axios.delete(
+            `https://api.prattuapp.com.br/api/componentsproduct/${this.dataComplement.id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${this.$store.state.token}`,
+              },
+            }
+          );
+
+          this.$emit('deleteComplement', this.dataComplement.id);
+          await this.$store.dispatch('fetchFormCategoriesAndComplements');
+          await this.$store.dispatch('fetchMenusAndItems');
+
+          this.$emit('closeModal');
+        } catch (error) {
+          console.error("Erro ao excluir complemento:", error);
+        }
+      }
     }
-  },
-  created() {
-    if (this.complementEditData && this.complementEditData.name) {
-      this.dataComplement = {
-        ...this.resetFormData(), // Reseta antes de atribuir novos dados
-        ...this.complementEditData, // Sobrescreve os valores com os dados de edição
-      };
-    }
-  },
+  }
 };
 </script>
 
@@ -523,10 +545,9 @@ export default {
 
 
 
-
 <style lang="scss" scoped>
 .modal-body .container-data {
-  width: 600px;
+  width: 500px;
   padding: 0 !important;
 }
 
@@ -634,7 +655,7 @@ export default {
   top: 1px;
   position: absolute;
   top: 7px;
-  right: 75px;
+  right: 35px;
 }
 
 .accordion-header .icon-options {
@@ -643,7 +664,7 @@ export default {
   width: 26px;
   position: absolute;
   top: 8px;
-  right: 38px;
+  right: 5px;
 }
 
 .accordion-body {
