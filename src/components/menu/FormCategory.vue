@@ -6,14 +6,14 @@
         <div v-if="hasSelectedMenuIndex && !showCreateCategoryForm && !showSearchCategoryForm" class="d-grid">
           <button
             type="button"
-            class="btn btn-success"
+            class="btn btn-save"
             @click="showCreateCategoryForm = true; showSearchCategoryForm = false"
           >
             Criar nova categoria
           </button>
           <button
             type="button"
-            class="btn btn-success mt-2"
+            class="btn btn-save mt-2"
             @click="showSearchCategoryForm = true; showCreateCategoryForm = false"
           >
             Buscar categoria existente
@@ -94,17 +94,7 @@
         </div>
 
         <!-- Exibição dos Menus Selecionados -->
-        <div
-          class="selected-menus"
-          v-if="hasSelectedMenuIndex && categoryData.selectedMenu.length > 0"
-        >
-          <span
-            v-for="(menu, index) in categoryData.selectedMenu"
-            :key="index"
-          >
-            {{ menu.name }}
-          </span>
-        </div>
+       
       </div>
     </form>
   </div>

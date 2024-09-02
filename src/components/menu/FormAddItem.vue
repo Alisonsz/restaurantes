@@ -2,9 +2,9 @@
     <div class="container-data small-data">
         <form>
             <div>
-              <!--  <div class="d-grid gap-2">
+             <div class="d-grid gap-2">
                     <button @click.prevent="$emit('newItem'), $emit('closeModal')" type="submit" class="btn btn-save">Criar novo item</button>
-                </div> -->
+                </div> 
                 <div class="d-grid gap-2 mt-2">
                     <button @click.prevent="$emit('searchItem'), $emit('closeModal')" type="submit" class="btn btn-save">Buscar item existente</button>
                 </div>

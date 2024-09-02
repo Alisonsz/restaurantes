@@ -485,7 +485,7 @@ export default {
             );
           } else {
             response = await axios.post(
-              "https://api.prattuapp.com.br/api/componentsproduct",
+              "https://api.prattuapp.com.br/api/products/component-items",
               {
                 component_name: this.dataComplement.name,
                 max_selections: this.dataComplement.selectNumber,

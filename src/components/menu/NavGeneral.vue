@@ -180,6 +180,15 @@
       </div>
     </div>
 
+    <!-- Botão de Deletar Menu -->
+    <div class="row mt-4 alinhado-direita">
+      <div class="col-12 text-center ">
+        <button @click="showDeleteMenuModal = true" type="button" class="btn excluir">
+          Excluir cardápio
+        </button>
+      </div>
+    </div>
+
     <!-- Modals -->
     <Teleport to="body">
       <ModalFormMenu
@@ -219,7 +228,7 @@
         <template #body>
           <FormAddItem
             @close-modal="showModalFormAddItem = false"
-            @new-item="showModalFormItem = true; mountAllCategories()"
+            @new-item="showModalFormItem = true"
             @search-item="openSearchItemModal"
           />
         </template>
@@ -241,6 +250,8 @@
       <ModalFormItem
         :show="showModalFormItem"
         @close="showModalFormItem = false"
+        :selected-category-id="selectedCategoryId" 
+        ref="formItem"
       >
         <template #header>Novo item</template>
         <template #body>
@@ -249,8 +260,9 @@
             @save-item="saveItem"
             :allCategories="allCategories"
             :allComplement="allComplement"
-            :setCategory="selectedCategoryName"
+            :selectedCategoryId="selectedCategoryId"
             :itemEditData="itemData"
+              
           />
         </template>
       </ModalFormItem>
@@ -268,9 +280,31 @@
           />
         </template>
       </ModalFormOpeningHours>
+
+      <!-- Modal de Confirmação de Exclusão -->
+      <ModalFormMenu
+        :show="showDeleteMenuModal"
+        @close="showDeleteMenuModal = false"
+      >
+        <template #header>Excluir cardápio</template>
+       
+          <template #body>
+  <div class="container-data small-data" style="width: 550px;">
+    <p style=" margin-bottom: 35px !important; font-weight: bold;">Certeza de que deseja excluir este cardápio? Essa ação é irreversível.</p>
+    <div class="d-flex justify-content-between mt-2" style="gap: 20px;">
+      <button @click.prevent="showDeleteMenuModal = false" type="button" class="btn btn-outline-success" style="flex: 1;">Cancelar</button>
+      <button @click.prevent="deleteMenu" type="button" class="btn btn-danger" style="flex: 1;">Excluir</button>
+     
+    </div>
+  </div>
+</template>
+
+
+      </ModalFormMenu>
     </Teleport>
   </div>
 </template>
+
 <script>
 import { mapState } from 'vuex';
 import axios from 'axios';
@@ -285,7 +319,7 @@ import FormMenu from "./FormMenu.vue";
 import FormCategory from "./FormCategory.vue";
 import FormAddItem from "./FormAddItem.vue";
 import FormSearchItem from "./FormSearchItem.vue";
-import FormItem from "./FormItem.vue";
+import FormItem from "./FormItem3.vue";
 import FormOpeningHours from "./FormOpeningHours.vue";
 
 export default {
@@ -319,6 +353,7 @@ export default {
       showModalFormSearchItem: false,
       showModalFormItem: false,
       showModalFormOpeningHours: false,
+      showDeleteMenuModal: false, // Modal de exclusão
       sortableCategories: [] // Variável que será usada no draggable
     };
   },
@@ -495,6 +530,33 @@ export default {
         console.error("Erro ao atualizar a ordem das categorias:", error.response ? error.response.data : error.message);
       }
     },
+    async deleteMenu() {
+      try {
+        const menuId = this.menus[this.selectedMenuIndex].id;
+        await axios.delete(`https://api.prattuapp.com.br/api/menus/${menuId}`, {
+          headers: {
+            Authorization: `Bearer ${this.$store.state.token}`,
+          },
+        });
+
+        // Após a exclusão, remova o menu da lista e feche o modal
+        this.menus.splice(this.selectedMenuIndex, 1);
+        this.showDeleteMenuModal = false;
+
+        // Se ainda houver menus, selecione o primeiro, senão redefina a seleção
+        if (this.menus.length > 0) {
+          this.selectedMenuIndex = 0;
+          this.selectedMenuName = this.menus[0].name;
+        } else {
+          this.selectedMenuIndex = null;
+          this.selectedMenuName = "";
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      } catch (error) {
+        console.error("Erro ao excluir o menu:", error.response ? error.response.data : error.message);
+      }
+    },
   },
   watch: {
     menus: {
@@ -525,8 +587,6 @@ export default {
   },
 };
 </script>
-
-
 
 
 <style lang="scss" scoped>
@@ -600,5 +660,13 @@ export default {
 .btn-add-item,
 .opening-hours {
   cursor: pointer;
+}
+.alinhado-direita{
+  align-items: right !important;
+  align-content: right !important;
+}
+.excluir{
+color: red !important;
+text-decoration: underline;
 }
 </style>

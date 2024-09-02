@@ -171,7 +171,7 @@ export default {
         this.$emit('saveOpeningHours', this.openingData);
         this.$emit('closeModal');
       } catch (error) {
-        const apiErrorMessage = error.response?.data?.errors?.error?.[0] || 'Erro ao salvar horários de funcionamento.';
+        const apiErrorMessage = error.response?.data?.errors?.error?.[0] || 'O cardápio não pode funcionar em um horário/dia em que o estabelecimento estiver fechado.';
         console.log(apiErrorMessage);
         this.message = {
           text: apiErrorMessage,

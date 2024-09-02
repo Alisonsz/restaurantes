@@ -29,7 +29,7 @@
           </div>
           <div class="col-6 create-new text-end">
             <span class="mb-0 pb-0 btn-round input-base" v-for="(menu, i) in category.menus" :key="i">{{ menu.name }}</span>
-            <button class="btn btn-round edit-button" @click="editCategory(index)">
+            <button class="btn btn-round edit-button input-base" @click="editCategory(index)">
               <span class="edit-data"></span>
               <span class="text">Editar</span>
             </button>
@@ -140,13 +140,14 @@ export default {
 }
 
 .table-data .input-base {
-  background-color: $light-blue;
+
   margin-left: 10px;
-  padding-top: 9px !important;
-  padding-bottom: 9px !important;
+
   white-space: nowrap;
 }
 .edit-button{
   margin-left: 5px;
+
 }
+
 </style>

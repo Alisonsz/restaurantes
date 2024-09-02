@@ -109,11 +109,10 @@
                         </button>
                       </div>
                     </div>
-                    <div v-if="categorySelected" class="mt-4 mb-2 position-relative d-inline-block">
-                 
+                    <div v-if="categorySelected" class="mt-4 mb-2 position-relative">
                       <span class="ml-1">Categoria selecionada:</span>
                       <span class="btn-round input-base edit-button bold-500 ml-1">{{ categorySelected.name }}</span>
-                     <button type="button" @click.stop.prevent="removeCategory" class="btn-remove-category">X</button>
+                      <button type="button" @click.stop.prevent="removeCategory" class="btn-remove-category">X</button>
                     </div>
                   </div>
                 </div>
@@ -182,12 +181,13 @@
 <script>
 import { mapState } from 'vuex';
 import axios from 'axios';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useStore } from 'vuex';
 
 export default {
   props: {
     itemEditData: Object,
+    selectedCategoryId: Number, // Nova prop para pré-selecionar a categoria
   },
   setup(props, { emit }) {
     const store = useStore();
@@ -204,7 +204,7 @@ export default {
     const formattedPrice = ref("");
     const imageName = ref("");
     const fileInput = ref(null);
-    const selectCategory = ref("");
+    const selectCategory = ref(""); // Armazena o ID da categoria
     const selectComplement = ref("");
     const categorySelected = ref(null);
     const selectedComplements = ref([]);
@@ -237,15 +237,27 @@ export default {
         imageName.value = product.products_photo ? product.products_photo.split('/').pop() : '';
         initialAvailability.value = product.is_available;
 
+        // Pre-seleciona a categoria do produto
+        selectCategory.value = product.category_product_id;
         categorySelected.value = store.state.formCategories.find(category => category.id === product.category_product_id);
-        selectCategory.value = categorySelected.value;
 
         selectedComplements.value = [...itemData.value.complement];
-
       } catch (error) {
         console.error('Erro ao carregar os dados do produto:', error);
       }
     };
+
+    // Pre-seleciona a categoria passada pela prop no dropdown
+    watch(
+      () => props.selectedCategoryId,
+      (newCategoryId) => {
+        if (newCategoryId) {
+          selectCategory.value = newCategoryId;
+          categorySelected.value = store.state.formCategories.find(category => category.id === newCategoryId);
+        }
+      },
+      { immediate: true } // Executa o watch imediatamente
+    );
 
     onMounted(() => {
       if (props.itemEditData && props.itemEditData.id) {
@@ -295,7 +307,7 @@ export default {
     };
 
     const addCategory = () => {
-      categorySelected.value = selectCategory.value;
+      categorySelected.value = store.state.formCategories.find(category => category.id === selectCategory.value);
     };
 
     const addComplement = () => {
@@ -331,7 +343,7 @@ export default {
       if (complementToRemove && itemData.value.id) {
         try {
           await axios.delete(
-            `https://api.prattuapp.com.br/api/product/${itemData.value.id}/components/${complementToRemove.id}`,
+            `https://api.prattuapp.com.br/api/products/${itemData.value.id}/components/${complementToRemove.id}`,
             {
               data: {
                 restaurant_id: store.state.restaurantId,
@@ -521,6 +533,9 @@ export default {
 };
 </script>
 
+
+
+
 <style lang="scss" scoped>
 .modal-body .container-data {
   min-width: 900px;
@@ -609,29 +624,11 @@ export default {
 }
 
 .btn-remove-image,
+.btn-remove-category,
 .btn-remove-complement {
   position: absolute;
-  top: -4px !important;
-  right: -4px !important;
-  width: 15px !important;
-  height: 15px !important;
-  background-color: red;
-  border: none;
-  color: white;
-  cursor: pointer;
-  font-size: 10px !important;
-  line-height: 1px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 5px !important;
-  z-index: 9999;
-}
-.btn-remove-category, {
-  position: absolute;
-  top: -4px !important;
-  right: -4px !important;
+  top: -4px;
+  right: -4px;
   width: 15px !important;
   height: 15px !important;
   background-color: red;
