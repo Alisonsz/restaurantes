@@ -56,7 +56,7 @@ export default {
     const token = computed(() => store.state.token);
 
     const searchProduct = async () => {
-      if (productTerm.value.length < 2) {
+      if (productTerm.value.length < 0) {
         searchProducts.value = [];
         return;
       }

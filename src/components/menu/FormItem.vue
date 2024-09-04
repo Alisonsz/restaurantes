@@ -12,7 +12,7 @@
           </label>
         </div>
       </div>
-      <hr class="hr-title">
+      <hr class="hr-title" />
       <div class="row">
         <div class="col-lg-6 d-grid">
           <label class="form-label bold-500" for="name">Nome
@@ -74,7 +74,6 @@
           <label for="description" class="bold-500">Descrição do produto
             <span class="char-limit">250 caracteres</span>
           </label>
-          
           <div class="form-floating">
             <textarea class="form-control item-description" placeholder="Deixe um comentário aqui" id="description" v-model="itemData.description" maxlength="250"></textarea>
             <label for="description">Ex: Hamburguer de 200g com pão australiano.</label>
@@ -82,38 +81,36 @@
           <p class="mb-0 required-alert" v-show="invalid.description">*Descrição não pode exceder 250 caracteres</p>
         </div>
       </div>
-
-      <template v-if="itemData.id || !itemData.id">
-        <div class="row mt-1">
-          <div class="col-lg-12 d-grid">
-            <div class="accordion" id="accordionCategory">
-              <div class="accordion-item">
-                <h2 class="accordion-header" id="headingOne">
-                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCategory" aria-expanded="false" aria-controls="collapseCategory">
-                    <span class="bold-500 ml-1">Categoria</span><span>(opcional)</span>
-                  </button>
-                </h2>
-                <div id="collapseCategory" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionCategory">
-                  <div class="accordion-body">
-                    <span class="hint mt-0 pt-0">Selecione a categoria apropriada para o item que você está adicionando ao seu cardápio.</span>
-                    <div class="row mt-0">
-                      <div class="col-lg-9 d-grid">
-                        <select class="form-select" v-model="selectCategory">
-                          <option value="">Selecione uma categoria</option>
-                          <option v-for="(category, index) in formCategories" :key="index" :value="category">{{ category.name }}</option>
-                        </select>
-                      </div>
-                      <div class="col-lg-3 d-grid">
-                        <button @click.prevent="addCategory" type="button" class="btn btn-save" :disabled="!selectCategory">
-                          <span class="add-item add-inline add-black ml-1"></span> Adicionar
-                        </button>
-                      </div>
+      <div class="row mt-1">
+        <div class="col-lg-12 d-grid">
+          <div class="accordion" id="accordionCategory">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingOne">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCategory" aria-expanded="false" aria-controls="collapseCategory">
+                  <span class="bold-500 ml-1">Categorias</span><span>(opcional)</span>
+                </button>
+              </h2>
+              <div id="collapseCategory" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionCategory">
+                <div class="accordion-body">
+                  <span class="hint mt-0 pt-0">Selecione as categorias apropriadas para o item que você está adicionando ao seu cardápio.</span>
+                  <div class="row mt-0">
+                    <div class="col-lg-9 d-grid">
+                      <select class="form-select" v-model="selectCategory">
+                        <option value="">Selecione uma categoria</option>
+                        <option v-for="(category, index) in formCategories" :key="index" :value="category">{{ category.name }}</option>
+                      </select>
                     </div>
-                    <div v-if="categorySelected" class="mt-4 mb-2 position-relative d-inline-block">
-                 
-                      <span class="ml-1">Categoria selecionada:</span>
-                      <span class="btn-round input-base edit-button bold-500 ml-1">{{ categorySelected.name }}</span>
-                     <button type="button" @click.stop.prevent="removeCategory" class="btn-remove-category">X</button>
+                    <div class="col-lg-3 d-grid">
+                      <button @click.prevent="addCategory" type="button" class="btn btn-save" :disabled="!selectCategory">
+                        <span class="add-item add-inline add-black ml-1"></span> Adicionar
+                      </button>
+                    </div>
+                  </div>
+                  <div v-if="selectedCategories.length" class="mt-4 mb-2 position-relative">
+                    <span class="ml-1">Categorias selecionadas:</span>
+                    <div v-for="(category, index) in selectedCategories" :key="index" class="position-relative d-inline-block">
+                      <span class="btn-round input-base edit-button bold-500 ml-1">{{ category.name }}</span>
+                      <button type="button" @click.stop.prevent="removeCategory(index)" class="btn-remove-category">X</button>
                     </div>
                   </div>
                 </div>
@@ -121,38 +118,37 @@
             </div>
           </div>
         </div>
-
-        <div class="row mt-4">
-          <div class="col-lg-12 d-grid">
-            <div class="accordion" id="accordionComplement">
-              <div class="accordion-item">
-                <h2 class="accordion-header" id="headingOne">
-                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseComplement" aria-expanded="false" aria-controls="collapseComplement">
-                    <span class="bold-500 ml-1">Complemento</span> <span>(opcional)</span>
-                  </button>
-                </h2>
-                <div id="collapseComplement" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionComplement">
-                  <div class="accordion-body">
-                    <span class="hint mt-0 pt-0">Selecione o complemento apropriado para o item que você está adicionando ao seu cardápio.</span>
-                    <div class="row mt-0">
-                      <div class="col-lg-9 d-grid">
-                        <select class="form-select" v-model="selectComplement">
-                          <option value="">Adicionar complemento</option>
-                          <option v-for="(complement, index) in formComplements" :key="index" :value="complement">{{ complement.name }}</option>
-                        </select>
-                      </div>
-                      <div class="col-lg-3 d-grid">
-                        <button @click.prevent="addComplement" type="button" class="btn btn-save" :disabled="!selectComplement">
-                          <span class="add-item add-inline add-black ml-1"></span> Adicionar
-                        </button>
-                      </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-lg-12 d-grid">
+          <div class="accordion" id="accordionComplement">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingOne">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseComplement" aria-expanded="false" aria-controls="collapseComplement">
+                  <span class="bold-500 ml-1">Complementos</span> <span>(opcional)</span>
+                </button>
+              </h2>
+              <div id="collapseComplement" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionComplement">
+                <div class="accordion-body">
+                  <span class="hint mt-0 pt-0">Selecione os complementos apropriados para o item que você está adicionando ao seu cardápio.</span>
+                  <div class="row mt-0">
+                    <div class="col-lg-9 d-grid">
+                      <select class="form-select" v-model="selectComplement">
+                        <option value="">Adicionar complemento</option>
+                        <option v-for="(complement, index) in formComplements" :key="index" :value="complement">{{ complement.name }}</option>
+                      </select>
                     </div>
-                    <div v-if="selectedComplements.length" class="mt-4 mb-2">
-                      <span class="ml-1">Complementos adicionados:</span>
-                      <div v-for="(complement, index) in selectedComplements" :key="index" class="position-relative d-inline-block">
-                        <span class="btn-round input-base edit-button bold-500 ml-1">{{ complement.name }}</span>
-                        <button type="button" @click.stop.prevent="removeComplement(index)" class="btn-remove-complement">X</button>
-                      </div>
+                    <div class="col-lg-3 d-grid">
+                      <button @click.prevent="addComplement" type="button" class="btn btn-save" :disabled="!selectComplement">
+                        <span class="add-item add-inline add-black ml-1"></span> Adicionar
+                      </button>
+                    </div>
+                  </div>
+                  <div v-if="selectedComplements.length" class="mt-4 mb-2">
+                    <span class="ml-1">Complementos adicionados:</span>
+                    <div v-for="(complement, index) in selectedComplements" :key="index" class="position-relative d-inline-block">
+                      <span class="btn-round input-base edit-button bold-500 ml-1">{{ complement.name }}</span>
+                      <button type="button" @click.stop.prevent="removeComplement(index)" class="btn-remove-complement">X</button>
                     </div>
                   </div>
                 </div>
@@ -160,29 +156,22 @@
             </div>
           </div>
         </div>
-      </template>
+      </div>
     </form>
     <div class="row mt-4 justify-content-end">
       <div class="col-lg-2 d-grid gap-2" v-if="itemData.id">
         <button @click.prevent="deleteProduct" type="button" class="btn btn-danger">Excluir</button>
       </div>
-     
       <div class="col-lg-2 d-grid gap-2">
-        <button 
-          @click.prevent="save" 
-          type="button" 
-          class="btn btn-save">
-          Salvar
-        </button>
+        <button @click.prevent="save" type="button" class="btn btn-save">Salvar</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex';
-import axios from 'axios';
 import { ref, onMounted } from 'vue';
+import axios from 'axios';
 import { useStore } from 'vuex';
 
 export default {
@@ -206,7 +195,7 @@ export default {
     const fileInput = ref(null);
     const selectCategory = ref("");
     const selectComplement = ref("");
-    const categorySelected = ref(null);
+    const selectedCategories = ref([]);
     const selectedComplements = ref([]);
     const invalid = ref({
       name: false,
@@ -231,17 +220,15 @@ export default {
           image: product.products_photo,
           description: product.description,
           active: product.is_available,
-          complement: product.components.map((comp) => comp),
+          complement: Array.isArray(product.components) ? product.components.map((comp) => comp) : [],
         };
         formattedPrice.value = formatCurrency(product.price);
         imageName.value = product.products_photo ? product.products_photo.split('/').pop() : '';
         initialAvailability.value = product.is_available;
-
-        categorySelected.value = store.state.formCategories.find(category => category.id === product.category_product_id);
-        selectCategory.value = categorySelected.value;
-
+        selectedCategories.value = Array.isArray(product.category_product) && product.category_product.length
+          ? product.category_product.map(category => category)
+          : [];
         selectedComplements.value = [...itemData.value.complement];
-
       } catch (error) {
         console.error('Erro ao carregar os dados do produto:', error);
       }
@@ -295,7 +282,9 @@ export default {
     };
 
     const addCategory = () => {
-      categorySelected.value = selectCategory.value;
+      if (selectCategory.value && !selectedCategories.value.includes(selectCategory.value)) {
+        selectedCategories.value.push(selectCategory.value);
+      }
     };
 
     const addComplement = () => {
@@ -304,22 +293,23 @@ export default {
       }
     };
 
-    const removeCategory = async () => {
-      if (categorySelected.value && itemData.value.id) {
+    const removeCategory = async (index) => {
+      const categoryToRemove = selectedCategories.value[index];
+      if (categoryToRemove && itemData.value.id) {
         try {
-          await axios.delete(
-            `https://api.prattuapp.com.br/api/products/${itemData.value.id}/remove-category`,
-            {
-              data: {
-                restaurant_id: store.state.restaurantId,
-              },
-              headers: {
-                Authorization: `Bearer ${store.state.token}`,
-              },
-            }
-          );
-          categorySelected.value = null;
-          selectCategory.value = "";
+          // Enviar o ID da categoria a ser removida na requisição DELETE
+          await axios.delete(`https://api.prattuapp.com.br/api/products/${itemData.value.id}/remove-categories`, {
+            data: {
+              restaurant_id: store.state.restaurantId,
+              category_ids: [categoryToRemove.id], // Enviar o array de categorias, mesmo que seja uma só
+            },
+            headers: {
+              Authorization: `Bearer ${store.state.token}`,
+            },
+          });
+          
+          // Remover da lista na UI
+          selectedCategories.value.splice(index, 1);
         } catch (error) {
           console.error('Erro ao remover a categoria:', error);
         }
@@ -349,11 +339,15 @@ export default {
     };
 
     const associateCategory = async () => {
-      if (categorySelected.value && itemData.value.id) {
+      if (selectedCategories.value.length && itemData.value.id) {
         try {
+          const categoryIds = selectedCategories.value.map(category => category.id);
           await axios.post(
-            `https://api.prattuapp.com.br/api/category/${categorySelected.value.id}/add-product`,
-            { product_id: itemData.value.id },
+            `https://api.prattuapp.com.br/api/category/add-product`,
+            {
+              product_id: itemData.value.id,
+              categories: categoryIds,
+            },
             {
               headers: {
                 Authorization: `Bearer ${store.state.token}`,
@@ -361,7 +355,7 @@ export default {
             }
           );
         } catch (error) {
-          console.error('Erro ao associar a categoria:', error);
+          console.error('Erro ao associar categorias:', error);
         }
       }
     };
@@ -382,7 +376,7 @@ export default {
             );
           }
         } catch (error) {
-          console.error('Erro ao associar o complemento:', error);
+          console.error('Erro ao associar complementos:', error);
         }
       }
     };
@@ -493,7 +487,7 @@ export default {
       fileInput,
       selectCategory,
       selectComplement,
-      categorySelected,
+      selectedCategories,
       selectedComplements,
       invalid,
       onFileChange,
@@ -513,13 +507,16 @@ export default {
     };
   },
   computed: {
-    ...mapState({
-      formCategories: (state) => state.formCategories,
-      formComplements: (state) => state.formComplements,
-    }),
+    formCategories() {
+      return this.$store.state.formCategories;
+    },
+    formComplements() {
+      return this.$store.state.formComplements;
+    },
   },
 };
 </script>
+
 
 <style lang="scss" scoped>
 .modal-body .container-data {
@@ -612,7 +609,7 @@ export default {
 .btn-remove-complement {
   position: absolute;
   top: -4px !important;
-  right: -4px !important;
+  right: 5px !important;
   width: 15px !important;
   height: 15px !important;
   background-color: red;
@@ -628,10 +625,11 @@ export default {
   padding: 5px !important;
   z-index: 9999;
 }
-.btn-remove-category, {
+.btn-remove-category {
   position: absolute;
+ 
   top: -4px !important;
-  right: -4px !important;
+  right: 5px !important;
   width: 15px !important;
   height: 15px !important;
   background-color: red;
@@ -646,6 +644,7 @@ export default {
   justify-content: center;
   padding: 5px !important;
   z-index: 9999;
+  
 }
 
 .d-grid {

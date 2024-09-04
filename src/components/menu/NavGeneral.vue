@@ -669,4 +669,12 @@ export default {
 color: red !important;
 text-decoration: underline;
 }
+.btn-outline-success{
+ border-color: #18E21C !important;
+ color: black !important;
+ 
+}
+.btn-outline-success:hover{
+  background-color: white !important;
+}
 </style>

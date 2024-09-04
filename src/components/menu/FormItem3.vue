@@ -12,7 +12,7 @@
           </label>
         </div>
       </div>
-      <hr class="hr-title">
+      <hr class="hr-title" />
       <div class="row">
         <div class="col-lg-6 d-grid">
           <label class="form-label bold-500" for="name">Nome
@@ -74,7 +74,6 @@
           <label for="description" class="bold-500">Descrição do produto
             <span class="char-limit">250 caracteres</span>
           </label>
-          
           <div class="form-floating">
             <textarea class="form-control item-description" placeholder="Deixe um comentário aqui" id="description" v-model="itemData.description" maxlength="250"></textarea>
             <label for="description">Ex: Hamburguer de 200g com pão australiano.</label>
@@ -82,37 +81,37 @@
           <p class="mb-0 required-alert" v-show="invalid.description">*Descrição não pode exceder 250 caracteres</p>
         </div>
       </div>
-
-      <template v-if="itemData.id || !itemData.id">
-        <div class="row mt-1">
-          <div class="col-lg-12 d-grid">
-            <div class="accordion" id="accordionCategory">
-              <div class="accordion-item">
-                <h2 class="accordion-header" id="headingOne">
-                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCategory" aria-expanded="false" aria-controls="collapseCategory">
-                    <span class="bold-500 ml-1">Categoria</span><span>(opcional)</span>
-                  </button>
-                </h2>
-                <div id="collapseCategory" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionCategory">
-                  <div class="accordion-body">
-                    <span class="hint mt-0 pt-0">Selecione a categoria apropriada para o item que você está adicionando ao seu cardápio.</span>
-                    <div class="row mt-0">
-                      <div class="col-lg-9 d-grid">
-                        <select class="form-select" v-model="selectCategory">
-                          <option value="">Selecione uma categoria</option>
-                          <option v-for="(category, index) in formCategories" :key="index" :value="category">{{ category.name }}</option>
-                        </select>
-                      </div>
-                      <div class="col-lg-3 d-grid">
-                        <button @click.prevent="addCategory" type="button" class="btn btn-save" :disabled="!selectCategory">
-                          <span class="add-item add-inline add-black ml-1"></span> Adicionar
-                        </button>
-                      </div>
+      <!-- Categoria -->
+      <div class="row mt-1">
+        <div class="col-lg-12 d-grid">
+          <div class="accordion" id="accordionCategory">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingOne">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCategory" aria-expanded="false" aria-controls="collapseCategory">
+                  <span class="bold-500 ml-1">Categorias</span><span>(opcional)</span>
+                </button>
+              </h2>
+              <div id="collapseCategory" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionCategory">
+                <div class="accordion-body">
+                  <span class="hint mt-0 pt-0">Selecione as categorias apropriadas para o item que você está adicionando ao seu cardápio.</span>
+                  <div class="row mt-0">
+                    <div class="col-lg-9 d-grid">
+                      <select class="form-select" v-model="selectCategory">
+                        <option value="">Selecione uma categoria</option>
+                        <option v-for="(category, index) in formCategories" :key="index" :value="category">{{ category.name }}</option>
+                      </select>
                     </div>
-                    <div v-if="categorySelected" class="mt-4 mb-2 position-relative">
-                      <span class="ml-1">Categoria selecionada:</span>
-                      <span class="btn-round input-base edit-button bold-500 ml-1">{{ categorySelected.name }}</span>
-                      <button type="button" @click.stop.prevent="removeCategory" class="btn-remove-category">X</button>
+                    <div class="col-lg-3 d-grid">
+                      <button @click.prevent="addCategory" type="button" class="btn btn-save" :disabled="!selectCategory">
+                        <span class="add-item add-inline add-black ml-1"></span> Adicionar
+                      </button>
+                    </div>
+                  </div>
+                  <div v-if="selectedCategories.length" class="mt-4 mb-2 position-relative">
+                    <span class="ml-1">Categorias selecionadas:</span>
+                    <div v-for="(category, index) in selectedCategories" :key="index" class="position-relative d-inline-block">
+                      <span class="btn-round input-base edit-button bold-500 ml-1">{{ category.name }}</span>
+                      <button type="button" @click.stop.prevent="removeCategory(index)" class="btn-remove-category">X</button>
                     </div>
                   </div>
                 </div>
@@ -120,38 +119,38 @@
             </div>
           </div>
         </div>
-
-        <div class="row mt-4">
-          <div class="col-lg-12 d-grid">
-            <div class="accordion" id="accordionComplement">
-              <div class="accordion-item">
-                <h2 class="accordion-header" id="headingOne">
-                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseComplement" aria-expanded="false" aria-controls="collapseComplement">
-                    <span class="bold-500 ml-1">Complemento</span> <span>(opcional)</span>
-                  </button>
-                </h2>
-                <div id="collapseComplement" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionComplement">
-                  <div class="accordion-body">
-                    <span class="hint mt-0 pt-0">Selecione o complemento apropriado para o item que você está adicionando ao seu cardápio.</span>
-                    <div class="row mt-0">
-                      <div class="col-lg-9 d-grid">
-                        <select class="form-select" v-model="selectComplement">
-                          <option value="">Adicionar complemento</option>
-                          <option v-for="(complement, index) in formComplements" :key="index" :value="complement">{{ complement.name }}</option>
-                        </select>
-                      </div>
-                      <div class="col-lg-3 d-grid">
-                        <button @click.prevent="addComplement" type="button" class="btn btn-save" :disabled="!selectComplement">
-                          <span class="add-item add-inline add-black ml-1"></span> Adicionar
-                        </button>
-                      </div>
+      </div>
+      <!-- Complemento -->
+      <div class="row mt-4">
+        <div class="col-lg-12 d-grid">
+          <div class="accordion" id="accordionComplement">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingOne">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseComplement" aria-expanded="false" aria-controls="collapseComplement">
+                  <span class="bold-500 ml-1">Complementos</span> <span>(opcional)</span>
+                </button>
+              </h2>
+              <div id="collapseComplement" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionComplement">
+                <div class="accordion-body">
+                  <span class="hint mt-0 pt-0">Selecione os complementos apropriados para o item que você está adicionando ao seu cardápio.</span>
+                  <div class="row mt-0">
+                    <div class="col-lg-9 d-grid">
+                      <select class="form-select" v-model="selectComplement">
+                        <option value="">Adicionar complemento</option>
+                        <option v-for="(complement, index) in formComplements" :key="index" :value="complement">{{ complement.name }}</option>
+                      </select>
                     </div>
-                    <div v-if="selectedComplements.length" class="mt-4 mb-2">
-                      <span class="ml-1">Complementos adicionados:</span>
-                      <div v-for="(complement, index) in selectedComplements" :key="index" class="position-relative d-inline-block">
-                        <span class="btn-round input-base edit-button bold-500 ml-1">{{ complement.name }}</span>
-                        <button type="button" @click.stop.prevent="removeComplement(index)" class="btn-remove-complement">X</button>
-                      </div>
+                    <div class="col-lg-3 d-grid">
+                      <button @click.prevent="addComplement" type="button" class="btn btn-save" :disabled="!selectComplement">
+                        <span class="add-item add-inline add-black ml-1"></span> Adicionar
+                      </button>
+                    </div>
+                  </div>
+                  <div v-if="selectedComplements.length" class="mt-4 mb-2">
+                    <span class="ml-1">Complementos adicionados:</span>
+                    <div v-for="(complement, index) in selectedComplements" :key="index" class="position-relative d-inline-block">
+                      <span class="btn-round input-base edit-button bold-500 ml-1">{{ complement.name }}</span>
+                      <button type="button" @click.stop.prevent="removeComplement(index)" class="btn-remove-complement">X</button>
                     </div>
                   </div>
                 </div>
@@ -159,35 +158,28 @@
             </div>
           </div>
         </div>
-      </template>
+      </div>
     </form>
     <div class="row mt-4 justify-content-end">
       <div class="col-lg-2 d-grid gap-2" v-if="itemData.id">
         <button @click.prevent="deleteProduct" type="button" class="btn btn-danger">Excluir</button>
       </div>
-     
       <div class="col-lg-2 d-grid gap-2">
-        <button 
-          @click.prevent="save" 
-          type="button" 
-          class="btn btn-save">
-          Salvar
-        </button>
+        <button @click.prevent="save" type="button" class="btn btn-save">Salvar</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex';
-import axios from 'axios';
 import { ref, onMounted, watch } from 'vue';
 import { useStore } from 'vuex';
+import axios from 'axios';
 
 export default {
   props: {
     itemEditData: Object,
-    selectedCategoryId: Number, // Nova prop para pré-selecionar a categoria
+    selectedCategoryId: Number, // Pre-selecionar a categoria
   },
   setup(props, { emit }) {
     const store = useStore();
@@ -204,9 +196,9 @@ export default {
     const formattedPrice = ref("");
     const imageName = ref("");
     const fileInput = ref(null);
-    const selectCategory = ref(""); // Armazena o ID da categoria
+    const selectCategory = ref(""); // Armazena a categoria selecionada
     const selectComplement = ref("");
-    const categorySelected = ref(null);
+    const selectedCategories = ref([]); // Várias categorias
     const selectedComplements = ref([]);
     const invalid = ref({
       name: false,
@@ -215,12 +207,11 @@ export default {
     });
     const imageRemoved = ref(false);
 
+    // Carregar os dados do produto
     const loadProductData = async (productId) => {
       try {
         const response = await axios.get(`https://api.prattuapp.com.br/api/products/${productId}`, {
-          headers: {
-            Authorization: `Bearer ${store.state.token}`,
-          },
+          headers: { Authorization: `Bearer ${store.state.token}` },
         });
 
         const product = response.data;
@@ -238,9 +229,9 @@ export default {
         initialAvailability.value = product.is_available;
 
         // Pre-seleciona a categoria do produto
-        selectCategory.value = product.category_product_id;
-        categorySelected.value = store.state.formCategories.find(category => category.id === product.category_product_id);
-
+        selectedCategories.value = Array.isArray(product.category_product) && product.category_product.length
+          ? product.category_product.map(category => category)
+          : [];
         selectedComplements.value = [...itemData.value.complement];
       } catch (error) {
         console.error('Erro ao carregar os dados do produto:', error);
@@ -253,7 +244,7 @@ export default {
       (newCategoryId) => {
         if (newCategoryId) {
           selectCategory.value = newCategoryId;
-          categorySelected.value = store.state.formCategories.find(category => category.id === newCategoryId);
+          selectedCategories.value.push(store.state.formCategories.find(category => category.id === newCategoryId));
         }
       },
       { immediate: true } // Executa o watch imediatamente
@@ -265,12 +256,9 @@ export default {
       }
     });
 
+    // Formatação de preço
     const formatCurrency = (value) => {
-      if (value === null || value === undefined) return '0,00';
-      return parseFloat(value).toLocaleString('pt-BR', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      });
+      return parseFloat(value).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     };
 
     const parsePrice = () => {
@@ -285,6 +273,7 @@ export default {
       formattedPrice.value = formatCurrency(value);
     };
 
+    // Funções de imagem
     const onFileChange = (e) => {
       const files = e.target.files || e.dataTransfer.files;
       if (!files.length) return;
@@ -306,8 +295,11 @@ export default {
       imageName.value = "";
     };
 
+    // Funções para categorias e complementos
     const addCategory = () => {
-      categorySelected.value = store.state.formCategories.find(category => category.id === selectCategory.value);
+      if (selectCategory.value && !selectedCategories.value.includes(selectCategory.value)) {
+        selectedCategories.value.push(selectCategory.value);
+      }
     };
 
     const addComplement = () => {
@@ -316,89 +308,15 @@ export default {
       }
     };
 
-    const removeCategory = async () => {
-      if (categorySelected.value && itemData.value.id) {
-        try {
-          await axios.delete(
-            `https://api.prattuapp.com.br/api/products/${itemData.value.id}/remove-category`,
-            {
-              data: {
-                restaurant_id: store.state.restaurantId,
-              },
-              headers: {
-                Authorization: `Bearer ${store.state.token}`,
-              },
-            }
-          );
-          categorySelected.value = null;
-          selectCategory.value = "";
-        } catch (error) {
-          console.error('Erro ao remover a categoria:', error);
-        }
-      }
+    const removeCategory = (index) => {
+      selectedCategories.value.splice(index, 1);
     };
 
-    const removeComplement = async (index) => {
-      const complementToRemove = selectedComplements.value[index];
-      if (complementToRemove && itemData.value.id) {
-        try {
-          await axios.delete(
-            `https://api.prattuapp.com.br/api/products/${itemData.value.id}/components/${complementToRemove.id}`,
-            {
-              data: {
-                restaurant_id: store.state.restaurantId,
-              },
-              headers: {
-                Authorization: `Bearer ${store.state.token}`,
-              },
-            }
-          );
-          selectedComplements.value.splice(index, 1);
-        } catch (error) {
-          console.error('Erro ao remover o complemento:', error);
-        }
-      }
+    const removeComplement = (index) => {
+      selectedComplements.value.splice(index, 1);
     };
 
-    const associateCategory = async () => {
-      if (categorySelected.value && itemData.value.id) {
-        try {
-          await axios.post(
-            `https://api.prattuapp.com.br/api/category/${categorySelected.value.id}/add-product`,
-            { product_id: itemData.value.id },
-            {
-              headers: {
-                Authorization: `Bearer ${store.state.token}`,
-              },
-            }
-          );
-        } catch (error) {
-          console.error('Erro ao associar a categoria:', error);
-        }
-      }
-    };
-
-    const associateComplement = async () => {
-      if (selectedComplements.value.length && itemData.value.id) {
-        try {
-          for (const complement of selectedComplements.value) {
-            await axios.post(
-              `https://api.prattuapp.com.br/api/components/${complement.id}/products/${itemData.value.id}/associate`,
-              { restaurant_id: store.state.restaurantId },
-              {
-                headers: {
-                  Authorization: `Bearer ${store.state.token}`,
-                  'Content-Type': 'application/json',
-                },
-              }
-            );
-          }
-        } catch (error) {
-          console.error('Erro ao associar o complemento:', error);
-        }
-      }
-    };
-
+    // Validação de formulário
     const valid = (data) => {
       let isValid = true;
       invalid.value.name = !data.name;
@@ -408,6 +326,7 @@ export default {
       return isValid;
     };
 
+    // Salvar o produto
     const save = async () => {
       if (!valid(itemData.value)) return;
 
@@ -428,35 +347,24 @@ export default {
           response = await axios.post(
             `https://api.prattuapp.com.br/api/restaurants/products/update/${itemData.value.id}`,
             formData,
-            {
-              headers: {
-                Authorization: `Bearer ${store.state.token}`,
-                'Content-Type': 'multipart/form-data',
-              },
-            }
+            { headers: { Authorization: `Bearer ${store.state.token}`, 'Content-Type': 'multipart/form-data' } }
           );
         } else {
           response = await axios.post(
             'https://api.prattuapp.com.br/api/restaurants/products/create',
             formData,
-            {
-              headers: {
-                Authorization: `Bearer ${store.state.token}`,
-                'Content-Type': 'multipart/form-data',
-              },
-            }
+            { headers: { Authorization: `Bearer ${store.state.token}`, 'Content-Type': 'multipart/form-data' } }
           );
           itemData.value.id = response.data.id;
         }
 
         if (imageRemoved.value && itemData.value.id) {
           await axios.delete(`https://api.prattuapp.com.br/api/products/${itemData.value.id}/remove-photo`, {
-            headers: {
-              Authorization: `Bearer ${store.state.token}`,
-            },
+            headers: { Authorization: `Bearer ${store.state.token}` },
           });
         }
 
+        // Associa categoria e complementos
         await associateCategory();
         await associateComplement();
 
@@ -464,12 +372,7 @@ export default {
           await axios.patch(
             `https://api.prattuapp.com.br/api/products/${itemData.value.id}/availability`,
             { is_available: itemData.value.active },
-            {
-              headers: {
-                Authorization: `Bearer ${store.state.token}`,
-                'Content-Type': 'application/json',
-              },
-            }
+            { headers: { Authorization: `Bearer ${store.state.token}`, 'Content-Type': 'application/json' } }
           );
         }
 
@@ -480,12 +383,41 @@ export default {
       }
     };
 
+    const associateCategory = async () => {
+      if (selectedCategories.value.length && itemData.value.id) {
+        try {
+          const categoryIds = selectedCategories.value.map(category => category.id);
+          await axios.post(
+            `https://api.prattuapp.com.br/api/category/add-product`,
+            { product_id: itemData.value.id, categories: categoryIds },
+            { headers: { Authorization: `Bearer ${store.state.token}` } }
+          );
+        } catch (error) {
+          console.error('Erro ao associar categorias:', error);
+        }
+      }
+    };
+
+    const associateComplement = async () => {
+      if (selectedComplements.value.length && itemData.value.id) {
+        try {
+          for (const complement of selectedComplements.value) {
+            await axios.post(
+              `https://api.prattuapp.com.br/api/components/${complement.id}/products/${itemData.value.id}/associate`,
+              { restaurant_id: store.state.restaurantId },
+              { headers: { Authorization: `Bearer ${store.state.token}`, 'Content-Type': 'application/json' } }
+            );
+          }
+        } catch (error) {
+          console.error('Erro ao associar complementos:', error);
+        }
+      }
+    };
+
     const deleteProduct = async () => {
       try {
         await axios.delete(`https://api.prattuapp.com.br/api/products/${itemData.value.id}`, {
-          headers: {
-            Authorization: `Bearer ${store.state.token}`,
-          },
+          headers: { Authorization: `Bearer ${store.state.token}` },
         });
         store.dispatch('fetchMenusAndItems');
         emit('close-modal');
@@ -505,7 +437,7 @@ export default {
       fileInput,
       selectCategory,
       selectComplement,
-      categorySelected,
+      selectedCategories,
       selectedComplements,
       invalid,
       onFileChange,
@@ -525,18 +457,18 @@ export default {
     };
   },
   computed: {
-    ...mapState({
-      formCategories: (state) => state.formCategories,
-      formComplements: (state) => state.formComplements,
-    }),
+    formCategories() {
+      return this.$store.state.formCategories;
+    },
+    formComplements() {
+      return this.$store.state.formComplements;
+    },
   },
 };
 </script>
 
-
-
-
-<style lang="scss" scoped>
+<style scoped lang="scss">
+/* Estilos copiados do formulário 2 para manter a consistência */
 .modal-body .container-data {
   min-width: 900px;
   padding: 0 !important;
@@ -589,38 +521,8 @@ export default {
   padding-top: 0;
 }
 
-/* Nova regra de estilo para alinhamento dos botões sempre à direita */
 .row.mt-4.justify-content-end {
   justify-content: flex-end !important;
-}
-
-.ellipsis {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background-color: #000;
-  animation: ellipsis 1s infinite;
-}
-
-.ellipsis:nth-child(2) {
-  animation-delay: 0.2s;
-}
-
-.ellipsis:nth-child(3) {
-  animation-delay: 0.4s;
-}
-
-@keyframes ellipsis {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.5);
-  }
-  100% {
-    transform: scale(1);
-  }
 }
 
 .btn-remove-image,
@@ -628,7 +530,7 @@ export default {
 .btn-remove-complement {
   position: absolute;
   top: -4px;
-  right: -4px;
+  right: 3px;
   width: 15px !important;
   height: 15px !important;
   background-color: red;
@@ -651,11 +553,11 @@ export default {
 
 .char-limit {
   position: absolute;
-  right: 0; /* Alinha à direita do container pai */
-  top: 10px; /* Alinha na parte superior do container pai */
-  color: #6c757d; /* Cor de texto para o limite de caracteres */
-  font-size: 0.7em; /* Tamanho da fonte um pouco menor */
-  margin-right: 20px; /* Espaçamento à direita */
+  right: 0;
+  top: 10px;
+  color: #6c757d;
+  font-size: 0.7em;
+  margin-right: 20px;
   font-weight: 400;
 }
 
@@ -667,9 +569,9 @@ export default {
 
 .inputfile-box {
   p {
-    font-size: 0.85em; /* Ajusta o tamanho da fonte */
-    color: #6c757d; /* Cor do texto */
-    margin: 0; /* Remove margens desnecessárias */
+    font-size: 0.85em;
+    color: #6c757d;
+    margin: 0;
   }
 }
 </style>

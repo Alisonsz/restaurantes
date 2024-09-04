@@ -67,7 +67,7 @@
           </div>
         </div>
       </div>
-
+<!--
       <template v-if="itemData.id">
         <div class="row mt-1">
           <div class="col-lg-12 d-grid">
@@ -140,15 +140,13 @@
             </div>
           </div>
         </div>
-      </template>
+      </template> -->
     </form>
     <div class="row mt-4 justify-content-end">
       <div class="col-lg-2 d-grid gap-2" v-if="itemData.id">
         <button @click.prevent="deleteProduct" type="button" class="btn btn-danger">Excluir</button>
       </div>
-      <div class="col-lg-2 d-grid gap-2">
-        <button @click.prevent="closeModal" type="button" class="btn btn-cancel">Cancelar</button>
-      </div>
+    
       <div class="col-lg-2 d-grid gap-2">
         <button @click.prevent="save" type="button" class="btn btn-save">Salvar</button>
       </div>

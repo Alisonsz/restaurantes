@@ -37,7 +37,7 @@
             class="btn btn-save mt-2"
             @click="saveNewCategory"
           >
-            Salvar nova categoria
+            Salvar
           </button>
           <p class="mb-0 required-alert" v-show="invalid.categoryName">
             *Campo obrigatório
@@ -67,7 +67,7 @@
                 role="button"
                 class="add-item add-right add-on"
                 @click="addCategory(category); categoryTerm = ''"
-              >+</span>
+              ></span>
             </li>
           </ul>
           <button
@@ -75,7 +75,7 @@
             class="btn btn-save mt-2"
             @click="saveExistingCategory"
           >
-            Salvar categoria existente
+            Salvar 
           </button>
         </div>
 
@@ -266,7 +266,7 @@ export default {
               },
             }
           );
-
+          await this.store.dispatch('fetchMenusAndItems');
           console.log('Resposta da API:', response.data);
           this.$emit('closeModal');
         } catch (error) {

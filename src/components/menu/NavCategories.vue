@@ -73,18 +73,30 @@ export default {
   computed: {
     ...mapState(['menus']),
     allCategories() {
-      const categories = this.menus.flatMap(menu => menu.categories);
-      const sortedCategories = categories
-        .map(category => ({
-          id: category.id,
-          name: category.name,
-          menus: this.menus
-            .filter(menu => menu.categories.some(cat => cat.id === category.id))
-            .map(menu => ({ id: menu.id, name: menu.name })),
-        }))
-        .sort((a, b) => b.id - a.id); 
-  
-      return sortedCategories;
+      // Use um objeto para armazenar categorias únicas por ID
+      const categoryMap = {};
+
+      // Itera sobre os menus para gerar a lista de categorias
+      this.menus.forEach(menu => {
+        menu.categories.forEach(category => {
+          if (!categoryMap[category.id]) {
+            // Adiciona a categoria se ainda não existe no objeto
+            categoryMap[category.id] = {
+              id: category.id,
+              name: category.name,
+              menus: this.menus
+                .filter(m => m.categories.some(cat => cat.id === category.id))
+                .map(m => ({ id: m.id, name: m.name })),
+            };
+          }
+        });
+      });
+
+      // Converte o objeto de categorias únicas de volta para um array
+      const uniqueCategories = Object.values(categoryMap);
+
+      // Ordena as categorias por ID, do mais recente para o mais antigo
+      return uniqueCategories.sort((a, b) => b.id - a.id);
     },
     allMenus() {
       return this.menus.map(menu => ({
@@ -125,6 +137,7 @@ export default {
   },
 };
 </script>
+
 
 <style lang="scss" scoped>
 .create-new {

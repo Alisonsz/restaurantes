@@ -55,7 +55,9 @@
                 <input
                   type="checkbox"
                   v-model="complement.is_available"
-                  @change="toggleStatus(index)"
+                 
+                  @change="toggleStatus(index, $event)"
+
                 />
                 <span class="slider round"></span>
               </label>
@@ -111,6 +113,7 @@ export default {
       complementTerm: '',
       orderBy: '',
       complementList: [],
+      loadingToggles: [],
     };
   },
   computed: {
@@ -206,30 +209,46 @@ export default {
       this.selectItem(index); // Seleciona os dados para edição
       this.toggleModal(true, false); // Abre o modal e não reseta os dados (false)
     },
-    async toggleStatus(index) {
-      try {
-        const complement = this.complementList[index];
-        const newStatus = !complement.is_available;
+    async toggleStatus(index, event) {
+  // Marcar o estado de carregamento como verdadeiro
+  this.loadingToggles[index] = true;
 
-        await axios.patch(
-          `https://api.prattuapp.com.br/api/components/${complement.id}`,
-          { is_available: newStatus },
-          {
-            headers: {
-              Authorization: `Bearer ${this.token}`,
-            },
-          }
-        );
+  try {
+    const complement = this.complementList[index];
+    const newStatus = event.target.checked; // Pega o valor diretamente do evento
 
-        // Atualiza o estado local após a resposta do backend
-        this.complementList[index] = {
-          ...complement,
-          is_available: newStatus,
-        };
-      } catch (error) {
-        console.error('Erro ao atualizar o status do complemento:', error);
+    // Enviar uma requisição POST para atualizar o status no backend
+    const response = await axios.post(
+      `https://api.prattuapp.com.br/api/components/${complement.id}/toggle`,
+      { is_available: newStatus }, 
+      {
+        headers: {
+          'Authorization': `Bearer ${this.token}`,
+          'Content-Type': 'application/json'
+        }
       }
-    },
+    );
+
+    // Se a requisição for bem-sucedida, atualize o status localmente
+    if (response.status === 200) {
+      this.complementList[index].is_available = newStatus; // Atualiza o status apenas após a resposta
+    } else {
+      // Reverte o estado do checkbox em caso de erro
+      event.target.checked = !newStatus;
+    }
+  } catch (error) {
+    console.error("Error updating status:", error.response ? error.response.data : error.message);
+
+    // Reverte o estado do checkbox em caso de erro
+    event.target.checked = !newStatus;
+  } finally {
+    // Remover o estado de carregamento
+    this.loadingToggles[index] = false;
+  }
+}
+
+
+,
   },
   created() {
     this.fetchComponents(); // Chama a função para buscar os componentes na criação do componente
