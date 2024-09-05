@@ -37,7 +37,7 @@
         </button>
       </div>
     </div>
-
+    <hr/>
     <!-- Botões de Criação de Novo Menu e Categoria -->
     <div class="row mb-3">
       <div class="col-12 create-new">
@@ -194,12 +194,13 @@
       <ModalFormMenu
         :show="showModalFormMenu"
         @close="showModalFormMenu = false"
+        @save-menu-name="onMenuSave"
       >
         <template #header>Novo cardápio</template>
         <template #body>
           <FormMenu
             @close-modal="showModalFormMenu = false"
-            @save-menu-name="saveMenuName"
+            @save-menu-name="onMenuSave"
           />
         </template>
       </ModalFormMenu>
@@ -346,41 +347,51 @@ export default {
       searchTerm: "",
       selectedMenuName: "",
       textOpeningHours: "Definir horário disponível",
-      itemData: {},
+      itemData: {}, // Dados do item que será editado ou adicionado
       showModalFormMenu: false,
       showModalFormCategory: false,
       showModalFormAddItem: false,
       showModalFormSearchItem: false,
       showModalFormItem: false,
       showModalFormOpeningHours: false,
-      showDeleteMenuModal: false, // Modal de exclusão
-      sortableCategories: [] // Variável que será usada no draggable
+      showDeleteMenuModal: false,
+      sortableCategories: [],
     };
   },
   computed: {
     ...mapState(["menus", "items", "crossSellItems"]),
     filteredCategories() {
       if (this.menus[this.selectedMenuIndex]) {
-        return this.menus[this.selectedMenuIndex].categories.map(category => ({
-          ...category,
-          items: category.items.filter(itemId =>
-            this.items[itemId].name.toLowerCase().includes(this.searchTerm.toLowerCase())
-          )
-        })).sort((a, b) => a.order - b.order);
+        return this.menus[this.selectedMenuIndex].categories
+          .map((category) => ({
+            ...category,
+            items: category.items.filter((itemId) =>
+              this.items[itemId].name.toLowerCase().includes(this.searchTerm.toLowerCase())
+            ),
+          }))
+          .sort((a, b) => a.order - b.order);
       }
       return [];
     },
     filteredCrossSellItems() {
       if (this.searchTerm === "") {
-        return this.crossSellItems.map(item => item.id);
+        return this.crossSellItems.map((item) => item.id);
       }
       return this.crossSellItems
-        .filter(item => item.name.toLowerCase().includes(this.searchTerm.toLowerCase()))
-        .map(item => item.id);
+        .filter((item) =>
+          item.name.toLowerCase().includes(this.searchTerm.toLowerCase())
+        )
+        .map((item) => item.id);
     },
     formattedOpeningHours() {
       const daysOfWeek = [
-        "Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado",
+        "Domingo",
+        "Segunda",
+        "Terça",
+        "Quarta",
+        "Quinta",
+        "Sexta",
+        "Sábado",
       ];
 
       const openingHours = this.menus[this.selectedMenuIndex]?.opening_hours || [];
@@ -398,16 +409,18 @@ export default {
         return acc;
       }, {});
 
-      const formattedHours = Object.entries(hoursMap).map(([time, days]) => {
-        const [start_time, end_time, is_closed] = time.split("-");
+      const formattedHours = Object.entries(hoursMap)
+        .map(([time, days]) => {
+          const [start_time, end_time, is_closed] = time.split("-");
 
-        if (is_closed === "true") return null;
+          if (is_closed === "true") return null;
 
-        const dayRanges = this.formatDayRanges(days, daysOfWeek);
-        const formattedTime = `${this.formatTime(start_time)} às ${this.formatTime(end_time)}`;
+          const dayRanges = this.formatDayRanges(days, daysOfWeek);
+          const formattedTime = `${this.formatTime(start_time)} às ${this.formatTime(end_time)}`;
 
-        return `${dayRanges} - ${formattedTime}`;
-      }).filter(Boolean);
+          return `${dayRanges} - ${formattedTime}`;
+        })
+        .filter(Boolean);
 
       return formattedHours.join(". ");
     },
@@ -417,7 +430,8 @@ export default {
       this.selectedMenuIndex = index;
       this.selectedMenuName = this.menus[index].name;
       this.updateOpeningHoursText();
-      this.syncSortableCategories(); // Sincroniza `sortableCategories` ao mudar de menu
+      this.syncSortableCategories();
+      this.saveLastMenu();
     },
     updateOpeningHoursText() {
       this.textOpeningHours = this.formattedOpeningHours;
@@ -427,25 +441,27 @@ export default {
     },
     selectItem(itemId, crossSell) {
       this.itemData = crossSell
-        ? this.crossSellItems.find(item => item.id === itemId)
+        ? this.crossSellItems.find((item) => item.id === itemId)
         : this.items[itemId];
     },
     toggleAvailability(item) {
-      axios.patch(
-        `https://api.prattuapp.com.br/api/products/${item.id}/availability`,
-        { is_available: item.active },
-        {
-          headers: {
-            Authorization: `Bearer ${this.$store.state.token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      ).catch(error => {
-        console.error("Erro ao alterar disponibilidade:", error);
-      });
+      axios
+        .patch(
+          `https://api.prattuapp.com.br/api/products/${item.id}/availability`,
+          { is_available: item.active },
+          {
+            headers: {
+              Authorization: `Bearer ${this.$store.state.token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        )
+        .catch((error) => {
+          console.error("Erro ao alterar disponibilidade:", error);
+        });
     },
     formatDayRanges(days, daysOfWeek) {
-      days = days.map(day => (day === 0 ? 7 : day));
+      days = days.map((day) => (day === 0 ? 7 : day));
 
       days.sort((a, b) => a - b);
 
@@ -471,6 +487,16 @@ export default {
     },
     openAddItemModal(categoryId) {
       this.selectedCategoryId = categoryId;
+      // Reset itemData ao abrir o modal para adicionar novo item
+      this.itemData = {
+        id: null,
+        name: '',
+        price: 0,
+        description: '',
+        active: true,
+        image: null,
+        complement: [],
+      };
       this.showModalFormAddItem = true;
     },
     openSearchItemModal() {
@@ -485,26 +511,22 @@ export default {
       this.showModalFormOpeningHours = true;
     },
     syncSortableCategories() {
-      // Sincroniza `sortableCategories` com `filteredCategories`
       this.sortableCategories = [...this.filteredCategories];
     },
     async onCategoryOrderChange() {
       try {
-        // Atualiza a ordem das categorias no estado local
         this.sortableCategories.forEach((category, index) => {
           category.order = index + 1;
         });
 
-        // Prepara os dados da requisição
         const requestData = {
           menu_id: this.menus[this.selectedMenuIndex].id,
-          order: this.sortableCategories.map(category => ({
+          order: this.sortableCategories.map((category) => ({
             id: category.id,
             order: category.order,
           })),
         };
 
-        // Envia a nova ordem para o backend
         await axios.post(
           "https://api.prattuapp.com.br/api/update-category-order",
           requestData,
@@ -516,7 +538,6 @@ export default {
           }
         );
 
-        // Atualiza o estado Vuex após a confirmação do backend
         this.$store.commit("setMenusAndItems", {
           menus: this.menus.map((menu, index) =>
             index === this.selectedMenuIndex
@@ -527,7 +548,10 @@ export default {
           crossSellItems: this.crossSellItems,
         });
       } catch (error) {
-        console.error("Erro ao atualizar a ordem das categorias:", error.response ? error.response.data : error.message);
+        console.error(
+          "Erro ao atualizar a ordem das categorias:",
+          error.response ? error.response.data : error.message
+        );
       }
     },
     async deleteMenu() {
@@ -539,11 +563,9 @@ export default {
           },
         });
 
-        // Após a exclusão, remova o menu da lista e feche o modal
         this.menus.splice(this.selectedMenuIndex, 1);
         this.showDeleteMenuModal = false;
 
-        // Se ainda houver menus, selecione o primeiro, senão redefina a seleção
         if (this.menus.length > 0) {
           this.selectedMenuIndex = 0;
           this.selectedMenuName = this.menus[0].name;
@@ -551,11 +573,37 @@ export default {
           this.selectedMenuIndex = null;
           this.selectedMenuName = "";
         }
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-
+        window.scrollTo({ top: 0, behavior: "smooth" });
       } catch (error) {
         console.error("Erro ao excluir o menu:", error.response ? error.response.data : error.message);
       }
+    },
+    saveLastMenu() {
+      const lastMenu = { index: this.selectedMenuIndex, id: this.menus[this.selectedMenuIndex]?.id };
+      localStorage.setItem("lastMenu", JSON.stringify(lastMenu));
+    },
+    loadLastMenu() {
+      const lastMenu = JSON.parse(localStorage.getItem("lastMenu"));
+      if (lastMenu && this.menus.length > 0) {
+        const foundIndex = this.menus.findIndex((menu) => menu.id === lastMenu.id);
+        if (foundIndex !== -1) {
+          this.selectedMenuIndex = foundIndex;
+          this.selectedMenuName = this.menus[this.selectedMenuIndex].name;
+        } else {
+          this.selectedMenuIndex = 0;
+          this.selectedMenuName = this.menus[0]?.name;
+        }
+      } else {
+        this.selectedMenuIndex = 0;
+        this.selectedMenuName = this.menus[0]?.name;
+      }
+    },
+    onMenuSave(menuName) {
+      this.$store.dispatch("fetchMenusAndItems").then(() => {
+        const newMenuIndex = this.menus.findIndex((menu) => menu.name === menuName);
+        this.changeMenu(newMenuIndex);
+        this.saveLastMenu();
+      });
     },
   },
   watch: {
@@ -563,31 +611,30 @@ export default {
       immediate: true,
       handler(newMenus) {
         if (newMenus.length > 0) {
-          this.selectedMenuIndex = 0;
-          this.selectedMenuName = newMenus[0].name;
-          this.syncSortableCategories(); // Inicializa `sortableCategories` ao montar o componente
+          this.loadLastMenu();
+          this.syncSortableCategories();
           this.updateOpeningHoursText();
         }
-      }
+      },
     },
     filteredCategories: {
       handler(newFilteredCategories) {
-        this.syncSortableCategories(); // Atualiza `sortableCategories` sempre que `filteredCategories` mudar
+        this.syncSortableCategories();
       },
       deep: true,
-    }
+    },
   },
   mounted() {
     if (this.menus.length > 0) {
-      this.selectedMenuIndex = 0;
-      this.selectedMenuName = this.menus[this.selectedMenuIndex]?.name || "";
-      this.syncSortableCategories(); // Inicializa `sortableCategories` ao montar o componente
+      this.loadLastMenu();
+      this.syncSortableCategories();
       this.updateOpeningHoursText();
     }
   },
 };
-</script>
 
+
+</script>
 
 <style lang="scss" scoped>
 .search-items {

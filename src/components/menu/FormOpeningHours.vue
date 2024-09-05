@@ -131,14 +131,23 @@ export default {
       });
     },
     toggleAlwaysAvailable() {
-      if (this.openingData.alwaysAvailable) {
-        this.openingData.weekday.forEach(day => {
-          day.active = true;
-        });
-        this.openingData.startHour = "00h";
-        this.openingData.endHour = "23h";
-      }
-    },
+  if (this.openingData.alwaysAvailable) {
+    // Se "Sempre Disponível" estiver marcado, ativa todos os dias e define o horário completo
+    this.openingData.weekday.forEach(day => {
+      day.active = true;
+    });
+    this.openingData.startHour = "00h";
+    this.openingData.endHour = "23h";
+  } else {
+    // Se "Sempre Disponível" estiver desmarcado, limpa as seleções
+    this.openingData.weekday.forEach(day => {
+      day.active = false;
+    });
+    this.openingData.startHour = "00h";
+    this.openingData.endHour = "23h";
+  }
+}
+,
     async save() {
       try {
         const selectedDays = this.openingData.weekday

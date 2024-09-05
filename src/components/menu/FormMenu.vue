@@ -18,17 +18,9 @@
 
 <script>
 import axios from 'axios';
-import { mapState, mapActions, mapMutations } from 'vuex';
 
 export default {
   name: "FormMenu",
-  props: {
-    dataMenu: {
-      type: Array,
-      required: false,
-      default: () => []
-    }
-  },
   data() {
     return {
       invalidMenuName: false,
@@ -59,18 +51,7 @@ export default {
 
           const menuId = response.data.menu.id;
 
-          if (!this.dataMenu) {
-            this.dataMenu = [];
-          }
-
-          this.dataMenu.push({ 
-            id: menuId,
-            name: this.menuName.trim(),
-            categories: []
-          });
-
-          this.$store.dispatch('fetchMenusAndItems');
-
+          this.$emit('save-menu-name', this.menuName);
 
           // Fecha o modal
           this.$emit('close-modal');

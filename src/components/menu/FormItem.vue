@@ -293,50 +293,60 @@ export default {
       }
     };
 
-    const removeCategory = async (index) => {
-      const categoryToRemove = selectedCategories.value[index];
-      if (categoryToRemove && itemData.value.id) {
-        try {
-          // Enviar o ID da categoria a ser removida na requisição DELETE
-          await axios.delete(`https://api.prattuapp.com.br/api/products/${itemData.value.id}/remove-categories`, {
-            data: {
-              restaurant_id: store.state.restaurantId,
-              category_ids: [categoryToRemove.id], // Enviar o array de categorias, mesmo que seja uma só
-            },
-            headers: {
-              Authorization: `Bearer ${store.state.token}`,
-            },
-          });
-          
-          // Remover da lista na UI
-          selectedCategories.value.splice(index, 1);
-        } catch (error) {
-          console.error('Erro ao remover a categoria:', error);
-        }
-      }
-    };
+    const removeCategory = (index) => {
+  if (itemData.value.id) {
+    // Caso o item tenha sido salvo, realiza a requisição DELETE como já está implementado
+    const categoryToRemove = selectedCategories.value[index];
+    if (categoryToRemove) {
+      axios.delete(`https://api.prattuapp.com.br/api/products/${itemData.value.id}/remove-categories`, {
+        data: {
+          restaurant_id: store.state.restaurantId,
+          category_ids: [categoryToRemove.id],
+        },
+        headers: {
+          Authorization: `Bearer ${store.state.token}`,
+        },
+      })
+      .then(() => {
+        selectedCategories.value.splice(index, 1);
+      })
+      .catch((error) => {
+        console.error('Erro ao remover a categoria:', error);
+      });
+    }
+  } else {
+    // Se o item não foi salvo ainda, remove diretamente da lista local
+    selectedCategories.value.splice(index, 1);
+  }
+};
 
-    const removeComplement = async (index) => {
-      const complementToRemove = selectedComplements.value[index];
-      if (complementToRemove && itemData.value.id) {
-        try {
-          await axios.delete(
-            `https://api.prattuapp.com.br/api/product/${itemData.value.id}/components/${complementToRemove.id}`,
-            {
-              data: {
-                restaurant_id: store.state.restaurantId,
-              },
-              headers: {
-                Authorization: `Bearer ${store.state.token}`,
-              },
-            }
-          );
-          selectedComplements.value.splice(index, 1);
-        } catch (error) {
-          console.error('Erro ao remover o complemento:', error);
-        }
-      }
-    };
+
+const removeComplement = (index) => {
+  if (itemData.value.id) {
+    // Caso o item tenha sido salvo, realiza a requisição DELETE
+    const complementToRemove = selectedComplements.value[index];
+    if (complementToRemove) {
+      axios.delete(`https://api.prattuapp.com.br/api/product/${itemData.value.id}/components/${complementToRemove.id}`, {
+        headers: {
+          Authorization: `Bearer ${store.state.token}`,
+        },
+        data: {
+          restaurant_id: store.state.restaurantId,
+        },
+      })
+      .then(() => {
+        selectedComplements.value.splice(index, 1);
+      })
+      .catch((error) => {
+        console.error('Erro ao remover o complemento:', error);
+      });
+    }
+  } else {
+    // Se o item não foi salvo ainda, remove diretamente da lista local
+    selectedComplements.value.splice(index, 1);
+  }
+};
+
 
     const associateCategory = async () => {
       if (selectedCategories.value.length && itemData.value.id) {

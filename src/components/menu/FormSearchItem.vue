@@ -42,8 +42,8 @@ import { useStore } from 'vuex';
 export default {
   name: "FormSearchItem",
   props: {
-    categoryId: {
-      type: Number,
+    categoryId: {  // Voltamos a aceitar um único ID de categoria
+      type: Number,  // Pode ser número único
       required: true
     }
   },
@@ -83,15 +83,19 @@ export default {
     };
 
     const selectProduct = async (product) => {
-      if (!props.categoryId) {
-        console.error("categoryId está indefinido");
+      // Usamos um array para enviar, mas convertendo o único ID de categoria
+      const categoryIds = props.categoryId ? [props.categoryId] : [];
+
+      if (!categoryIds.length) {
+        console.error("Nenhuma categoria foi selecionada");
         return;
       }
 
       try {
-        console.log('Adicionando produto à categoria com ID:', props.categoryId);
-        const response = await axios.post(`https://api.prattuapp.com.br/api/category/${props.categoryId}/add-product`, {
-          product_id: product.id
+        console.log('Adicionando produto à(s) categoria(s):', categoryIds);
+        const response = await axios.post(`https://api.prattuapp.com.br/api/category/add-product`, {
+          product_id: product.id,
+          categories: categoryIds  // Enviamos como array, mesmo sendo um único ID
         }, {
           headers: {
             Authorization: `Bearer ${token.value}`
@@ -105,7 +109,7 @@ export default {
           emit('closeModal');
         }
       } catch (error) {
-        console.error('Erro ao adicionar produto à categoria:', error);
+        console.error('Erro ao adicionar produto à(s) categoria(s):', error);
       }
     };
 

@@ -7,12 +7,12 @@
         </div>
         <div class="col-lg-6 status">
           <label class="switch">
-            <input type="checkbox" v-model="itemData.active" />
+            <input type="checkbox" v-model="itemData.active" @change="toggleStatus(itemData.id)" />
             <span class="slider round"></span>
           </label>
         </div>
       </div>
-      <hr class="hr-title">
+      <hr class="hr-title" />
       <div class="row">
         <div class="col-lg-6 d-grid">
           <label class="form-label bold-500" for="name">Nome</label>
@@ -67,7 +67,7 @@
           </div>
         </div>
       </div>
-<!--
+
       <template v-if="itemData.id">
         <div class="row mt-1">
           <div class="col-lg-12 d-grid">
@@ -140,7 +140,7 @@
             </div>
           </div>
         </div>
-      </template> -->
+      </template>
     </form>
     <div class="row mt-4 justify-content-end">
       <div class="col-lg-2 d-grid gap-2" v-if="itemData.id">
@@ -153,8 +153,9 @@
     </div>
   </div>
 </template>
+
 <script>
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import axios from 'axios';
 import { useStore, mapState } from 'vuex';
 
@@ -168,33 +169,6 @@ export default {
   setup(props, { emit }) {
     const store = useStore();
 
-    // Função para formatar o valor de preço
-    const formatCurrency = (value) => {
-      if (!value) return '0,00';
-      return parseFloat(value).toLocaleString('pt-BR', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      });
-    };
-
-    // Função para resetar o formulário
-    const resetForm = () => {
-      itemData.value = {
-        id: "",
-        active: true,
-        name: "",
-        price: "",
-        image: "",
-        description: "",
-        complement: [],
-      };
-      formattedPrice.value = "";
-      imageName.value = "";
-      selectCategory.value = "";
-      categorySelected.value = null;
-    };
-
-    // Estado local para o item sendo editado/adicionado
     const itemData = ref({
       id: "",
       active: true,
@@ -216,45 +190,102 @@ export default {
       price: false,
     });
 
-    // Watch para atualizar itemData com os dados de itemEditData quando a prop mudar
+    // Função para formatar a moeda
+    const formatCurrency = (value) => {
+      if (!value) return '0,00';
+      return parseFloat(value).toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+    };
+
+    // Função para pegar o status do produto via API ao carregar
+    const loadProductStatus = async (id) => {
+      try {
+        const response = await axios.get(`https://api.prattuapp.com.br/api/products/${id}`, {
+          headers: {
+            Authorization: `Bearer ${store.state.token}`, // Corrigido para passar o Bearer token
+          },
+        });
+        itemData.value.active = response.data.is_available; // Pega o status da API
+      } catch (error) {
+        console.error('Erro ao carregar status do produto:', error);
+      }
+    };
+
+    // Função para alterar o status do produto
+    const toggleStatus = async (id) => {
+      try {
+        const newStatus = !itemData.value.active; // Alterna o status localmente
+        await axios.patch(
+          `https://api.prattuapp.com.br/api/products/${id}/availability`,
+          { is_available: newStatus },
+          {
+            headers: {
+              Authorization: `Bearer ${store.state.token}`, // Corrigido para passar o Bearer token
+            },
+          }
+        );
+        itemData.value.active = newStatus; // Atualiza o estado local
+      } catch (error) {
+        console.error('Erro ao alterar o status:', error);
+      }
+    };
+
+    // Função para carregar dados iniciais do produto
+    const loadProductData = () => {
+      if (props.itemEditData && props.itemEditData.id) {
+        itemData.value = { ...props.itemEditData }; // Clona os dados
+        formattedPrice.value = formatCurrency(props.itemEditData.price || 0);
+        imageName.value = props.itemEditData.image ? props.itemEditData.image.split('/').pop() : '';
+        categorySelected.value = store.state.formCategories.find(
+          (category) => category.id === props.itemEditData.category_id
+        );
+        selectCategory.value = categorySelected.value;
+        loadProductStatus(props.itemEditData.id); // Carrega o status via API
+      } else {
+        resetForm();
+      }
+    };
+
+    const resetForm = () => {
+      itemData.value = {
+        id: "",
+        active: true,
+        name: "",
+        price: "",
+        image: "",
+        description: "",
+        complement: [],
+      };
+      formattedPrice.value = "";
+      imageName.value = "";
+      selectCategory.value = "";
+      categorySelected.value = null;
+    };
+
     watch(
       () => props.itemEditData,
-      (newData) => {
-        if (newData && Object.keys(newData).length > 0) {
-          itemData.value = { ...newData }; // Clona os dados para edição
-          formattedPrice.value = formatCurrency(newData.price || 0); // Formata o preço
-          imageName.value = newData.image ? newData.image.split('/').pop() : ''; // Nome da imagem
-          categorySelected.value = store.state.formCategories.find(
-            (category) => category.id === newData.category_id
-          );
-          selectCategory.value = categorySelected.value;
-        } else {
-          resetForm();
-        }
-      },
-      { immediate: true } // Executa imediatamente para carregar dados iniciais
+      () => loadProductData(),
+      { immediate: true }
     );
 
-    // Converte o preço formatado de volta para um número utilizável
     const parsePrice = () => {
       const parsedValue = formattedPrice.value.replace(/\./g, '').replace(',', '.');
       itemData.value.price = parsedValue ? parseFloat(parsedValue) : 0;
     };
 
-    // Formata o preço enquanto o usuário digita
     const formatPrice = () => {
       const rawValue = formattedPrice.value.replace(/\D/g, '');
       formattedPrice.value = formatCurrency(rawValue / 100);
     };
 
-    // Manipula a mudança de arquivo e carrega a imagem
     const onFileChange = (e) => {
       const files = e.target.files || e.dataTransfer.files;
       if (!files.length) return;
       createImage(files[0]);
     };
 
-    // Cria a visualização da imagem após o upload
     const createImage = (file) => {
       imageName.value = file.name;
       const reader = new FileReader();
@@ -264,7 +295,6 @@ export default {
       reader.readAsDataURL(file);
     };
 
-    // Associa o produto a uma categoria selecionada
     const associateCategory = async () => {
       if (selectCategory.value && itemData.value.id) {
         try {
@@ -273,18 +303,17 @@ export default {
             { product_id: itemData.value.id },
             {
               headers: {
-                Authorization: `Bearer ${store.state.token}`,
+                Authorization: `Bearer ${store.state.token}`, // Corrigido para passar o Bearer token
               },
             }
           );
-          categorySelected.value = selectCategory.value; // Atualiza a categoria selecionada
+          categorySelected.value = selectCategory.value;
         } catch (error) {
           console.error('Erro ao associar a categoria:', error);
         }
       }
     };
 
-    // Associa o produto a um complemento selecionado
     const associateComplement = async () => {
       if (selectComplement.value && itemData.value.id) {
         try {
@@ -293,7 +322,7 @@ export default {
             { restaurant_id: store.state.restaurantId },
             {
               headers: {
-                Authorization: `Bearer ${store.state.token}`,
+                Authorization: `Bearer ${store.state.token}`, // Corrigido para passar o Bearer token
                 'Content-Type': 'application/json',
               },
             }
@@ -309,22 +338,20 @@ export default {
       }
     };
 
-    // Validação básica dos campos obrigatórios
     const valid = (data) => {
       let isValid = true;
-      invalid.value.name = !data.name; // Nome não pode estar vazio
-      invalid.value.price = data.price === null || data.price === ''; // Permitir preço 0
+      invalid.value.name = !data.name;
+      invalid.value.price = data.price === null || data.price === '';
       isValid = !invalid.value.name && !invalid.value.price;
       return isValid;
     };
 
-    // Salva as alterações ou cria um novo produto
     const save = async () => {
       if (!valid(itemData.value)) return;
 
       const formData = new FormData();
       formData.append('name', itemData.value.name);
-      formData.append('price', itemData.value.price); 
+      formData.append('price', itemData.value.price);
       formData.append('description', itemData.value.description);
       formData.append('restaurant_id', store.state.restaurantId);
       formData.append('is_available', itemData.value.active ? 1 : 0);
@@ -336,34 +363,31 @@ export default {
       try {
         let response;
         if (itemData.value.id) {
-          // Editar produto
           response = await axios.post(
             `https://api.prattuapp.com.br/api/restaurants/products/update/${itemData.value.id}`,
             formData,
             {
               headers: {
-                Authorization: `Bearer ${store.state.token}`,
+                Authorization: `Bearer ${store.state.token}`, // Corrigido para passar o Bearer token
                 'Content-Type': 'multipart/form-data',
               },
             }
           );
         } else {
-          // Criar novo produto
           response = await axios.post(
             'https://api.prattuapp.com.br/api/restaurants/products/create',
             formData,
             {
               headers: {
-                Authorization: `Bearer ${store.state.token}`,
+                Authorization: `Bearer ${store.state.token}`, // Corrigido para passar o Bearer token
                 'Content-Type': 'multipart/form-data',
               },
             }
           );
-          itemData.value.id = response.data.id; 
+          itemData.value.id = response.data.id;
         }
 
-        emit('save-item', itemData.value); 
-
+        emit('save-item', itemData.value);
         store.dispatch('fetchMenusAndItems');
         emit('close-modal');
       } catch (error) {
@@ -371,12 +395,11 @@ export default {
       }
     };
 
-    // Exclui o produto
     const deleteProduct = async () => {
       try {
         await axios.delete(`https://api.prattuapp.com.br/api/products/${itemData.value.id}`, {
           headers: {
-            Authorization: `Bearer ${store.state.token}`,
+            Authorization: `Bearer ${store.state.token}`, // Corrigido para passar o Bearer token
           },
         });
         store.dispatch('fetchMenusAndItems');
@@ -386,7 +409,6 @@ export default {
       }
     };
 
-    // Fecha o modal
     const closeModal = () => {
       emit('close-modal');
     };
@@ -409,6 +431,7 @@ export default {
       formatCurrency,
       parsePrice,
       formatPrice,
+      toggleStatus,
     };
   },
   computed: {
@@ -418,12 +441,7 @@ export default {
     }),
   },
 };
-
-
 </script>
-
-
-
 
 <style lang="scss" scoped>
 

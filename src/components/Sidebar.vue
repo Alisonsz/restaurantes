@@ -91,6 +91,7 @@ export default {
                     icon: "icon-monitor", 
                     name: "Monitor Performance", 
                     sublinks: {
+                    
                         overview: { icon: "icon-grid", name: "Visão geral", route: "/visao" },
                         sales: { icon: "icon-performance", name: "Vendas", route: "/vendas" },
                         operacional: { icon: "icon-efficiency", name: "Eficiência operacional", route: "/operacional" },

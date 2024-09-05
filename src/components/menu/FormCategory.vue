@@ -70,31 +70,30 @@
               ></span>
             </li>
           </ul>
+
+          <!-- Exibição das Categorias Selecionadas - MOVIDO PARA CIMA -->
+          <div
+            class="selected-categories position-relative d-inline-block mt-2"
+            v-if="categoryData.selectedCategories.length > 0"
+          >
+            <span class="btn-round input-base edit-button"
+              v-for="(category, index) in categoryData.selectedCategories"
+              :key="index"
+            >
+              {{ category.name }}
+              <button @click="removeCategory(index)" class="btn-remove-menu">X</button>
+            </span>
+          </div>
+
+          <!-- Botão Salvar -->
           <button
             type="button"
-            class="btn btn-save mt-2"
+            class="btn btn-save distance mt-2"
             @click="saveExistingCategory"
           >
-            Salvar 
+            Salvar
           </button>
         </div>
-
-        <!-- Exibição das Categorias Selecionadas -->
-        <div
-          class="selected-categories"
-          v-if="hasSelectedMenuIndex && categoryData.selectedCategories.length > 0"
-        >
-          <span
-            v-for="(category, index) in categoryData.selectedCategories"
-            :key="index"
-          >
-            {{ category.name }}
-            <button @click="removeCategory(index)" class="remove-category-btn">X</button>
-          </span>
-        </div>
-
-        <!-- Exibição dos Menus Selecionados -->
-       
       </div>
     </form>
   </div>
@@ -140,7 +139,7 @@ export default {
       try {
         const response = await axios.get('https://api.prattuapp.com.br/api/restaurants/1/product-categories', {
           headers: {
-            Authorization: `Bearer ${store.state.token}`, // Inclui o Bearer token
+            Authorization: `Bearer ${store.state.token}`,
           },
         });
         categoriesList.value = response.data.categories;
@@ -157,7 +156,7 @@ export default {
 
     onMounted(() => {
       if (hasSelectedMenuIndex.value) {
-        fetchCategories(); // Chamando diretamente a função, sem usar this.
+        fetchCategories();
       }
     });
 
@@ -225,13 +224,12 @@ export default {
     async saveNewCategory() {
       if (this.valid(this.categoryData)) {
         try {
-          // Endpoint para criar e associar uma nova categoria
           const response = await axios.post(
             'https://api.prattuapp.com.br/api/menus/add-category-to-menu',
             {
               name: this.categoryData.categoryName,
               menu_ids: this.categoryData.selectedMenu.map(menu => menu.id),
-              restaurant_id: this.store.state.restaurantId, // Usando o restaurant_id do Vuex store
+              restaurant_id: this.store.state.restaurantId,
             },
             {
               headers: {
@@ -241,7 +239,6 @@ export default {
             }
           );
           await this.store.dispatch('fetchMenusAndItems');
-          console.log('Resposta da API:', response.data);
           this.$emit('closeModal');
         } catch (error) {
           console.error('Erro ao criar nova categoria:', error.response ? error.response.data : error.message);
@@ -253,7 +250,6 @@ export default {
     async saveExistingCategory() {
       if (this.valid(this.categoryData)) {
         try {
-          // Endpoint para associar uma categoria existente ao menu
           const response = await axios.post(
             `https://api.prattuapp.com.br/api/menus/${this.categoryData.selectedMenu[0].id}/attach-categories`,
             {
@@ -267,7 +263,6 @@ export default {
             }
           );
           await this.store.dispatch('fetchMenusAndItems');
-          console.log('Resposta da API:', response.data);
           this.$emit('closeModal');
         } catch (error) {
           console.error('Erro ao associar categoria existente:', error.response ? error.response.data : error.message);
@@ -280,55 +275,92 @@ export default {
   mounted() {
     if (this.selectedMenuIndex !== null && this.dataMenu[this.selectedMenuIndex]) {
       this.categoryData.selectedMenu.push(this.dataMenu[this.selectedMenuIndex]);
-      this.fetchCategories(); // Alterado para fetchCategories do setup.
+      this.fetchCategories();
     }
   },
 };
 </script>
 
 
+<style lang="scss" scoped>
+.modal-body .container-data {
+  width: 330px !important;
+  padding: 0 !important;
+}
 
-  <style lang="scss" scoped>
-  .modal-body .container-data {
-    width: 330px !important;
-    padding: 0 !important;
-  }
-  
-  .modal-container {
-    min-width: 350px !important;
-  }
-  
-  .autocomplete-local {
-    position: absolute;
-    width: 100%;
-    margin-top: 28px
-  }
-  
-  .autocomplete-local .search-list {
-    top: 48px;
-  }
-  
-  .search-space {
-    margin-top: 0;
-    margin-bottom: 0;
-    height: 43px;
-  }
-  
-  .selected-menus {
-    width: 100% !important;
-    padding-top: 8px;
-    position: relative;
-    height: auto !important;
-  }
-  
-  .selected-menus span {
-    white-space: nowrap;
-    display: inline-block;
-    background-color: $light-blue;
-    margin: 0 10px 7px 0;
-    font-size: 14px;
-    padding: 7px 15px;
-    border-radius: 20px
-  }
-  </style>
-  
+.modal-container {
+  min-width: 350px !important;
+}
+
+.autocomplete-local {
+  position: absolute;
+  width: 100%;
+  margin-top: 28px;
+}
+
+.autocomplete-local .search-list {
+  top: 48px;
+}
+
+.search-space {
+  margin-top: 0;
+  margin-bottom: 25px;
+  height: 43px;
+}
+
+/* Remover largura total das categorias selecionadas */
+.selected-categories {
+  display: inline-block; /* Ocupa apenas o espaço necessário */
+
+  position: relative;
+}
+
+/* Cada categoria só ocupa o espaço necessário */
+.selected-categories span {
+  white-space: nowrap;
+  display: inline-block; /* Mantém o comportamento de ocupar apenas o espaço necessário */
+  background-color: $light-blue;
+
+  font-size: 14px;
+  padding: 10px;
+  border-radius: 20px;
+  position: relative; /* Necessário para posicionar o botão de remoção corretamente */
+}
+
+/* Botão de remoção posicionado acima da categoria */
+.btn-remove-menu {
+  position: absolute;
+  top: -3px; /* Colocado acima da categoria */
+  right: 0px; /* Ajuste no canto direito */
+  width: 15px !important;
+  height: 15px !important;
+  background-color: red;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 10px !important;
+  line-height: 1px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+/* Ajuste do botão de edição para cinza */
+.edit-button {
+  background-color: #f0f0f0 !important;
+  color: #333333 !important;
+  border: none;
+ 
+}
+
+/* Gap de 15px entre os componentes dentro de "Buscar categoria existente" */
+.d-grid.mt-3 > * {
+  margin-bottom: 5px !important;
+}
+
+
+
+</style>
+

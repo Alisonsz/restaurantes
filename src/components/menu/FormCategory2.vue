@@ -105,18 +105,29 @@ export default {
   },
   setup(props) {
     const store = useStore();
-    let menuList = ref(props.dataMenu);
+
+    // Mantém todos os menus
+    let menuList = ref([...props.dataMenu]);
+
     const menuTerm = ref('');
 
     const isEditing = computed(() => props.selectedCategory !== null);
 
+    // Função para filtrar menus com base no termo de busca
     const searchMenus = computed(() => {
       if (menuTerm.value.trim() === '') {
         return [];
       }
-      return menuList.value.filter((menu) => {
-        return menu.name.toLowerCase().includes(menuTerm.value.toLowerCase());
-      });
+
+      // Filtrar menus que correspondem ao termo de busca
+      const filteredMenus = menuList.value.filter((menu) =>
+        menu.name.toLowerCase().includes(menuTerm.value.toLowerCase())
+      );
+
+      // Filtrar menus já selecionados
+      const alreadySelectedIds = new Set(categoryData.selectedMenu.map(menu => menu.id));
+
+      return filteredMenus.filter(menu => !alreadySelectedIds.has(menu.id));
     });
 
     return {
@@ -137,7 +148,7 @@ export default {
         selectedMenu: [],
         categoryName: "",
       },
-      removedMenus: [], // Array para armazenar os menus que foram removidos
+      removedMenus: [], // Armazena os menus removidos
     };
   },
   watch: {
@@ -145,64 +156,59 @@ export default {
       immediate: true,
       handler(newVal) {
         if (newVal) {
-          // Preencher o nome da categoria
+          // Preencher dados da categoria ao editar
           this.categoryData.categoryName = newVal.name;
-
-          // Mapear os menus associados
           this.categoryData.selectedMenu = newVal.menus.map(menu => {
-            const fullMenu = this.dataMenu.find(m => m.id === menu.id);
+            const fullMenu = this.menuList.find(m => m.id === menu.id);
             return {
               id: fullMenu.id,
               name: fullMenu.name
             };
           });
         } else {
-          this.categoryData.categoryName = ""; // Resetar campo
-          this.categoryData.selectedMenu = []; // Resetar campo
+          this.resetCategoryData();
         }
       }
     }
   },
   methods: {
     addMenu(menu) {
+      // Adiciona menu à categoria se ainda não estiver presente
       if (!this.categoryData.selectedMenu.find((item) => item.id === menu.id)) {
         this.categoryData.selectedMenu.push(menu);
       }
     },
     removeMenu(menu) {
-      // Adiciona o menu removido à lista de menus removidos
-      this.removedMenus.push(menu.id);
-      // Remove o menu da lista de menus selecionados
+      // Adiciona menu à lista de removidos se não estiver lá
+      if (!this.removedMenus.includes(menu.id)) {
+        this.removedMenus.push(menu.id);
+      }
+      // Remove menu da lista de selecionados
       this.categoryData.selectedMenu = this.categoryData.selectedMenu.filter((item) => item.id !== menu.id);
     },
     valid(data) {
-      let isvalid = true;
+      let isValid = true;
       for (const field in this.invalid) {
         if (
           (typeof data[field] === "string" && data[field] === "") ||
           (typeof data[field] === "object" && data[field].length === 0)
         ) {
           this.invalid[field] = true;
-          isvalid = false;
+          isValid = false;
         } else {
           this.invalid[field] = false;
         }
       }
-      return isvalid;
+      return isValid;
     },
     async save() {
-      console.log('Salvando a categoria...');
-
       if (this.valid(this.categoryData)) {
         const selectedMenuIds = this.categoryData.selectedMenu.map(menu => menu.id);
-
-        console.log('selectedMenuIds:', selectedMenuIds);
-        console.log('Nome da categoria:', this.categoryData.categoryName);
 
         try {
           let response;
           if (this.isEditing) {
-            // Editar a categoria existente
+            // Atualiza a categoria
             response = await axios.put(
               `https://api.prattuapp.com.br/api/categoriesproduct/${this.selectedCategory.id}`,
               {
@@ -217,9 +223,7 @@ export default {
               }
             );
 
-            console.log('Resposta da API:', response.data);
-
-            // Remover a categoria dos menus removidos
+            // Remove menus não mais selecionados
             for (const menuId of this.removedMenus) {
               await axios.delete(
                 `https://api.prattuapp.com.br/api/categories/${this.selectedCategory.id}/menu/${menuId}`,
@@ -230,11 +234,10 @@ export default {
                   },
                 }
               );
-              console.log(`Menu ${menuId} removido da categoria ${this.selectedCategory.id}`);
             }
 
           } else {
-            // Criar nova categoria
+            // Cria uma nova categoria
             response = await axios.post(
               'https://api.prattuapp.com.br/api/menus/add-category-to-menu',
               {
@@ -249,11 +252,10 @@ export default {
                 },
               }
             );
-
-            console.log('Resposta da API:', response.data);
           }
 
           await this.store.dispatch('fetchMenusAndItems');
+          this.$emit('categorySaved');
           this.$emit('closeModal');
         } catch (error) {
           console.error('Erro ao salvar a categoria:', error.response ? error.response.data : error.message);
@@ -274,7 +276,7 @@ export default {
               },
             }
           );
-          console.log('Categoria deletada com sucesso');
+          this.$emit('categoryDeleted');
           await this.store.dispatch('fetchMenusAndItems');
           this.$emit('closeModal'); // Fechar modal após exclusão
         } catch (error) {
@@ -282,9 +284,17 @@ export default {
         }
       }
     },
+    resetCategoryData() {
+      this.categoryData.categoryName = "";
+      this.categoryData.selectedMenu = [];
+      this.removedMenus = [];
+    }
   },
 };
+
 </script>
+
+
 
 <style lang="scss" scoped>
 .modal-body .container-data {
