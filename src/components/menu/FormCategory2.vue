@@ -87,7 +87,7 @@
 </template>
 
 <script>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, reactive, watch, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import axios from 'axios';
 
@@ -98,20 +98,37 @@ export default {
       type: Object,
       default: null,
     },
-    dataMenu: {
-      type: Array,
-      required: true,
-    },
   },
-  setup(props) {
+  setup(props, { emit }) {
     const store = useStore();
 
-    // Mantém todos os menus
-    let menuList = ref([...props.dataMenu]);
-
+    const menuList = ref([]); // Será atualizado com os dados da API
     const menuTerm = ref('');
+    const categoryData = reactive({
+      selectedMenu: [],
+      categoryName: "",
+    });
+    const removedMenus = ref([]); // Armazena os menus removidos
+    const invalid = reactive({
+      selectedMenu: false,
+      categoryName: false,
+    });
 
     const isEditing = computed(() => props.selectedCategory !== null);
+
+    // Função para buscar os cardápios da API
+    const fetchMenus = async () => {
+      try {
+        const response = await axios.get('https://api.prattuapp.com.br/api/menus?restaurant_id=1', {
+          headers: {
+            Authorization: `Bearer ${store.state.token}`, // Token de autenticação se necessário
+          },
+        });
+        menuList.value = response.data.data; // Atualiza menuList com os dados retornados da API
+      } catch (error) {
+        console.error('Erro ao buscar menus:', error.response ? error.response.data : error.message);
+      }
+    };
 
     // Função para filtrar menus com base no termo de busca
     const searchMenus = computed(() => {
@@ -119,117 +136,73 @@ export default {
         return [];
       }
 
-      // Filtrar menus que correspondem ao termo de busca
       const filteredMenus = menuList.value.filter((menu) =>
         menu.name.toLowerCase().includes(menuTerm.value.toLowerCase())
       );
 
-      // Filtrar menus já selecionados
       const alreadySelectedIds = new Set(categoryData.selectedMenu.map(menu => menu.id));
 
       return filteredMenus.filter(menu => !alreadySelectedIds.has(menu.id));
     });
 
-    return {
-      menuList,
-      menuTerm,
-      searchMenus,
-      isEditing,
-      store,
+    const addMenu = (menu) => {
+      if (!categoryData.selectedMenu.find((item) => item.id === menu.id)) {
+        categoryData.selectedMenu.push(menu);
+      }
     };
-  },
-  data() {
-    return {
-      invalid: {
-        selectedMenu: false,
-        categoryName: false,
-      },
-      categoryData: {
-        selectedMenu: [],
-        categoryName: "",
-      },
-      removedMenus: [], // Armazena os menus removidos
+
+    const removeMenu = (menu) => {
+      if (!removedMenus.value.includes(menu.id)) {
+        removedMenus.value.push(menu.id);
+      }
+      categoryData.selectedMenu = categoryData.selectedMenu.filter((item) => item.id !== menu.id);
     };
-  },
-  watch: {
-    selectedCategory: {
-      immediate: true,
-      handler(newVal) {
-        if (newVal) {
-          // Preencher dados da categoria ao editar
-          this.categoryData.categoryName = newVal.name;
-          this.categoryData.selectedMenu = newVal.menus.map(menu => {
-            const fullMenu = this.menuList.find(m => m.id === menu.id);
-            return {
-              id: fullMenu.id,
-              name: fullMenu.name
-            };
-          });
-        } else {
-          this.resetCategoryData();
-        }
-      }
-    }
-  },
-  methods: {
-    addMenu(menu) {
-      // Adiciona menu à categoria se ainda não estiver presente
-      if (!this.categoryData.selectedMenu.find((item) => item.id === menu.id)) {
-        this.categoryData.selectedMenu.push(menu);
-      }
-    },
-    removeMenu(menu) {
-      // Adiciona menu à lista de removidos se não estiver lá
-      if (!this.removedMenus.includes(menu.id)) {
-        this.removedMenus.push(menu.id);
-      }
-      // Remove menu da lista de selecionados
-      this.categoryData.selectedMenu = this.categoryData.selectedMenu.filter((item) => item.id !== menu.id);
-    },
-    valid(data) {
+
+    const valid = (data) => {
       let isValid = true;
-      for (const field in this.invalid) {
+      for (const field in invalid) {
         if (
           (typeof data[field] === "string" && data[field] === "") ||
           (typeof data[field] === "object" && data[field].length === 0)
         ) {
-          this.invalid[field] = true;
+          invalid[field] = true;
           isValid = false;
         } else {
-          this.invalid[field] = false;
+          invalid[field] = false;
         }
       }
       return isValid;
-    },
-    async save() {
-      if (this.valid(this.categoryData)) {
-        const selectedMenuIds = this.categoryData.selectedMenu.map(menu => menu.id);
+    };
+
+    const save = async () => {
+      if (valid(categoryData)) {
+        const selectedMenuIds = categoryData.selectedMenu.map(menu => menu.id);
 
         try {
           let response;
-          if (this.isEditing) {
+          if (isEditing.value) {
             // Atualiza a categoria
             response = await axios.put(
-              `https://api.prattuapp.com.br/api/categoriesproduct/${this.selectedCategory.id}`,
+              `https://api.prattuapp.com.br/api/categoriesproduct/${props.selectedCategory.id}`,
               {
-                name: this.categoryData.categoryName,
+                name: categoryData.categoryName,
                 menu_ids: selectedMenuIds,
               },
               {
                 headers: {
-                  Authorization: `Bearer ${this.store.state.token}`,
+                  Authorization: `Bearer ${store.state.token}`,
                   'Content-Type': 'application/json',
                 },
               }
             );
 
             // Remove menus não mais selecionados
-            for (const menuId of this.removedMenus) {
+            for (const menuId of removedMenus.value) {
               await axios.delete(
-                `https://api.prattuapp.com.br/api/categories/${this.selectedCategory.id}/menu/${menuId}`,
+                `https://api.prattuapp.com.br/api/categories/${props.selectedCategory.id}/menu/${menuId}`,
                 {
                   headers: {
-                    Authorization: `Bearer ${this.store.state.token}`,
+                    Authorization: `Bearer ${store.state.token}`,
                     'Content-Type': 'application/json',
                   },
                 }
@@ -241,57 +214,88 @@ export default {
             response = await axios.post(
               'https://api.prattuapp.com.br/api/menus/add-category-to-menu',
               {
-                name: this.categoryData.categoryName,
+                name: categoryData.categoryName,
                 menu_ids: selectedMenuIds,
-                restaurant_id: this.store.state.restaurantId
+                restaurant_id: store.state.restaurantId
               },
               {
                 headers: {
-                  Authorization: `Bearer ${this.store.state.token}`,
+                  Authorization: `Bearer ${store.state.token}`,
                   'Content-Type': 'application/json',
                 },
               }
             );
           }
 
-          await this.store.dispatch('fetchMenusAndItems');
-          this.$emit('categorySaved');
-          this.$emit('closeModal');
+          await store.dispatch('fetchMenusAndItems');
+          emit('categorySaved');
+          emit('closeModal');
         } catch (error) {
           console.error('Erro ao salvar a categoria:', error.response ? error.response.data : error.message);
         }
       } else {
         console.error('Campos obrigatórios não preenchidos.');
       }
-    },
-    async deleteCategory() {
-      if (this.isEditing && this.selectedCategory) {
+    };
+
+    const deleteCategory = async () => {
+      if (isEditing.value && props.selectedCategory) {
         try {
           await axios.delete(
-            `https://api.prattuapp.com.br/api/categoriesproduct/${this.selectedCategory.id}`,
+            `https://api.prattuapp.com.br/api/categoriesproduct/${props.selectedCategory.id}`,
             {
               headers: {
-                Authorization: `Bearer ${this.store.state.token}`,
+                Authorization: `Bearer ${store.state.token}`,
                 'Content-Type': 'application/json',
               },
             }
           );
-          this.$emit('categoryDeleted');
-          await this.store.dispatch('fetchMenusAndItems');
-          this.$emit('closeModal'); // Fechar modal após exclusão
+          emit('categoryDeleted');
+          await store.dispatch('fetchMenusAndItems');
+          emit('closeModal'); // Fechar modal após exclusão
         } catch (error) {
           console.error('Erro ao deletar a categoria:', error.response ? error.response.data : error.message);
         }
       }
-    },
-    resetCategoryData() {
-      this.categoryData.categoryName = "";
-      this.categoryData.selectedMenu = [];
-      this.removedMenus = [];
-    }
+    };
+
+    const resetCategoryData = () => {
+      categoryData.categoryName = "";
+      categoryData.selectedMenu = [];
+      removedMenus.value = [];
+    };
+
+    watch(() => props.selectedCategory, (newVal) => {
+      if (newVal) {
+        categoryData.categoryName = newVal.name;
+        categoryData.selectedMenu = newVal.menus.map(menu => {
+          return { id: menu.id, name: menu.name };
+        });
+      } else {
+        resetCategoryData();
+      }
+    }, { immediate: true });
+
+    // Busca os menus quando o componente é montado
+    onMounted(() => {
+      fetchMenus();
+    });
+
+    return {
+      menuList,
+      menuTerm,
+      searchMenus,
+      categoryData,
+      isEditing,
+      addMenu,
+      removeMenu,
+      save,
+      deleteCategory,
+      resetCategoryData,
+      invalid,
+    };
   },
 };
-
 </script>
 
 

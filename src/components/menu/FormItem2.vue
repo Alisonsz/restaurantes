@@ -5,17 +5,18 @@
         <div class="col-lg-6">
           <label class="form-label bold-500 title">{{ itemData.id ? "Editar produto" : "Adicionar produto" }}</label>
         </div>
-        <div class="col-lg-6 status">
+      <!--  <div class="col-lg-6 status">
           <label class="switch">
             <input type="checkbox" v-model="itemData.active" @change="toggleStatus(itemData.id)" />
             <span class="slider round"></span>
           </label>
-        </div>
+        </div>-->
       </div>
       <hr class="hr-title" />
       <div class="row">
         <div class="col-lg-6 d-grid">
           <label class="form-label bold-500" for="name">Nome</label>
+          <span class="char-limit">50 caracteres</span>
         </div>
       </div>
       <div class="row">
@@ -47,8 +48,7 @@
               <input type="file" id="file" class="inputfile" accept="image/*" @change="onFileChange" ref="fileInput">
               <label for="file">
                 <span class="file-box">
-                  <p>{{ imageName.trim() !== '' ? imageName : "Adicionar imagem" }}</p>
-                </span>
+                  <p>{{ imageName.trim() !== '' ? imageName : "JPEG, JPG e PNG até 12MB. Resolução mínima: 325x300" }}</p>                </span>
                 <span class="file-button" v-if="itemData.image && typeof itemData.image === 'string'">
                   <img :src="itemData.image">
                 </span>
@@ -60,7 +60,10 @@
           </div>
         </div>
         <div class="col-lg-8 d-grid">
-          <label for="description" class="bold-500">Descrição do produto</label>
+          <label for="description" class="bold-500">Descrição do produto
+            <span class="char-limit">250 caracteres</span>
+
+          </label>
           <div class="form-floating">
             <textarea class="form-control item-description" placeholder="Deixe um comentário aqui" id="description" v-model="itemData.description"></textarea>
             <label for="description">Ex: Hamburger de 200g com pão australiano.</label>
@@ -68,7 +71,7 @@
         </div>
       </div>
 
-      <template v-if="itemData.id">
+    <!--  <template v-if="itemData.id">
         <div class="row mt-1">
           <div class="col-lg-12 d-grid">
             <div class="accordion" id="accordionCategory">
@@ -140,7 +143,7 @@
             </div>
           </div>
         </div>
-      </template>
+      </template>-->
     </form>
     <div class="row mt-4 justify-content-end">
       <div class="col-lg-2 d-grid gap-2" v-if="itemData.id">
@@ -499,5 +502,25 @@ export default {
 
 .row.mt-4.justify-content-end {
   justify-content: flex-end !important;
+}
+.d-grid {
+  position: relative;
+}
+
+.char-limit {
+  position: absolute;
+  right: 0;
+  top: 10px;
+  color: #6c757d;
+  font-size: 0.7em;
+  margin-right: 20px;
+  font-weight: 400;
+}
+.inputfile-box {
+  p {
+    font-size: 0.85em; /* Ajusta o tamanho da fonte */
+    color: #6c757d; /* Cor do texto */
+    margin: 0; /* Remove margens desnecessárias */
+  }
 }
 </style>

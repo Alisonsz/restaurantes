@@ -12,7 +12,8 @@
               v-model="productTerm" 
               @input="searchProduct"
             >
-            <ul v-if="searchProducts.length" class="w-full rounded search-list" role="list">
+            <!-- Exibir a lista de resultados apenas se houver um termo de pesquisa e resultados -->
+            <ul v-if="productTerm.length > 0 && searchProducts.length > 0" class="w-full rounded search-list" role="list">
               <li v-for="(product, index) in searchProducts" :key="product.id">
                 <span>{{ product.name }}</span> 
                 <span 
@@ -42,21 +43,23 @@ import { useStore } from 'vuex';
 export default {
   name: "FormSearchItem",
   props: {
-    categoryId: {  // Voltamos a aceitar um único ID de categoria
+    categoryId: {  // Aceitar um único ID de categoria
       type: Number,  // Pode ser número único
       required: true
     }
   },
   setup(props, { emit }) {
     const store = useStore();
-    const productTerm = ref('');
-    const searchProducts = ref([]);
+    const productTerm = ref(''); // Termo de busca do produto
+    const searchProducts = ref([]); // Resultados da busca de produtos
 
     const restaurantId = computed(() => store.state.restaurantId);
     const token = computed(() => store.state.token);
 
+    // Função para buscar produtos com base no termo digitado
     const searchProduct = async () => {
-      if (productTerm.value.length < 0) {
+      if (productTerm.value.trim().length === 0) {
+        // Limpar a lista se o campo de busca estiver vazio
         searchProducts.value = [];
         return;
       }
@@ -82,8 +85,8 @@ export default {
       }
     };
 
+    // Função para selecionar um produto e adicionar à categoria
     const selectProduct = async (product) => {
-      // Usamos um array para enviar, mas convertendo o único ID de categoria
       const categoryIds = props.categoryId ? [props.categoryId] : [];
 
       if (!categoryIds.length) {
@@ -123,7 +126,6 @@ export default {
 };
 </script>
 
-
 <style lang="scss" scoped>
 .modal-body .small-data {
   width: 400px !important;
@@ -136,15 +138,3 @@ export default {
 }
 </style>
 
-
-<style lang="scss" scoped>
-.modal-body .small-data {
-  width: 400px !important;
-  padding: 0 !important;
-}
-
-.search-list {
-  position: relative !important;
-  top: 5px !important;
-}
-</style>
