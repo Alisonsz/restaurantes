@@ -1,127 +1,124 @@
 <template>
-    <div :class="['order-card', { expanded: isExpanded }]" @click="toggleExpansion">
-      <div class="card-header">
-        <h3>{{ order.user.name }}</h3>
-        <div class="header-right">
-          <span :class="['status', statusColorClass]">{{ timeAgo }}</span>
-          <img class="toggle-icon" :src="toggleIconSrc" :class="{ rotated: isExpanded }" alt="toggle" />
-        </div>
-      </div>
-      <div v-if="isExpanded" class="card-body">
-        <div class="detail">
-          <p class="detail-item">
-            <span class="label">Data e hora:</span>
-            <span class="value">{{ formattedDate }}</span>
-          </p>
-          <div class="divider"></div>
-        </div>
-        <div class="detail">
-          <p class="detail-item">
-            <span class="label">Valor:</span>
-            <span class="value">R$ {{ order.total }}</span>
-          </p>
-          <div class="divider"></div>
-        </div>
-        <div class="detail">
-          <p class="detail-item">
-            <span class="label">Tempo de preparo:</span>
-            <span class="value">{{ order.restaurant.preparation_time }} minutos</span>
-          </p>
-          <div class="divider"></div>
-        </div>
-        <div class="detail">
-          <p class="detail-item">
-            <span class="label">Horário da retirada:</span>
-            <span class="value">{{ order.estimated_delivery_datetime ? formattedDate(order.estimated_delivery_datetime) : 'N/A' }}</span>
-          </p>
-        </div>
-      </div>
-      <div v-if="isExpanded" class="card-footer">
-        <button @click.stop="viewDetails" class="btn details">Detalhes</button>
-        <button @click.stop="acceptOrder" class="btn accept">Aceitar</button>
-        <button @click.stop="rejectOrder" class="btn reject">Recusar</button>
+  <div :class="['order-card', { expanded: isExpanded }]" @click="toggleExpansion">
+    <div class="card-header">
+      <h3>{{ order.user.name }}</h3>
+      <div class="header-right">
+        <span :class="['status', statusColorClass]">{{ timeAgo }}</span>
+        <img class="toggle-icon" :src="toggleIconSrc" :class="{ rotated: isExpanded }" alt="toggle" />
       </div>
     </div>
-  </template>
-  
-  <script>
-  import { useStore } from 'vuex';
-  
-  export default {
-    props: {
-      order: {
-        type: Object,
-        required: true,
-      },
+    <div v-if="isExpanded" class="card-body">
+      <div class="detail">
+        <p class="detail-item">
+          <span class="label">Data e hora:</span>
+          <span class="value">{{ formattedDate }}</span>
+        </p>
+        <div class="divider"></div>
+      </div>
+      <div class="detail">
+        <p class="detail-item">
+          <span class="label">Valor:</span>
+          <span class="value">{{ formattedTotal }}</span>
+        </p>
+        <div class="divider"></div>
+      </div>
+    </div>
+    <div v-if="isExpanded" class="card-footer">
+      <button @click.stop="acceptOrder" class="btn accept">Aceitar</button>
+      <button @click.stop="rejectOrder" class="btn reject">Recusar</button>
+      <button @click.stop="viewDetails" class="btn details">Detalhes</button>
+    </div>
+  </div>
+</template>
+
+<script>
+import { useStore } from 'vuex';
+
+export default {
+  props: {
+    order: {
+      type: Object,
+      required: true,
     },
-    data() {
-      return {
-        isExpanded: false,
-      };
+  },
+  data() {
+    return {
+      isExpanded: false,
+    };
+  },
+  computed: {
+    formattedDate() {
+      return new Date(this.order.created_at).toLocaleString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
     },
-    computed: {
-      formattedDate() {
-        return new Date(this.order.created_at).toLocaleString('pt-BR', {
-          day: '2-digit',
-          month: '2-digit',
-          year: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-        });
-      },
-      timeAgo() {
-        const now = new Date();
-        const created = new Date(this.order.created_at);
-        const diffInMinutes = Math.floor((now - created) / 60000);
-        return diffInMinutes < 60 ? `Há ${diffInMinutes} min` : `Há ${Math.floor(diffInMinutes / 60)} horas`;
-      },
-      statusColorClass() {
-        const now = new Date();
-        const created = new Date(this.order.created_at);
-        const diffInMinutes = Math.floor((now - created) / 60000);
-        return diffInMinutes < 5 ? 'status-green' : 'status-red';
-      },
-      toggleIconSrc() {
-        return require('@/assets/img/arrow_drop_down.svg');
-      },
+    formattedTotal() {
+      return new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+      }).format(this.order.total);
     },
-    methods: {
-      toggleExpansion() {
-        this.isExpanded = !this.isExpanded;
-      },
-      async acceptOrder() {
-        try {
-          const response = await fetch(`https://api.prattuapp.com.br/api/orders/${this.order.id}/mark-as-accepted`, {
+    timeAgo() {
+      const now = new Date();
+      const created = new Date(this.order.created_at);
+      const diffInMinutes = Math.floor((now - created) / 60000);
+      return diffInMinutes < 60
+        ? `Há ${diffInMinutes} min`
+        : `Há ${Math.floor(diffInMinutes / 60)} horas`;
+    },
+    statusColorClass() {
+      const now = new Date();
+      const created = new Date(this.order.created_at);
+      const diffInMinutes = Math.floor((now - created) / 60000);
+      return diffInMinutes < 5 ? 'status-green' : 'status-red';
+    },
+    toggleIconSrc() {
+      return require('@/assets/img/arrow_drop_down.svg');
+    },
+  },
+  methods: {
+    toggleExpansion() {
+      this.isExpanded = !this.isExpanded;
+    },
+    async acceptOrder() {
+      try {
+        const response = await fetch(
+          `https://api.prattuapp.com.br/api/orders/${this.order.id}/mark-as-accepted`,
+          {
             method: 'POST',
             headers: {
-              'Authorization': `Bearer ${this.$store.state.token}`,
+              Authorization: `Bearer ${this.$store.state.token}`,
               'Content-Type': 'application/json',
             },
-          });
-          if (response.ok) {
-            // Sucesso na aceitação, recarregar a página
-            window.location.reload();
-          } else {
-            console.error('Erro ao aceitar o pedido:', response.statusText);
           }
-        } catch (error) {
-          console.error('Erro ao aceitar o pedido:', error);
+        );
+        if (response.ok) {
+          window.location.reload();
+        } else {
+          console.error('Erro ao aceitar o pedido:', response.statusText);
         }
-      },
-      rejectOrder() {
-        // Lógica para recusar o pedido
-      },
-      viewDetails() {
-        this.$emit('view-details', this.order.id);
-      },
+      } catch (error) {
+        console.error('Erro ao aceitar o pedido:', error);
+      }
     },
-  };
-  </script>
+    rejectOrder() {
+      // Lógica para recusar o pedido
+    },
+    viewDetails() {
+      this.$emit('view-details', this.order.id);
+    },
+  },
+};
+</script>
 
   
   <style scoped>
   .order-card {
-    border: 1px solid #baedbd; /* Cor verde claro */
+    border: 1px solid #FB9F9F; /* Cor verde claro */
     border-radius: 4px;
     margin-bottom: 10px;
     transition: border-color 0.3s, max-height 0.3s ease;
@@ -129,9 +126,12 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     cursor: pointer;
     overflow: hidden;
+    padding: 8px 8px;
+   
   }
   .order-card.expanded {
-    border-color: #baedbd;
+    border-color: #FB9F9F;
+    
   }
   .card-header {
     display: flex;
@@ -139,6 +139,10 @@
     align-items: center;
     padding: 10px;
   }
+  .card-header h3 {
+  margin: 0; /* Remove possíveis margens que podem desalinhar o elemento */
+}
+
   .header-right {
     display: flex;
     align-items: center;
@@ -159,17 +163,19 @@
     width: 20px;
     height: 20px;
     transition: transform 0.3s;
+     transform: rotate(180deg);
   }
   .toggle-icon.rotated {
-    transform: rotate(180deg);
+    transform: rotate(0deg);
   }
   .card-body {
     padding: 10px;
+    gap: 10px;
   }
   .detail {
     display: flex;
     flex-direction: column;
-    margin-bottom: 10px;
+   
   }
   .detail-item {
     display: flex;
@@ -177,7 +183,7 @@
   }
   .divider {
     border-bottom: 1px solid #d3d3d3;
-    margin: 5px 0 10px 0;
+    margin: 0px 0 10px 0;
   }
   .card-footer {
     display: flex;
@@ -204,6 +210,9 @@
   .details {
     background-color: #f0f0f0;
     color: #333;
+  }
+  .btn {
+    border-radius: 100px !important;
   }
   </style>
   

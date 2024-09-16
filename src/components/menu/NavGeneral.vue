@@ -347,6 +347,7 @@ export default {
       searchTerm: "",
       selectedMenuName: "",
       textOpeningHours: "Definir horário disponível",
+      alwaysAvailable: false, // Armazena o estado do "Sempre disponível"
       itemData: {}, // Dados do item que será editado ou adicionado
       showModalFormMenu: false,
       showModalFormCategory: false,
@@ -383,7 +384,15 @@ export default {
         )
         .map((item) => item.id);
     },
+    // Computed property para formatar os horários de funcionamento
     formattedOpeningHours() {
+      const selectedMenu = this.menus[this.selectedMenuIndex];
+
+      // Se "always_available" for true, retorna "Sempre disponível"
+      if (selectedMenu.always_available) {
+        return "Sempre disponível";
+      }
+
       const daysOfWeek = [
         "Domingo",
         "Segunda",
@@ -394,8 +403,9 @@ export default {
         "Sábado",
       ];
 
-      const openingHours = this.menus[this.selectedMenuIndex]?.opening_hours || [];
+      const openingHours = selectedMenu?.opening_hours || [];
 
+      // Se não houver horários, retorna "Definir horário disponível"
       if (openingHours.length === 0) {
         return "Definir horário disponível";
       }
@@ -428,7 +438,9 @@ export default {
   methods: {
     changeMenu(index) {
       this.selectedMenuIndex = index;
-      this.selectedMenuName = this.menus[index].name;
+      const selectedMenu = this.menus[index];
+      this.selectedMenuName = selectedMenu.name;
+      this.alwaysAvailable = selectedMenu.always_available;  // Armazena o valor para uso posterior
       this.updateOpeningHoursText();
       this.syncSortableCategories();
       this.saveLastMenu();
@@ -632,9 +644,8 @@ export default {
     }
   },
 };
-
-
 </script>
+
 
 <style lang="scss" scoped>
 .search-items {

@@ -197,18 +197,26 @@ export default {
 .tabs {
   display: flex;
   justify-content: flex-start;
+  gap: 5px ;
+  z-index: 0;
+ 
 }
 
 .tabs button {
-  padding: 10px 20px;
+  padding: 20px 16px;
   cursor: pointer;
   background: none;
   border: none;
   outline: none;
-  font-weight: 500;
-  font-size: 16px;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 5px;
   color: #555;
-  border-radius: 16px 16px 0px 0px !important;
+  align-items: center;
+  border-radius: 9px 9px 0px 0px !important;
+  background-color: #EBEBEB;
+
+  z-index: 1;
 }
 
 .tabs button.active {
@@ -222,10 +230,13 @@ export default {
   padding: 16px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   min-width: 650px;
+
+
 }
 
 .tab-content {
   padding: 16px;
+ 
 }
 
 .detail {

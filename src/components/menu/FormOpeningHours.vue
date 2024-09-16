@@ -8,34 +8,40 @@
             <option value="">Selecione um cardápio</option>
             <option v-for="menu in menus" :key="menu.id" :value="menu.id">{{ menu.name }}</option>
           </select>
+
+          <!-- Checkbox de "Cardápio sempre disponível" -->
           <label class="form-label bold-500 mt-2 mb-0">Cardápio sempre disponível?</label>
           <label class="switch-yn mt-0">
             <input type="checkbox" v-model="openingData.alwaysAvailable" @change="toggleAlwaysAvailable">
             <span class="slider round"></span>
           </label>
+
+          <!-- Dias e horários desabilitados quando "Sempre disponível" estiver ativado -->
           <div v-show="!openingData.alwaysAvailable">
             <label class="form-label bold-500 mt-2 mb-0">Dias da semana</label>
             <div class="mb-2">
               <label class="weekday ml-1" v-for="(day, index) in openingData.weekday" :key="index">
-                <input type="checkbox" v-model="day.active">
+                <input type="checkbox" v-model="day.active" :disabled="openingData.alwaysAvailable">
                 <span class="checkmark">{{ day.day }}</span>
               </label>
             </div>
             <label class="form-label bold-500 mt-2 mb-2">Horários</label>
             <div class="select-time">
-              <select class="form-select" v-model="openingData.startHour">
+              <select class="form-select" v-model="openingData.startHour" :disabled="openingData.alwaysAvailable">
                 <option v-for="hour in hours" :key="hour">{{ hour }}</option>
               </select>
               <span>às</span>
-              <select class="form-select" v-model="openingData.endHour">
+              <select class="form-select" v-model="openingData.endHour" :disabled="openingData.alwaysAvailable">
                 <option v-for="hour in hours" :key="hour">{{ hour }}</option>
               </select>
             </div>
           </div>
         </div>
+
         <div v-if="message.text" :class="['alert', message.type === 'error' ? 'alert-danger' : 'alert-success']">
           {{ message.text }}
         </div>
+
         <div class="row">
           <div class="col-lg-6 d-grid gap-2">
             <button @click="$emit('closeModal')" type="button" class="btn btn-cancel">Cancelar</button>
@@ -98,6 +104,7 @@ export default {
     })
   },
   methods: {
+    // Atualizar horários disponíveis
     async fetchAvailableHours() {
       if (!this.openingData.selectedMenu) return;
 
@@ -108,7 +115,11 @@ export default {
             headers: { Authorization: `Bearer ${this.token}` }
           }
         );
-        this.updateWeekdays(response.data.opening_hours);
+        const { opening_hours, always_available } = response.data;
+
+        // Atualizar o estado de "Sempre disponível"
+        this.openingData.alwaysAvailable = always_available;
+        this.updateWeekdays(opening_hours);
       } catch (error) {
         const errorMessage = 'Erro ao buscar horários disponíveis.';
         console.log(errorMessage);
@@ -131,39 +142,44 @@ export default {
       });
     },
     toggleAlwaysAvailable() {
-  if (this.openingData.alwaysAvailable) {
-    // Se "Sempre Disponível" estiver marcado, ativa todos os dias e define o horário completo
-    this.openingData.weekday.forEach(day => {
-      day.active = true;
-    });
-    this.openingData.startHour = "00h";
-    this.openingData.endHour = "23h";
-  } else {
-    // Se "Sempre Disponível" estiver desmarcado, limpa as seleções
-    this.openingData.weekday.forEach(day => {
-      day.active = false;
-    });
-    this.openingData.startHour = "00h";
-    this.openingData.endHour = "23h";
-  }
-}
-,
+      if (this.openingData.alwaysAvailable) {
+        // Se "Sempre Disponível" estiver marcado, ativa todos os dias e define o horário completo
+        this.openingData.weekday.forEach(day => {
+          day.active = true;
+        });
+        this.openingData.startHour = "00h";
+        this.openingData.endHour = "23h";
+      } else {
+        // Se "Sempre Disponível" estiver desmarcado, limpa as seleções
+        this.openingData.weekday.forEach(day => {
+          day.active = false;
+        });
+        this.openingData.startHour = "00h";
+        this.openingData.endHour = "23h";
+      }
+    },
     async save() {
       try {
         const selectedDays = this.openingData.weekday
           .map((day, index) => day.active ? index + 1 : null)
           .filter(day => day !== null);
 
+        // Se 'alwaysAvailable' for true, a API será informada e nenhum horário/dia específico será enviado
+        const payload = this.openingData.alwaysAvailable
+          ? { always_available: true }
+          : {
+              always_available: false,
+              day_of_week: selectedDays,
+              open_time: this.openingData.startHour.replace('h', ':00'),
+              close_time: this.openingData.endHour.replace('h', ':00'),
+              is_closed: false,
+              allows_schedule: true
+            };
+
         // O array `selectedDays` pode ser vazio, o que resultará na exclusão dos horários
         await axios.post(
           `https://api.prattuapp.com.br/api/menu/${this.openingData.selectedMenu}/opening-hours`,
-          {
-            day_of_week: selectedDays,
-            open_time: this.openingData.startHour.replace('h', ':00'),
-            close_time: this.openingData.endHour.replace('h', ':00'),
-            is_closed: false,
-            allows_schedule: true
-          },
+          payload,
           {
             headers: { Authorization: `Bearer ${this.token}` }
           }
@@ -197,7 +213,6 @@ export default {
   }
 };
 </script>
-
 
 <style lang="scss" scoped>
   .modal-body .container-data {
