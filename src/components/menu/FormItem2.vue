@@ -66,7 +66,7 @@
           </label>
           <div class="form-floating">
             <textarea class="form-control item-description" placeholder="Deixe um comentário aqui" id="description" v-model="itemData.description"></textarea>
-            <label for="description">Ex: Hamburger de 200g com pão australiano.</label>
+            <label for="description">Ex: Hamburguer de 200g com pão australiano.</label>
           </div>
         </div>
       </div>

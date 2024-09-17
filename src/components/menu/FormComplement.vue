@@ -176,6 +176,8 @@
           class="form-control number"
           v-model="dataComplement.selectNumber"
           @input="validateNumber('selectNumber')"
+          min="0"
+          max="99"
         />
         <p class="text">
           O usuário pode selecionar um item mais de uma vez?
@@ -191,6 +193,8 @@
             class="form-control number"
             v-model="dataComplement.moreNumber"
             @input="validateNumber('moreNumber')"
+            min="0"
+            max="99"
           />
         </div>
       </div>
@@ -332,11 +336,11 @@ export default {
   },
   data() {
     return {
-      itemEditData: {}, // Inicializa com um objeto vazio
+      itemEditData: {}, 
       invalid: {
         name: false,
       },
-      dataComplement: this.resetFormData(), // Inicializa com dados resetados
+      dataComplement: this.resetFormData(), 
     };
   },
   props: {
@@ -348,8 +352,8 @@ export default {
       handler(newData) {
         if (newData && Object.keys(newData).length > 0) {
           this.dataComplement = {
-            ...this.resetFormData(), // Reseta antes de atribuir novos dados
-            ...newData, // Sobrescreve os valores com os dados de edição
+            ...this.resetFormData(),
+            ...newData,
           };
         }
       },
@@ -378,15 +382,15 @@ export default {
         );
 
         if (existingItemIndex !== -1) {
-          this.dataComplement.items[existingItemIndex] = itemData; // Atualiza o item existente diretamente no array
+          this.dataComplement.items[existingItemIndex] = itemData; 
         } else if (typeof itemData.idAdd === "number") {
           if (Array.isArray(this.dataComplement.items[itemData.idAdd].items)) {
-            this.dataComplement.items[itemData.idAdd].items.push(itemData); // Adiciona subitem
+            this.dataComplement.items[itemData.idAdd].items.push(itemData); 
           } else {
-            this.dataComplement.items[itemData.idAdd].items = [itemData]; // Cria novo array de subitens
+            this.dataComplement.items[itemData.idAdd].items = [itemData]; 
           }
         } else {
-          this.dataComplement.items.push(itemData); // Adiciona novo item
+          this.dataComplement.items.push(itemData);
         }
       }
     },
@@ -397,7 +401,7 @@ export default {
       }
     },
     addItem() {
-      this.resetFormData(); // Resetar os dados ao adicionar um novo item
+      this.resetFormData(); 
       this.showModalFormItem = true;  
     },
     removeItem(index) {
@@ -422,6 +426,9 @@ export default {
     validateNumber(field) {
       if (this.dataComplement[field] < 0) {
         this.dataComplement[field] = 0;
+      }
+      if (this.dataComplement[field] > 99) {
+        this.dataComplement[field] = 99;
       }
     },
     valid(data) {
@@ -544,7 +551,6 @@ export default {
 
 
 
-
 <style lang="scss" scoped>
 .modal-body .container-data {
   width: 500px;
@@ -614,7 +620,7 @@ export default {
 }
 
 .rules input.number {
-  width: 50px;
+  width: 65px;
   margin-top: 5px;
 }
 
