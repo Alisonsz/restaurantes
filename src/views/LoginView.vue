@@ -1,6 +1,6 @@
 <template>
     <div class="home container-data">
-      <Navbar />
+      <Navbar :noData="true" :loggedIn="true"/>
       <FormLogin />
     </div>
   </template>
@@ -24,8 +24,10 @@
     max-width: 100%;
     background-image: url("~@/assets/img/bglogin.jpg");
     background-position: left top;
-    background-size: contain;
+    background-size: cover;
     background-repeat: no-repeat;
+    border-radius: 0;
+    margin-top: 22px;
 
   }
   </style>

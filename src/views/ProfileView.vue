@@ -95,24 +95,6 @@
         <FormCompany @close-modal="showModalCompany = false" @save-modal="saveCompany" :company="dataCompany"/>
       </template>
     </ModalCompany>
-    <ModalWelcome :show="completeConfig === false && stepModal.welcome" :noClose="true" @close="stepModal.welcome = false">
-      <template #header>Obaa, sejam bem-vindos(a) à Prattu!!</template>
-      <template #body>
-        <Welcome @next-modal="nextModal"/>
-      </template>
-    </ModalWelcome>
-    <ModalLink :show="completeConfig === false && stepModal.link" :noClose="true" @close="stepModal.link = false">
-      <template #header>Link da Asaas</template>
-      <template #body>
-        <Link @next-modal="nextModal"/>
-      </template>
-    </ModalLink>
-    <ModalStart :show="completeConfig === false && stepModal.start" :noClose="true" @close="stepModal.start = false">
-      <template #header>Começar a receber pedidos</template>
-      <template #body>
-        <Start @next-modal="nextModal"/>
-      </template>
-    </ModalStart>
   </Teleport>
 </template>
 
@@ -264,22 +246,14 @@ import Footer from "../components/Footer.vue";
 import FormCategories from "../components/profile/FormCategories.vue";
 import FormOrderTypes from "../components/profile/FormOrderTypes.vue";
 import FormCompany from "../components/profile/FormCompany.vue";
-import Welcome from "../components/profile/Welcome.vue";
-import Link from "../components/profile/Link.vue";
-import Start from "../components/profile/Start.vue";
 
 export default {
   name: "ProfileView",
   data() {
     return {
-      completeConfig: false,
-      currentConfigStep: 1,
+      completeConfig: this.$store.state.completeConfig,
+      currentConfigStep: 3,
       countConfigSteps: 5,
-      stepModal: {
-        welcome: true,
-        link: false,
-        start: false
-      },
       sidebarData: {
         logo: "/img/logo1.png",
         company: "TATÁ Sushi",
@@ -305,9 +279,6 @@ export default {
     FormCategories,
     FormOrderTypes,
     FormCompany,
-    Welcome,
-    Link,
-    Start
   },
   methods: {
     showModalLogo() {
@@ -324,12 +295,6 @@ export default {
     },
     saveCompany(data) {
       this.dataCompany = data;
-    },
-    nextModal(step) {
-      this.stepModal.welcome = false;
-      this.stepModal.link = false;
-      this.stepModal.start = false;
-      this.stepModal[step] = true;
     },
     nextConfigStep() {
       this.$router.push('/cardapio');

@@ -104,12 +104,12 @@ export default {
                     icon: "icon-settings", 
                     name: "Configuração da loja", 
                     sublinks: {
-                        profile: { icon: "icon-account", name: "Perfil", route: "/perfil" },
-                        menu: { icon: "icon-summarize", name: "Cardápio", route: "/cardapio" },
                         hours: { icon: "icon-clock", name: "Horário funcionamento", route: "/horario" },
                         preparation: { icon: "icon-pot", name: "Tempo de preparacão", route: "/preparo" },
-                        promotions: { icon: "icon-promotion", name: "Promoções", route: "/promocoes" },
+                        profile: { icon: "icon-account", name: "Perfil", route: "/perfil" },
+                        menu: { icon: "icon-summarize", name: "Cardápio", route: "/cardapio" },
                         config: { icon: "icon-slider", name: "Configurações da conta", route: "/configuracoes" },
+                        promotions: { icon: "icon-promotion", name: "Promoções", route: "/promocoes" },
                     }
                 },
                 management: {

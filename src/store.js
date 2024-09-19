@@ -6,6 +6,8 @@ const store = createStore({
   state: {
     token: null,
     tokenTimestamp: null,
+    email: null,
+    completeConfig: false,
     navbarData: null,
     sidebarData: null,
     restaurantId: null,
@@ -24,6 +26,12 @@ const store = createStore({
     clearToken(state) {
       state.token = null;
       state.tokenTimestamp = null;
+    },
+    setEmail(state, { email }) {
+      state.email = email;
+    },
+    setCompleteConfig(state, { completeConfig }) {
+      state.completeConfig = completeConfig;
     },
     setNavbarAndSidebarData(state, data) {
       state.navbarData = {
@@ -66,6 +74,12 @@ const store = createStore({
     },
     removeToken({ commit }) {
       commit('clearToken');
+    },
+    saveEmail({ commit }, email) {
+      commit('setEmail', { email });
+    },
+    saveCompleteConfig({ commit }, completeConfig) {
+      commit('setCompleteConfig', { completeConfig });
     },
     checkTokenValidity({ state, dispatch }) {
       const currentTimestamp = new Date().getTime();
@@ -149,6 +163,8 @@ const store = createStore({
       reducer: (state) => ({
         token: state.token,
         tokenTimestamp: state.tokenTimestamp,
+        email: state.email,
+        completeConfig: state.completeConfig,
         navbarData: state.navbarData,
         sidebarData: state.sidebarData,
         restaurantId: state.restaurantId,

@@ -46,8 +46,8 @@ export default {
   name: "HoursView",
   data() {
     return {
-      completeConfig: false,
-      currentConfigStep: 3,
+      completeConfig: this.$store.state.completeConfig,
+      currentConfigStep: 1,
       countConfigSteps: 5,
       hoursOptions: [
         "00:00", "01:00", "02:00", "03:00", "04:00", "05:00", 

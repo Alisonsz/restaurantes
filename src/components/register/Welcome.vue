@@ -1,19 +1,14 @@
 <template>
     <div class="container-form">
         <form>
-            <h2 class="text-center bold-700">Financeiro</h2>
-            <p class="text-center mb-4 bold-400">Etapa {{ currentStep }} de {{ countSteps }}</p>
             <div class="form-data">
-                <div class="finance-data">
-                    <h3 class="bold-500 mb-4">Repasses e Pagamentos</h3>
-                    <p>Na Prattu, trabalhamos em parceria com o Asaas, plataforma financeira que será responsável por realizar todos os repasses e pagamentos ao seu estabelecimento.</p>
-                    <p>Importante: <span class="bold-500">O cadastro no Asaas é obrigatório</span> para que você possa receber os pagamentos e repasses. Todas as informações inseridas durante o cadastro na Prattu serão automaticamente transferidas para a criação da sua conta no Asaas.</p>
+                <div class="welcome-data">
+                    <h2 class="text-center bold-700 title">Obaa, sejam bem-vindos(a) à Prattu!!</h2>
+                    <p>Estamos suuuper empolgados em ter vocês como parceiros!</p>
+                    <p>Podemos garantir que iremos fazer de tudo (e mais um pouco!) para que o seu estabelecimento cresça e se destaque cada vez mais no mercado!</p>
                 </div>
                 <div class="row mt-4">
-                    <div class="col-6 d-grid">
-                        <button @click.prevent="cancel()" type="button" class="btn btn-cancel">Voltar</button>
-                    </div>
-                    <div class="col-6 d-grid">
+                    <div class="col d-grid">
                         <button @click.prevent="save()" type="submit" class="btn btn-save">Próximo</button>
                     </div>
                 </div>
@@ -36,9 +31,10 @@
 <script>
 import axios from 'axios';
 import ModalBase from '@/components/ModalBase.vue';
+import { useStore } from 'vuex';
 
 export default {
-    name: "Finance",
+    name: "Welcome",
     components: {
         ModalBase
     },
@@ -46,11 +42,19 @@ export default {
         currentStep: Number,
         countSteps: Number
     },
+    setup() {
+        const v = useStore();
+    },
     data() {
         return {
             showModal: false,
             modalTitle: '',
-            modalMessage: ''
+            modalMessage: '',
+            sameEmail: false,
+            email: '',
+            invalid: {
+                email: false,
+            },
         };
     },
     methods: {
@@ -66,6 +70,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.title {
+    border-bottom: 1px solid $gray-line;
+    padding-bottom: 10px;
+    margin-bottom: 25px;
+}
 .container-form {
     max-width: 550px;
     margin: auto;
@@ -89,7 +98,28 @@ export default {
     font-size: 20px;
     margin-bottom: 15px;
 }
-.finance-data p {
+.welcome-data p {
     padding-bottom: 5px;
+}
+.form-check-input:checked {
+    background-color: $light-green;
+    border-color: $light-green;
+}
+.form-group {
+    position: relative;
+}
+.icon-padlock {
+  text-align: center;
+  width: 30px;
+  height: 30px;
+  background-size: 20px 20px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  margin: auto;
+  display: inline-block;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  opacity: 0.2;
 }
 </style>

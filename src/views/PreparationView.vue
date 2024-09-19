@@ -78,8 +78,8 @@ export default {
   name: "PreparationView",
   data() {
     return {
-      completeConfig: false,
-      currentConfigStep: 4,
+      completeConfig: this.$store.state.completeConfig,
+      currentConfigStep: 2,
       countConfigSteps: 5,
       weekdays: {
         1: "Domingo",
@@ -204,7 +204,7 @@ export default {
       this.timeNumber.general.time = 0;
     },
     nextConfigStep() {
-      this.$router.push('/configuracoes');
+      this.$router.push('/perfil');
     }
   },
   async created() {

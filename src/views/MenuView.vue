@@ -43,8 +43,8 @@ export default {
   name: "MenuView",
   data() {
     return {
-      completeConfig: true,
-      currentConfigStep: 2,
+      completeConfig: this.$store.state.completeConfig,
+      currentConfigStep: 4,
       countConfigSteps: 5,
       selectedMenu: 0,
       skipStepCategories: false,
@@ -81,7 +81,7 @@ export default {
       this.skipStepCategories = true;
     },
     nextConfigStep() {
-      this.$router.push('/horario');
+      this.$router.push('/configuracoes');
     }
   },
   created() {

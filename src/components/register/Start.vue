@@ -1,20 +1,20 @@
 <template>
     <div class="container-form">
         <form>
-            <h2 class="text-center bold-700">Financeiro</h2>
-            <p class="text-center mb-4 bold-400">Etapa {{ currentStep }} de {{ countSteps }}</p>
             <div class="form-data">
-                <div class="finance-data">
-                    <h3 class="bold-500 mb-4">Repasses e Pagamentos</h3>
-                    <p>Na Prattu, trabalhamos em parceria com o Asaas, plataforma financeira que será responsável por realizar todos os repasses e pagamentos ao seu estabelecimento.</p>
-                    <p>Importante: <span class="bold-500">O cadastro no Asaas é obrigatório</span> para que você possa receber os pagamentos e repasses. Todas as informações inseridas durante o cadastro na Prattu serão automaticamente transferidas para a criação da sua conta no Asaas.</p>
+                <div class="start-data">
+                    <h2 class="text-center bold-700 title">Começar a receber pedidos</h2>
+                    <p>Antes de começar a receber pedidos, vamos garantir que seu perfil esteja completo e pronto para conquistar novos clientes.</p>
+                    <p>Para isso, precisamos preencher suas informações nas seguintes páginas:</p>
+                    <span>- Horário de funcionamento</span>
+                    <span>- Tempo de preparação</span>
+                    <span>- Perfil</span>
+                    <span>- Cardápio</span>
+                    <span>- Configurações da conta</span>
                 </div>
                 <div class="row mt-4">
-                    <div class="col-6 d-grid">
-                        <button @click.prevent="cancel()" type="button" class="btn btn-cancel">Voltar</button>
-                    </div>
-                    <div class="col-6 d-grid">
-                        <button @click.prevent="save()" type="submit" class="btn btn-save">Próximo</button>
+                    <div class="col d-grid">
+                        <button @click.prevent="save()" type="submit" class="btn btn-save">Começar</button>
                     </div>
                 </div>
             </div>
@@ -36,9 +36,10 @@
 <script>
 import axios from 'axios';
 import ModalBase from '@/components/ModalBase.vue';
+import { useStore } from 'vuex';
 
 export default {
-    name: "Finance",
+    name: "Start",
     components: {
         ModalBase
     },
@@ -46,11 +47,19 @@ export default {
         currentStep: Number,
         countSteps: Number
     },
+    setup() {
+        const v = useStore();
+    },
     data() {
         return {
             showModal: false,
             modalTitle: '',
-            modalMessage: ''
+            modalMessage: '',
+            sameEmail: false,
+            email: '',
+            invalid: {
+                email: false,
+            },
         };
     },
     methods: {
@@ -66,6 +75,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.title {
+    border-bottom: 1px solid $gray-line;
+    padding-bottom: 10px;
+    margin-bottom: 25px;
+}
 .container-form {
     max-width: 550px;
     margin: auto;
@@ -89,7 +103,11 @@ export default {
     font-size: 20px;
     margin-bottom: 15px;
 }
-.finance-data p {
+.start-data p {
     padding-bottom: 5px;
+}
+.start-data span {
+    display: block;
+    font-size: 16px;
 }
 </style>

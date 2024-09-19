@@ -7,7 +7,15 @@
             <div class="col text-center">
                 <img src="~@/assets/img/logo_principal.png" class="logo">
             </div>
-            <div class="col p-0 text-end">
+            <div class="col p-0 text-end" v-if="noData">
+                <router-link v-if="!loggedIn" class="navbar-brand input-base btn-round no-hover login" to="/login">
+                    <span class="text">Já tem conta?</span> <span class="time bold-500">Entrar</span>
+                </router-link>
+                <router-link v-if="loggedIn" class="navbar-brand input-base btn-round no-hover login" to="/">
+                    <span class="text">Não tem conta?</span> <span class="time bold-500">Cadastrar</span>
+                </router-link>
+            </div>
+            <div class="col p-0 text-end" v-if="!noData">
                 <a class="navbar-brand icon-bell" href="#" v-if="typeof navbarData.notifications === 'number'">
                     <span class="badge" v-if="navbarData.notifications > 0">{{ navbarData.notifications }}</span>
                 </a>
@@ -34,7 +42,9 @@ export default {
     name: "Navbar",
     props: {
         withSidebar: Boolean,
-        withBack: Boolean
+        withBack: Boolean,
+        noData: Boolean,
+        loggedIn: Boolean
     },
     computed: {
         ...mapState(['navbarData']),
@@ -137,5 +147,11 @@ export default {
         background-repeat: no-repeat;
         background-size: 14px 14px;
         margin-bottom: -3px;
+    }
+    .login {
+        background-color: $light-green;
+        position: relative;
+        top: 5px;
+        cursor: pointer;
     }
 </style>

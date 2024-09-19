@@ -1,9 +1,17 @@
 <template>
-    <div class="config container-data" :class="completeConfig ? '' : 'with-footer'">
+    <div class="container-report" :class="completeConfig ? '' : 'with-footer'">
         <Navbar :navbarData="navbarData" />
         <Sidebar :sidebarData="sidebarData" />
-        <div class="content">
-            <h3 class="bold-600">Configurações</h3>
+        <div class="report-titles">
+            <Navbar :navbarData="navbarData" /><Sidebar :sidebarData="sidebarData"  />
+            <div class="row">
+                <div class="col">
+                    <h3 class="bold-700 mb-2">Configurações</h3>
+                </div>
+            </div>
+        </div>
+        <div class="container-data">
+            <div class="content">
             <h4>
                 Configure as informações da pessoa responsável pela conta do estabelecimento na plataforma.
                 <br />
@@ -25,11 +33,6 @@
                         <i class="fas fa-envelope"></i>
                         <input type="email" id="email" v-model="formData.email" placeholder="Email" />
                     </div>
-                    <div class="form-group">
-                        <label for="phone">Telefone</label>
-                        <i class="fas fa-phone"></i>
-                        <input type="text" id="phone" v-model="formData.phone" @input="applyPhoneMask" placeholder="Telefone" />
-                    </div>
                 </div>
                 <div class="right-column">
                     <div class="form-group">
@@ -39,22 +42,29 @@
                             <option value="gerente">Gerente</option>
                         </select>
                     </div>
-                    <div class="password-container">
-                        <div class="form-group">
-                            <label for="current-password">Senha Atual</label>
-                            <i class="fas fa-lock"></i>
-                            <input type="password" id="current-password" v-model="passwordData.currentPassword" placeholder="Senha Atual" />
-                        </div>
-                        <div class="form-group">
-                            <label for="new-password">Nova Senha</label>
-                            <i class="fas fa-lock"></i>
-                            <input type="password" id="new-password" v-model="passwordData.newPassword" placeholder="Nova Senha" />
-                        </div>
-                        <div class="form-group">
-                            <label for="confirm-new-password">Confirme a Nova Senha</label>
-                            <i class="fas fa-lock"></i>
-                            <input type="password" id="confirm-new-password" v-model="passwordData.confirmNewPassword" placeholder="Confirme a Nova Senha" />
-                        </div>
+                    <div class="form-group">
+                        <label for="phone">Telefone</label>
+                        <i class="fas fa-phone"></i>
+                        <input type="text" id="phone" v-model="formData.phone" @input="applyPhoneMask" placeholder="Telefone" />
+                    </div>
+                </div>
+            </div>
+            <div class="form-container" v-if="completeConfig">
+                <div class="password-container">
+                    <div class="form-group">
+                        <label for="current-password">Senha Atual</label>
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="current-password" v-model="passwordData.currentPassword" placeholder="Senha Atual" />
+                    </div>
+                    <div class="form-group">
+                        <label for="new-password">Nova Senha</label>
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="new-password" v-model="passwordData.newPassword" placeholder="Nova Senha" />
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm-new-password">Confirme a Nova Senha</label>
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="confirm-new-password" v-model="passwordData.confirmNewPassword" placeholder="Confirme a Nova Senha" />
                     </div>
                 </div>
             </div>
@@ -62,7 +72,7 @@
                 <button :class="['btn', 'btn-success', { 'btn-disabled': !hasChanges }]" :disabled="!hasChanges" @click="save">Salvar</button>
             </div>
         </div>
-        <Footer @next-config-step="showModalCongratulations = true" :currentConfigStep="currentConfigStep" :countConfigSteps="countConfigSteps" v-if="completeConfig === false" />
+        <Footer @next-config-step="showModalCongratulations = true, complete()" :currentConfigStep="currentConfigStep" :countConfigSteps="countConfigSteps" v-if="completeConfig === false" />
         <Teleport to="body">
             <ModalCongratulations :show="showModalCongratulations" @close="showModalCongratulations = false">
                 <template #header>Parabéns!</template>
@@ -77,6 +87,8 @@
         </Teleport>
 
     </div>
+        </div>
+        
 </template>
 
 <script setup>
@@ -258,17 +270,34 @@ const hasChanges = computed(() => {
            passwordData.value.confirmNewPassword;
 });
 
-const completeConfig = ref(false);
+const completeConfig = ref(store.state.completeConfig);
 const currentConfigStep = ref(5);
 const countConfigSteps = ref(5);
 const successMessage = ref('');
 
 function finishConfig() {
     completeConfig.value = true;
+    $router.push('/perfil');
 }
 
 
 </script>
+
+<script>
+import { mapActions } from 'vuex';
+
+export default {
+  name: "ConfigView",
+  methods: {
+    ...mapActions(['saveCompleteConfig']),
+    complete() {
+        this.saveCompleteConfig(true)
+    },
+  }
+}
+</script>
+
+
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Red+Hat+Text:wght@400&display=swap');

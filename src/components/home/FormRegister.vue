@@ -16,14 +16,15 @@
             <input type="tel" class="form-control mt-2" v-model="accountData.phone" @input="formatPhone" placeholder="Celular">
             <p class="mb-0 required-alert" v-show="invalid.phone">*Campo obrigatório, insira um telefone válido</p>
             <input type="password" class="form-control mt-2" v-model="accountData.password" placeholder="Senha">
-            <p class="mb-0 required-alert" v-show="invalid.password">*Campo obrigatório</p>
+            <p class="mb-0 required-alert" v-show="invalid.password">*A senha deve conter, no mínimo, 6 caracteres, com pelo menos: - 1 caractere especial - 1 letra maiúscula - 1 letra minúscula - 1 número</p>
             <input type="password" class="form-control mt-2" v-model="confirmPassword" placeholder="Confirme a senha">
             <p class="mb-0 required-alert" v-show="invalidConfirmPassword">*As senhas devem ser iguais</p>
             <div class="form-checkx mt-2">
               <input class="form-check-input ml-1" type="checkbox" id="termsAndConditions" v-model="termsAndConditions">
-              <label class="form-check-label" for="termsAndConditions">Li e concordo com os <a href="#">termos e condições</a></label>
+              <label class="form-check-label" for="termsAndConditions">Li e concordo com os</label>&nbsp;
+              <span class="form-check-label"><a target="_blank" href="http://restaurantes.prattuapp.com.br/termos-de-uso">termos de uso</a> e <a target="_blank" href="http://restaurantes.prattuapp.com.br/politica-de-privacidade">política de privacidade</a></span>
             </div>
-            <p class="mb-0 required-alert" v-show="invalidTermsAndConditions">*É preciso aceitar os termos e condições</p>
+            <p class="mb-0 required-alert" v-show="invalidTermsAndConditions">*É preciso aceitar os termos de uso e a política de privacidade</p>
             <div class="d-grid mt-4">
               <button @click.prevent="save()" type="submit" class="btn btn-save">Criar conta</button>
             </div>
@@ -61,11 +62,24 @@ export default {
     };
   },
   methods: {
-    ...mapActions(['saveToken']),
+    ...mapActions(['saveToken', 'saveEmail']),
     formatPhone(event) {
       const input = event.target.value.replace(/\D/g, '');
       const formatted = input.replace(/^(\d{2})(\d{5})(\d{4}).*/, '($1) $2-$3');
       this.accountData.phone = formatted;
+    },
+    validatePassword(password) {
+      if (
+        password.length >= 6 
+        && /[A-Z]/.test(password) 
+        && /[a-z]/.test(password) 
+        && /[0-9]/.test(password) 
+        && /[!@#$%^&*(),.?":{}|<>-]/.test(password)
+      ) {
+        return true
+      } else {
+        return false
+      }
     },
     valid(data) {
       let isvalid = true;
@@ -97,7 +111,7 @@ export default {
       }
 
       // Validação da Senha
-      if (!data.password) {
+      if (!this.validatePassword(data.password) || data.password.trim().length === 0) {
         this.invalid.password = true;
         isvalid = false;
       } else {
@@ -123,6 +137,7 @@ export default {
 
               // Salvar o token no Vuex store
               this.saveToken(token);
+              this.saveEmail(this.accountData.email);
 
               // Redirecionar para a página de cadastro
               this.$router.push({ name: 'register' });
@@ -159,6 +174,7 @@ export default {
 }
 .container-form input {
   background-color: $white-primary !important;
+  border: 1px solid #dee2e6 !important;
 }
 .container-form input[type='checkbox'] {
   border-radius: 3px !important;
@@ -195,5 +211,6 @@ hr {
 .required-alert {
   color: red;
   font-size: 12px;
+  max-width: 460px;
 }
 </style>

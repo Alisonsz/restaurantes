@@ -4,7 +4,7 @@ body, div, input, select, textarea, span, p, h1, h2, h3 {
     font-style: normal !important;
 }
 
-button, input, select, .input-form {
+button, input[type="text"], input[type="email"], input[type="number"], input[type="tel"], select, .input-form {
     height: 42px !important;
     border-radius: 8px !important;
     font-size: 15px !important;
@@ -241,15 +241,21 @@ hr {
     margin: 25px 0;
 }
 
-.modal-container input, 
-.container-data input, 
+.modal-container input[type="text"], 
+.container-data input[type="text"], 
+.modal-container input[type="email"], 
+.container-data input[type="email"], 
+.modal-container input[type="number"], 
+.container-data input[type="number"], 
+.modal-container input[type="tel"], 
+.container-data input[type="tel"], 
 .modal-container select, 
 .container-data select, 
 .modal-container textarea, 
 .container-data textarea, 
 .input-form {
-    border-radius: 9px !important;
-    background-color: $gray-bg !important;
+    border-radius: 9px;
+    background-color: $gray-bg;
     border: none;
     font-size: 16px;
 }

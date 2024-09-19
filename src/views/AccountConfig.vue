@@ -91,7 +91,7 @@ onMounted(async () => {
   try {
     const response = await axios.get('https://api.prattuapp.com.br/api/users/me', {
       headers: {
-        'Authorization': `Bearer ${store.state.token}`
+        'Authorization': `Bearer 5|BMKUv7poypxLq7EgekdujmyKt7NO8githQfm0Pxnfea429e0`
       }
     });
     const userData = response.data;
@@ -119,7 +119,7 @@ function selectImage() {
         formData.append('profile_photo', file);
         await axios.post('https://api.prattuapp.com.br/api/user/profile-photo', formData, {
           headers: {
-            'Authorization': `Bearer ${store.state.token}`,
+            'Authorization': `Bearer 5|BMKUv7poypxLq7EgekdujmyKt7NO8githQfm0Pxnfea429e0`,
             'Content-Type': 'multipart/form-data'
           }
         });
@@ -141,7 +141,7 @@ async function save() {
       phone: formData.value.phone
     }, {
       headers: {
-        'Authorization': `Bearer ${store.state.token}`
+        'Authorization': `Bearer 5|BMKUv7poypxLq7EgekdujmyKt7NO8githQfm0Pxnfea429e0`
       }
     });
 
@@ -157,7 +157,7 @@ async function save() {
         new_password_confirmation: passwordData.value.confirmNewPassword
       }, {
         headers: {
-          'Authorization': `Bearer ${store.state.token}`
+          'Authorization': `Bearer 5|BMKUv7poypxLq7EgekdujmyKt7NO8githQfm0Pxnfea429e0`
         }
       });
       alert('Senha alterada com sucesso!');
