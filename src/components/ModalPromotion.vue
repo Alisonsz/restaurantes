@@ -7,7 +7,6 @@
           <h3>{{ getPromotionTitle(formData.type) }}</h3>
         </div>
         <hr class="hr-header" />
-        <h2>{{ validate() }}</h2>
         <div class="modal-body">
           <div class="form-row top-row">
             <div class="form-group name-group">
