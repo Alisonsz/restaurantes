@@ -2,7 +2,7 @@
   <div class="chat-wrapper">
     <Navbar :navbarData="navbarData" />
     <div class="main-container">
-      <Sidebar :sidebarData="sidebarData" />
+      <Sidebar activePage="support" />
       <div class="content">
         <div class="page-header">
           <h1>Suporte</h1>
@@ -24,8 +24,9 @@
           <div class="chat-container">
             <div class="chat-header">
               <h2>
-                Motivo do chamado: 
-                <span class="conversation-title-text">{{ isNewConversation ? '' : selectedConversationTitle }}</span>
+                <span v-if="isNewConversation">Motivo do chamado:</span>
+                <span v-if="!isNewConversation">Chamado {{ selectedConversationId }}: </span>
+                <span class="conversation-title-text">{{ isNewConversation ? '' : `(${selectedConversationTitle})` }}</span>
               </h2>
               <p 
                 v-if="!isNewConversation" 
@@ -71,11 +72,11 @@
                 </div>
               </div>
               <div
-                v-for="message in selectedConversationMessages"
+                v-for="(message, index) in selectedConversationMessages"
                 :key="message.id"
                 :class="['message', { 'sent': message.user?.id === currentUser.id, 'received': message.user?.id !== currentUser.id }]"
               >
-                <p>
+                <p v-if="message.user?.id !== selectedConversationMessages[index - 1]?.user?.id">
                   <strong>{{ message.user?.id === currentUser.id ? 'Você' : message.user?.name || 'Usuário desconhecido' }}:</strong>
                 </p>
                 <p v-if="message.message">{{ message.message }}</p>
@@ -243,6 +244,7 @@ export default {
         this.selectedConversationMessages = [];
         this.selectedConversationTitle = 'Nova Conversa';
         this.selectedConversationStatus = null;
+        this.hasConversations = true;
       }
     },
     listenToConversation(conversationId) {
@@ -459,7 +461,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .chat-wrapper {
   display: flex;
   flex-direction: column;
@@ -649,7 +651,7 @@ export default {
 }
 
 .send-button {
-  background-color: #7ED957;
+  background-color: $light-green;
   color: black;
   padding: 10px 20px;
   margin-left: 10px;

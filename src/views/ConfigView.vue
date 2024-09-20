@@ -1,9 +1,9 @@
 <template>
     <div class="container-report" :class="completeConfig ? '' : 'with-footer'">
         <Navbar :navbarData="navbarData" />
-        <Sidebar :sidebarData="sidebarData" />
+        <Sidebar activePage="config" />
         <div class="report-titles">
-            <Navbar :navbarData="navbarData" /><Sidebar :sidebarData="sidebarData"  />
+            <Navbar :navbarData="navbarData" /><Sidebar activePage="config" />
             <div class="row">
                 <div class="col">
                     <h3 class="bold-700 mb-2">Configurações</h3>
@@ -39,7 +39,10 @@
                         <label for="position">Posição</label>
                         <i class="fas fa-briefcase"></i>
                         <select id="position" v-model="formData.position">
-                            <option value="gerente">Gerente</option>
+                            <option value="Proprietário(a)">Proprietário(a)</option>
+                            <option value="Gerente Geral">Gerente Geral</option>
+                            <option value="Gerente de Cozinha">Gerente de Cozinha</option>
+                            <option value="Funcionário(a)">Funcionário(a)</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -49,7 +52,7 @@
                     </div>
                 </div>
             </div>
-            <div class="form-container" v-if="completeConfig">
+            <!-- <div class="form-container" v-if="completeConfig">
                 <div class="password-container">
                     <div class="form-group">
                         <label for="current-password">Senha Atual</label>
@@ -67,7 +70,7 @@
                         <input type="password" id="confirm-new-password" v-model="passwordData.confirmNewPassword" placeholder="Confirme a Nova Senha" />
                     </div>
                 </div>
-            </div>
+            </div> -->
             <div class="buttons" v-if="completeConfig === true">
                 <button :class="['btn', 'btn-success', { 'btn-disabled': !hasChanges }]" :disabled="!hasChanges" @click="save">Salvar</button>
             </div>
@@ -110,7 +113,7 @@ const profileImage = ref('/path/to/default-image.jpg');
 const formData = ref({
     name: '',
     email: '',
-    position: 'gerente',
+    position: 'Gerente Geral',
     phone: ''
 });
 
@@ -151,7 +154,7 @@ onMounted(async () => {
         formData.value = {
             name: userData.name,
             email: userData.email,
-            position: 'gerente',
+            position: 'Gerente Geral',
             phone: userData.phone
         };
         initialFormData.value = { ...formData.value };
@@ -277,9 +280,7 @@ const successMessage = ref('');
 
 function finishConfig() {
     completeConfig.value = true;
-    $router.push('/perfil');
 }
-
 
 </script>
 

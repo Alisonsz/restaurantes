@@ -1,7 +1,7 @@
 <template>
   <div class="hours container-data" :class="completeConfig ? '' : 'with-footer'">
     <Navbar :navbarData="navbarData" />
-    <Sidebar :sidebarData="sidebarData" />
+    <Sidebar activePage="hours" />
     <h3 class="bold-600">Horário de funcionamento</h3>
     <hr />
     <div class="row header-hours">

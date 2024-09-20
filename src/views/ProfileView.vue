@@ -1,7 +1,7 @@
 <template>
   <div class="profile container-data" :class="completeConfig ? '' : 'with-footer'">
     <Navbar :navbarData="navbarData" />
-    <Sidebar :sidebarData="sidebarData" />
+    <Sidebar activePage="profile" />
     <div class="row">
       <div class="col-lg-6">
         <div class="row">

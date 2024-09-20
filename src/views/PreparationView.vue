@@ -1,6 +1,6 @@
 <template>
     <div class="preparation" :class="completeConfig ? '' : 'with-footer'">
-      <Navbar :navbarData="navbarData" /><Sidebar :sidebarData="sidebarData" />
+      <Navbar :navbarData="navbarData" /><Sidebar activePage="preparation" />
       <h2 class="bold-700 title">Tempo de preparo</h2>
       <div class="container-data">
         <label class="bold-500">Tempo médio padrão</label>

@@ -1,7 +1,7 @@
 <template>
   <div class="menu" @skip-categories="skipCategories" :class="completeConfig ? '' : 'with-footer'">
     <Navbar :navbarData="navbarData" />
-    <Sidebar :sidebarData="sidebarData" />
+    <Sidebar activePage="menu" />
     
     <!-- FormMenu: Só exibe se não houver menus -->
     <div class="menu-new" v-if="menus.length === 0">

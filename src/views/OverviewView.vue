@@ -1,7 +1,7 @@
 <template>
   <div class="performance container-report">
       <div class="report-titles">
-          <Navbar :navbarData="navbarData" /><Sidebar :sidebarData="sidebarData"  />
+          <Navbar :navbarData="navbarData" /><Sidebar activePage="overview"  />
           <div class="type-report">
               <button @click.prevent="changeReport('sales')" type="submit" class="btn" :class="reportSelected === 'sales' ? 'report-active' : ''">
                   <span class="add-item add-inline icon-sale"></span> Vendas
@@ -46,7 +46,7 @@
                   sixMonths: "6 meses"
               },
               intervalsLastLabel: {
-                  sevenDays: "Últimos 7 dias",
+                  sevenDays: "últimos 7 dias",
                   oneMonth: "mês passado",
                   sixMonths: "6 meses anteriores"
               },

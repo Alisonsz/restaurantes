@@ -20,8 +20,8 @@
                     <span class="badge" v-if="navbarData.notifications > 0">{{ navbarData.notifications }}</span>
                 </a>
                 <a class="navbar-brand open-time input-base btn-round no-hover" href="#" v-if="navbarData.time" :class="navbarData.open ? 'open' : 'close'">
-                    <span class="text">{{ navbarData.open ? 'Aberto' : 'Reabre às' }}: </span> 
-                    <span class="time bold-500">{{ navbarData.time }}</span>
+                    <span class="text">{{ navbarData.open ? 'Aberto' : 'Fechado' }}: </span> 
+                    <span class="time bold-500">{{ navbarData.open ? '' : 'reabre às' }} {{ navbarData.time }}</span>
                 </a>
                 <a v-if="navbarData.open && navbarData.preparation" class="navbar-brand open-time input-base btn-round no-hover preparation-data" :class="'preparation-'+navbarData.preparationStatus">
                     <span class="text">Preparo: </span> 

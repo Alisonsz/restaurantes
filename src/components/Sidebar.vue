@@ -14,9 +14,9 @@
                 </div>
                 <div class="sublinks-floating" :style="{ top: positionSublink + 'px' }" v-show="visibleSublink">
                     <span v-for="(sublink, i) in selectedSublinks" :key="i">
-                        <p :class="[sidebarData.active === i ? 'item-active' : '']" v-if="typeof sidebarData.links !== 'object' || typeof sidebarData.links[i] === 'object'">
+                        <p :class="[activePage === i ? 'item-active' : '']" v-if="typeof sidebarData.links !== 'object' || typeof sidebarData.links[i] === 'object'">
                             <router-link class="nav-sublink" :to="sublink.route">
-                                <span class="sidbar-icon" :class="sublink.icon"></span>
+                                <span class="sidbar-icon" :class="i === 'orders' ? 'icon-clipboard' : sublink.icon"></span>
                                 <span class="sublink-name">{{ sublink.name }}</span>
                             </router-link>
                         </p>
@@ -36,7 +36,7 @@
                                     <div class="sublinks-list float-left collapse" :id="'sublinks' + index" data-bs-parent=".nav-top" :class="[parentMenu === index ? 'show' : '']">
                                         <div class="sublink" v-for="(sublink, i) in link.sublinks" :key="i">
                                             <span v-if="typeof sidebarData.links !== 'object' || typeof sidebarData.links[i] === 'object'" :class="'menu-'+i">
-                                                <router-link class="nav-link d-flex align-items-center sublink" aria-current="page" :to="sublink.route" :class="[sidebarData.active === i ? 'icon-active' : '']">
+                                                <router-link class="nav-link d-flex align-items-center sublink" aria-current="page" :to="sublink.route" :class="[activePage === i ? 'icon-active' : '']">
                                                     <span class="sidbar-icon info-icon" :class="checkAddIcon(i)"></span>
                                                     <span class="sidbar-icon" :class="sublink.icon"></span>
                                                     <span class="name">{{ sublink.name }}</span>
@@ -45,7 +45,7 @@
                                         </div>
                                     </div>
                                 </span>
-                                <router-link class="nav-link d-flex align-items-center" aria-current="page" v-else :to="link.route" :class="[sidebarData.active === index ? 'icon-active ' : '']">
+                                <router-link class="nav-link d-flex align-items-center" aria-current="page" v-else :to="link.route" :class="[activePage === index ? 'icon-active ' : '']">
                                     <span class="sidbar-icon info-icon" :class="checkAddIcon(index)"></span>
                                     <span class="sidbar-icon" :class="link.icon"></span>
                                     <span class="name">{{ link.name }}</span>
@@ -118,7 +118,7 @@ export default {
                     sublinks: {
                         orders: { icon: "icon-assignment", name: "Pedidos", route: "/pedidos" },
                         history: { icon: "icon-summarize", name: "Histórico de pedidos", route: "/historico" },
-                        support: { icon: "icon-support", name: "Chamados/suporte", route: "/suporte" },
+                        support: { icon: "icon-support", name: "Chamados/suporte", route: "/chamados" },
                     }
                 }
             }
@@ -126,6 +126,9 @@ export default {
     },
     computed: {
         ...mapState(['sidebarData'])
+    },
+    props: {
+        activePage: String
     },
     methods: {
         openClose() {
@@ -192,7 +195,7 @@ export default {
             firstChild.style.marginLeft = '90px';
             firstChild.classList.remove('sidebar-open');
         }
-        this.parentMenu = this.findParentMenu(this.sidebarData.active);
+        this.parentMenu = this.findParentMenu(this.activePage);
     }
 };
 </script>
@@ -495,6 +498,7 @@ export default {
     }
     .item-exit {
         padding-bottom: 25px;
+        margin-bottom: 30px;
     }
 
     @media (max-height: 950px) {
