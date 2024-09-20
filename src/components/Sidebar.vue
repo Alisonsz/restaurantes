@@ -273,6 +273,8 @@ export default {
     }
     .icon-active .sidbar-icon {
         opacity: 1 !important;
+        margin-top: 1px;
+        margin-bottom: 1px;
     }
     .nav-top .nav-item {
         width: 50px !important;
@@ -453,7 +455,7 @@ export default {
             padding-bottom: 5px;
         }
         .sublinks-list {
-            padding-top: 15px;
+            padding-top: 9px;
         }
     }
 

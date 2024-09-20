@@ -122,7 +122,7 @@
             >
               Deletar
             </button>
-            <button @click="savePromotion" class="btn-save" :class="validate() ? 'enabled' : 'disabled'" :disabled="validate()">Salvar</button>
+            <button @click="savePromotion" class="btn-save" :class="validate() ? 'enabled' : 'disabled'" :disabled="!validate()">Salvar</button>
           </div>
         </div>
       </div>
@@ -548,6 +548,7 @@ const isEditing = computed(() => {
   font-size: 16px;
   margin-left: 10px;
   line-height: 16px;
+  margin-right: 15px;
 }
 
 .btn-delete:hover {

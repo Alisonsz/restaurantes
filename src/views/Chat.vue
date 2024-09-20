@@ -26,7 +26,7 @@
               <h2>
                 <span v-if="isNewConversation">Motivo do chamado:</span>
                 <span v-if="!isNewConversation">Chamado {{ selectedConversationId }}: </span>
-                <span class="conversation-title-text">{{ isNewConversation ? '' : `(${selectedConversationTitle})` }}</span>
+                <span class="conversation-title-text">{{ isNewConversation ? '' : selectedConversationTitle }}</span>
               </h2>
               <p 
                 v-if="!isNewConversation" 
