@@ -64,7 +64,7 @@
             </div>
         </div>
     </div>
-    <Footer @next-config-step="nextConfigStep" :currentConfigStep="currentConfigStep" :countConfigSteps="countConfigSteps" v-if="completeConfig === false"/>
+    <Footer @next-config-step="nextConfigStep" :currentConfigStep="currentConfigStep" :countConfigSteps="countConfigSteps" :completeStep="dataTime.general.time" v-if="completeConfig === false"/>
 </template>
 
 <script>

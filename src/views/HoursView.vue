@@ -31,7 +31,7 @@
         </div>
       </div>
     </div>
-    <Footer @next-config-step="nextConfigStep" :currentConfigStep="currentConfigStep" :countConfigSteps="countConfigSteps" v-if="!completeConfig" />
+    <Footer @next-config-step="nextConfigStep" :currentConfigStep="currentConfigStep" :countConfigSteps="countConfigSteps" :completeStep="verifyCompleteStep()" v-if="!completeConfig" />
   </div>
 </template>
 
@@ -49,6 +49,7 @@ export default {
       completeConfig: this.$store.state.completeConfig,
       currentConfigStep: 1,
       countConfigSteps: 5,
+      completeStep: true,
       hoursOptions: [
         "00:00", "01:00", "02:00", "03:00", "04:00", "05:00", 
         "06:00", "07:00", "08:00", "09:00", "10:00", "11:00",  
@@ -113,6 +114,11 @@ export default {
         console.error('Erro ao buscar os horários de funcionamento:', error);
         throw error;
       }
+    },
+    verifyCompleteStep() {
+      return this.completeStep = Object.values(this.dataHour).some(day => 
+        day.some(hour => !hour.is_closed)
+      );
     },
     initializeDataHour(openingHours) {
       this.dataHour = {};

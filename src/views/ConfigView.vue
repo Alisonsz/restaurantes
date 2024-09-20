@@ -75,7 +75,7 @@
                 <button :class="['btn', 'btn-success', { 'btn-disabled': !hasChanges }]" :disabled="!hasChanges" @click="save">Salvar</button>
             </div>
         </div>
-        <Footer @next-config-step="showModalCongratulations = true, complete()" :currentConfigStep="currentConfigStep" :countConfigSteps="countConfigSteps" v-if="completeConfig === false" />
+        <Footer @next-config-step="showModalCongratulations = true, complete()" :currentConfigStep="currentConfigStep" :countConfigSteps="countConfigSteps" :completeStep="formData.position.length > 0" v-if="completeConfig === false" />
         <Teleport to="body">
             <ModalCongratulations :show="showModalCongratulations" @close="showModalCongratulations = false">
                 <template #header>Parabéns!</template>
