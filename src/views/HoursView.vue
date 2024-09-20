@@ -116,8 +116,8 @@ export default {
       }
     },
     verifyCompleteStep() {
-      return this.completeStep = Object.values(this.dataHour).some(day => 
-        day.some(hour => !hour.is_closed)
+      return this.completeStep = Object.values(this.dataHour).every(day =>
+        day.every(hour => hour.id !== null)
       );
     },
     initializeDataHour(openingHours) {
@@ -128,8 +128,8 @@ export default {
           this.dataHour[dayOfWeek] = [];
         }
         this.dataHour[dayOfWeek].push({
-          open: hour.is_closed ? "closed" : hour.open_time.slice(0, 5),
-          close: hour.is_closed ? "closed" : hour.close_time.slice(0, 5),
+          open: !hour.id ? "" :(hour.is_closed ? "closed" : hour.open_time.slice(0, 5)),
+          close: !hour.id ? "" :(hour.is_closed ? "closed" : hour.close_time.slice(0, 5)),
           id: hour.id,
           is_closed: hour.is_closed
         });

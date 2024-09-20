@@ -6,10 +6,15 @@
       <div class="col-lg-6">
         <div class="row">
           <div class="col profile-image">
-            <img :src="dataCompany.logo_photo ? dataCompany.logo_photo : '/img/default_logo.png'" alt="Logo" @click="uploadLogo">
+            <img v-if="dataCompany.cover_photo" :src="dataCompany.cover_photo ? dataCompany.cover_photo : ''" alt="Capa" @click="uploadLogo">
+            <div v-else class="local-cover" @click="uploadLogo"> 
+              <div class="border icon-image">
+                <span class="label-image">Selecione a capa</span>
+              </div>
+            </div>
           </div>
           <div class="col d-flex align-items-center justify-content-center profile-logo">
-            <img :src="dataCompany.cover_photo ? dataCompany.cover_photo : '/img/default_cover.png'" alt="Cover" @click="uploadCover">
+            <img :src="dataCompany.logo_photo ? dataCompany.logo_photo : ''" alt="Logo" @click="uploadCover">
           </div>
         </div>
       </div>
@@ -357,5 +362,24 @@ export default {
   li.inactive {
     background-color: $gray-bg;
   }
+}
+.local-cover {
+  background-color: $gray-bg;
+  padding: 15px;
+  .border {
+    width: 100%;
+    min-height: 150px;
+    background-color: red;
+  }
+}
+
+.icon-image {
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center bottom;
+}
+
+.label-image {
+  
 }
 </style>
