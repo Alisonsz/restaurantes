@@ -16,14 +16,14 @@
                 </router-link>
             </div>
             <div class="col p-0 text-end" v-if="!noData">
-                <a class="navbar-brand icon-bell" href="#" v-if="typeof navbarData.notifications === 'number'">
-                    <span class="badge" v-if="navbarData.notifications > 0">{{ navbarData.notifications }}</span>
+                <a class="navbar-brand icon-bell" href="#" v-if="typeof navbarData?.notifications === 'number'">
+                    <span class="badge" v-if="navbarData?.notifications > 0">{{ navbarData?.notifications }}</span>
                 </a>
-                <a class="navbar-brand open-time input-base btn-round no-hover" href="#" v-if="navbarData.time" :class="navbarData.open ? 'open' : 'close'">
-                    <span class="text">{{ navbarData.open ? 'Aberto' : 'Fechado' }}: </span> 
-                    <span class="time bold-500">{{ navbarData.open ? '' : 'reabre às' }} {{ navbarData.time }}</span>
+                <a class="navbar-brand open-time input-base btn-round no-hover" href="#" v-if="navbarData?.time" :class="navbarData?.open ? 'open' : 'close'">
+                    <span class="text">{{ navbarData?.open ? 'Aberto' : 'Fechado' }}: </span> 
+                    <span class="time bold-500">{{ navbarData?.open ? '' : 'reabre às' }} {{ navbarData?.time }}</span>
                 </a>
-                <a v-if="navbarData.open && navbarData.preparation" class="navbar-brand open-time input-base btn-round no-hover preparation-data" :class="'preparation-'+navbarData.preparationStatus">
+                <a v-if="navbarData?.open && navbarData.preparation" class="navbar-brand open-time input-base btn-round no-hover preparation-data" :class="'preparation-'+navbarData.preparationStatus">
                     <span class="text">Preparo: </span> 
                     <span class="time bold-500">
                         <span class="preparation-icon" :class="'icon-'+navbarData.preparationStatus"></span>

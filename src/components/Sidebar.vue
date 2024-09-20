@@ -5,16 +5,16 @@
             <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-0">
                 <div class="row data-company">
                     <div class="company-logo">
-                        <img class="logo" :src="sidebarData.logo" :alt="sidebarData.company">
+                        <img class="logo" :src="sidebarData?.logo" :alt="sidebarData?.company">
                     </div>
                     <div class="col">
-                        <span class="company-name">{{ sidebarData.company }}</span>
-                        <span class="company-adress">{{ sidebarData.address }}</span>
+                        <span class="company-name">{{ sidebarData?.company }}</span>
+                        <span class="company-adress">{{ sidebarData?.address }}</span>
                     </div>
                 </div>
                 <div class="sublinks-floating" :style="{ top: positionSublink + 'px' }" v-show="visibleSublink">
                     <span v-for="(sublink, i) in selectedSublinks" :key="i">
-                        <p :class="[activePage === i ? 'item-active' : '']" v-if="typeof sidebarData.links !== 'object' || typeof sidebarData.links[i] === 'object'">
+                        <p :class="[activePage === i ? 'item-active' : '']" v-if="typeof sidebarData?.links !== 'object' || typeof sidebarData?.links[i] === 'object'">
                             <router-link class="nav-sublink" :to="sublink.route">
                                 <span class="sidbar-icon" :class="i === 'orders' ? 'icon-clipboard' : sublink.icon"></span>
                                 <span class="sublink-name">{{ sublink.name }}</span>
@@ -23,10 +23,10 @@
                     </span>
                 </div>
                 <div class="menu-content" @scroll="visibleSublink = false">
-                    <p class="message" v-if="typeof sidebarData.message === 'string'">{{ sidebarData.message }}</p>
-                    <ul class="nav nav-top flex-column" :class="typeof sidebarData.message === 'string' ? '' : 'mt-1'">
+                    <p class="message" v-if="typeof sidebarData?.message === 'string'">{{ sidebarData?.message }}</p>
+                    <ul class="nav nav-top flex-column" :class="typeof sidebarData?.message === 'string' ? '' : 'mt-1'">
                         <div v-for="(link, index) in links" :key="index">
-                            <li class="nav-item" :class="typeof link.sublinks === 'object' ? 'with-sublink' : ''" v-if="typeof sidebarData.links !== 'object' || typeof sidebarData.links[index] === 'object'">
+                            <li class="nav-item" :class="typeof link.sublinks === 'object' ? 'with-sublink' : ''" v-if="typeof sidebarData?.links !== 'object' || typeof sidebarData?.links[index] === 'object'">
                                 <span v-if="typeof link.sublinks === 'object'" @click="selectSublink(index, link.sublinks, $event)" ref="clickableElement">
                                     <a class="nav-link d-flex align-items-center collapsed" data-bs-toggle="collapse" :href="'#sublinks' + index" aria-expanded="false" :aria-controls="'sublinks' + index" :class="[parentMenu === index ? 'menu-parent' : '']">
                                         <span class="sidbar-icon" :class="link.icon" v-tippy="open ? '' : link.name"></span>
@@ -35,7 +35,7 @@
                                     </a>
                                     <div class="sublinks-list float-left collapse" :id="'sublinks' + index" data-bs-parent=".nav-top" :class="[parentMenu === index ? 'show' : '']">
                                         <div class="sublink" v-for="(sublink, i) in link.sublinks" :key="i">
-                                            <span v-if="typeof sidebarData.links !== 'object' || typeof sidebarData.links[i] === 'object'" :class="'menu-'+i">
+                                            <span v-if="typeof sidebarData?.links !== 'object' || typeof sidebarData?.links[i] === 'object'" :class="'menu-'+i">
                                                 <router-link class="nav-link d-flex align-items-center sublink" aria-current="page" :to="sublink.route" :class="[activePage === i ? 'icon-active' : '']">
                                                     <span class="sidbar-icon info-icon" :class="checkAddIcon(i)"></span>
                                                     <span class="sidbar-icon" :class="sublink.icon"></span>
@@ -145,10 +145,10 @@ export default {
             }
         },
         checkAddIcon(index) {
-            if (typeof this.sidebarData.links === "object") {
-                if (typeof this.sidebarData.links[index] === "object") {
-                    if (typeof this.sidebarData.links[index].complete === "boolean") {
-                        if (this.sidebarData.links[index].complete) {
+            if (typeof this.sidebarData?.links === "object") {
+                if (typeof this.sidebarData?.links[index] === "object") {
+                    if (typeof this.sidebarData?.links[index].complete === "boolean") {
+                        if (this.sidebarData?.links[index].complete) {
                             return 'check-on';
                         } else {
                             return 'icon-alert';
@@ -185,7 +185,7 @@ export default {
         }
     },
     mounted() {
-        this.open = this.sidebarData.open;
+        this.open = this.sidebarData?.open;
         const mainElement = document.querySelector('main');
         const firstChild = mainElement.querySelector('div');
         if (this.open) {
