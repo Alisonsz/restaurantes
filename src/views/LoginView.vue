@@ -1,6 +1,6 @@
 <template>
     <div class="home container-data">
-      <Navbar :noData="true" :loggedIn="true"/>
+      <Navbar :noData="true" :loggedIn="2"/>
       <FormLogin />
     </div>
   </template>

@@ -8,10 +8,10 @@
                 <img src="~@/assets/img/logo_principal.png" class="logo">
             </div>
             <div class="col p-0 text-end" v-if="noData">
-                <router-link v-if="!loggedIn" class="navbar-brand input-base btn-round no-hover login" to="/login">
+                <router-link v-if="loggedIn === 1" class="navbar-brand input-base btn-round no-hover login" to="/login">
                     <span class="text">Já tem conta?</span> <span class="time bold-500">Entrar</span>
                 </router-link>
-                <router-link v-if="loggedIn" class="navbar-brand input-base btn-round no-hover login" to="/">
+                <router-link v-if="loggedIn === 2" class="navbar-brand input-base btn-round no-hover login" to="/">
                     <span class="text">Não tem conta?</span> <span class="time bold-500">Cadastrar</span>
                 </router-link>
             </div>

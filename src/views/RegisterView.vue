@@ -1,6 +1,6 @@
 <template>
   <div class="register container-data">
-    <Navbar  @back-step="backStep" :withBack="showNavBack" :noData="true"/>
+    <Navbar  @back-step="backStep" :withBack="showNavBack" :loggedIn="3" :noData="true"/>
     <div class="row register">
         <div class="col" v-show="currentStep == 1">
             <FormResponsible @next-step="nextStep" :currentStep="currentStep" :countSteps="countSteps"/>
