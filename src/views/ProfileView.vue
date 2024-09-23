@@ -6,15 +6,15 @@
       <div class="col-lg-6">
         <div class="row">
           <div class="col profile-image">
-            <img v-if="dataCompany.cover_photo" :src="dataCompany.cover_photo ? dataCompany.cover_photo : ''" alt="Capa" @click="uploadLogo">
-            <div v-else class="local-cover" @click="uploadLogo"> 
+            <img v-if="dataCompany.cover_photo" :src="dataCompany.cover_photo ? dataCompany.cover_photo : ''" alt="Capa" @click="uploadCover">
+            <div v-else class="local-cover" @click="uploadCover"> 
               <div class="border icon-image">
                 <span class="label-image">Selecione a capa</span>
               </div>
             </div>
           </div>
           <div class="col d-flex align-items-center justify-content-center profile-logo">
-            <img :src="dataCompany.logo_photo ? dataCompany.logo_photo : ''" alt="Logo" @click="uploadCover">
+            <img :src="dataCompany.logo_photo ? dataCompany.logo_photo : ''" alt="Logo" @click="uploadLogo">
           </div>
         </div>
       </div>
@@ -41,8 +41,8 @@
           <hr/>
           <h3>Categorias <span class="edit-data" @click="showModalCategories = true"></span></h3>
           <p class="hint">Atenção: As categorias poderão ser editadas somente de 20 em 20 dias.</p>
-          <ul>
-            <li class="input-base">{{ dataCompany.category }}</li>
+          <ul v-if="dataCompany.categories">
+            <li class="input-base" v-for="(category, index) in dataCompany.categories" :key="index">{{ category.name }}</li>
           </ul>
         </div>
         <div class="preparation-time">
@@ -70,17 +70,17 @@
           <textarea v-model="dataCompany.description" placeholder="Descrição do restaurante..." class="form-control"></textarea>
         </div>
         <div class="withdrawal">
-          <h3>Instruções para retirada</h3>
+          <h3 class="mt-4">Instruções para retirada</h3>
           <textarea v-model="dataCompany.withdrawal" placeholder="Instruções para retirada..." class="form-control"></textarea>
         </div>
         <div class="opening-hours">
-          <h3>Horários de funcionamento <router-link to="/horario" class="edit-data"></router-link></h3>
+          <h3 class="mt-4">Horários de funcionamento <router-link to="/horario" class="edit-data"></router-link></h3>
           <p>{{ formattedOpeningHours }}</p>
         </div>
       </div>
     </div>
   </div>
-  <Footer @next-config-step="nextConfigStep" :currentConfigStep="currentConfigStep" :countConfigSteps="countConfigSteps" v-if="completeConfig === false"/>
+  <Footer @next-config-step="nextConfigStep" :currentConfigStep="currentConfigStep" :countConfigSteps="countConfigSteps" :completeStep="verifyCompleteStep(dataCompany)" v-if="completeConfig === false"/>
   <Teleport to="body">
     <ModalCategories :show="showModalCategories" @close="showModalCategories = false">
       <template #header>Categoria</template>
@@ -91,7 +91,7 @@
     <ModalOrderTypes :show="showModalOrderTypes" @close="showModalOrderTypes = false">
       <template #header>Formas de pedidos aceitas</template>
       <template #body>
-        <FormOrderTypes @close-modal="showModalOrderTypes = false" @save-modal="saveOrderTypes" :listOrderTypes="listOrderTypes" :orderTypes="dataCompany.orderTypes"/>
+        <FormOrderTypes @close-modal="showModalOrderTypes = false" @save-modal="saveOrderTypes" :eatOn="dataCompany.eat_on" :withdrawalOn="true"/>
       </template>
     </ModalOrderTypes>
     <ModalCompany :show="showModalCompany" @close="showModalCompany = false">
@@ -107,6 +107,9 @@
 import { ref, reactive, computed, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import axios from 'axios';
+import ModalCategories from "../components/ModalBase.vue";
+import ModalOrderTypes from "../components/ModalBase.vue";
+import ModalCompany from "../components/ModalBase.vue";
 
 const store = useStore();
 
@@ -218,6 +221,10 @@ async function uploadImage(file, field) {
   }
 }
 
+async function saveOrderTypes(data) {
+  dataCompany.eat_on = data.eatOn;
+}
+
 onMounted(async () => {
   await fetchData();
 });
@@ -251,6 +258,7 @@ import Footer from "../components/Footer.vue";
 import FormCategories from "../components/profile/FormCategories.vue";
 import FormOrderTypes from "../components/profile/FormOrderTypes.vue";
 import FormCompany from "../components/profile/FormCompany.vue";
+import { mapActions } from 'vuex';
 
 export default {
   name: "ProfileView",
@@ -286,6 +294,7 @@ export default {
     FormCompany,
   },
   methods: {
+    ...mapActions(['saveCompleteStep']),
     showModalLogo() {
       this.showModalCompany = true;
     },
@@ -295,15 +304,22 @@ export default {
     saveCategories(data) {
       this.dataCompany.category = data;
     },
-    saveOrderTypes(data) {
-      this.dataCompany.eat_on = data.includes('dinein');
-    },
     saveCompany(data) {
       this.dataCompany = data;
     },
     nextConfigStep() {
+      this.saveCompleteStep('profile');
       this.$router.push('/cardapio');
-    }
+    },
+    verifyCompleteStep(dataCompany) {
+      return (
+        (typeof dataCompany?.logo_photo === "string" &&  dataCompany?.logo_photo.trim() !== "")
+        && (typeof dataCompany?.cover_photo === "string" &&  dataCompany?.cover_photo.trim() !== "")
+        //&& (typeof dataCompany?.description === "string" &&  dataCompany?.description.trim() !== "")
+        && (typeof dataCompany?.withdrawal === "string" &&  dataCompany?.withdrawal.trim() !== "")
+        && (typeof dataCompany?.categories === "object" &&  dataCompany?.categories.length > 0)
+      );
+    },
   }
 };
 </script>
@@ -366,10 +382,17 @@ export default {
 .local-cover {
   background-color: $gray-bg;
   padding: 15px;
+  border-radius: 8px;
   .border {
     width: 100%;
     min-height: 150px;
-    background-color: red;
+    background-color: $gray-bg;
+    border: 2px solid #FFF !important;
+    border-radius: 4px;
+    padding: 20px;
+    .label-image {
+      opacity: 0.4;
+    }
   }
 }
 

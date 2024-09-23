@@ -37,7 +37,7 @@
 
 <script>
 import axios from 'axios';
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 import Navbar from "../components/Navbar.vue";
 import Sidebar from "../components/Sidebar.vue";
 import Footer from "../components/Footer.vue";
@@ -86,9 +86,10 @@ export default {
     };
   },
   computed: {
-    ...mapState(['token'])
+    ...mapState(['token']),
   },
   methods: {
+    ...mapActions(['saveCompleteStep']),
     async fetchRestaurantId() {
       try {
         const response = await axios.get('https://api.prattuapp.com.br/api/users/me', {
@@ -115,7 +116,9 @@ export default {
         throw error;
       }
     },
+    
     verifyCompleteStep() {
+      this.saveCompleteStep('hours');
       return this.completeStep = Object.values(this.dataHour).every(day =>
         day.every(hour => hour.id !== null)
       );

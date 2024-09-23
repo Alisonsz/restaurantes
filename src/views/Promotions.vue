@@ -91,10 +91,9 @@
               <span class="promo-type">{{ getPromotionType(promo.type) }}</span>
             </td>
             <td>
-              <label class="switch">
-                <input type="checkbox" v-model="promo.status">
-                <span class="slider round"></span>
-              </label>
+              <span class="promo-type promo-type-1" v-if="promo.status == 1">Ativo</span>
+              <span class="promo-type promo-type-2" v-if="promo.status == 2">Programada</span>
+              <span class="promo-type promo-type-3" v-if="promo.status == 3">Expirada</span>
             </td>
             <td>
               <button class="edit-button btn-round input-base" @click="openModal(promo.type, promo)">
@@ -447,6 +446,16 @@ h4 {
   font-size: 14px;
   color: black;
   font-weight: 500;
+}
+
+.promo-type-1 {
+  background-color: $green-secondary;
+}
+.promo-type-2 {
+  background-color: $purple-secondary;
+}
+.promo-type-3 {
+  background-color: $red-secondary;
 }
 
 .status-switch {

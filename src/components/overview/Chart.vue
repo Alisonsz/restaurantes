@@ -2,7 +2,14 @@
   <div class="report-data card-general">
       <div class="row header">
           <div class="col-lg-6">
-              <h3 class="bold-500">Visão geral</h3>
+              <div class="type-report">
+                <button @click.prevent="changeReport('sales')" type="submit" class="btn" :class="reportSelected === 'sales' ? 'report-active' : ''">
+                    <span class="add-item add-inline icon-sale"></span> Vendas
+                </button>
+                <button @click.prevent="changeReport('requests')" type="submit" class="btn" :class="reportSelected === 'requests' ? 'report-active' : ''">
+                    <span class="add-item add-inline icon-request"></span> Pedidos
+                </button>
+            </div>
           </div>
           <div class="col-lg-6">
               <div class="interval">
@@ -58,6 +65,7 @@
       name: "Chart",
       data() {
           return {
+              reportSelected: "sales",
               intervalSelected: "sevenDays",
               reportChart: [],
               reportCardLabels: {
@@ -275,7 +283,6 @@
           }
       },
       props: {
-          reportSelected: String,
           intervalsLastLabel: Object,
           intervals: Object
       },
@@ -283,6 +290,10 @@
           VueTippy
       },
       methods: {
+          changeReport(report) {
+              this.reportSelected = report;
+              this.reloadChart(report);
+          },
           reloadChart(reportSelected) {
               const storage = this.chartData[reportSelected][this.intervalSelected];
               this.reportChart.data.labels = storage.current.map(row => row.time);
@@ -490,6 +501,15 @@
               left: 0;
           }
       }
+  }
+
+  .type-report button {
+      background-color: $gray-line;
+      width: 120px;
+      margin-right: 15px;
+  }
+  .report-active {
+      background-color: $light-green !important;
   }
 
   @media (max-width: 1570px) {

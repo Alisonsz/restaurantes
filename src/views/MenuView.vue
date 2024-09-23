@@ -28,7 +28,7 @@
   </div>
   
   <!-- Exibe o Footer se a configuração não estiver completa -->
-  <Footer @nextConfigStep="nextConfigStep" :currentConfigStep="currentConfigStep" :countConfigSteps="countConfigSteps" v-if="!completeConfig" />
+  <Footer @nextConfigStep="nextConfigStep" :currentConfigStep="currentConfigStep" :countConfigSteps="countConfigSteps" :completeStep="this.$store.state.items.length >= 5" v-if="!completeConfig" />
 </template>
 
 <script>
@@ -38,6 +38,7 @@ import Footer from "../components/Footer.vue";
 import FormMenu from "../components/menu/FormMenu.vue";
 import FormCategories from "../components/menu/FormCategories.vue";
 import Menu from "../components/menu/Menu.vue";
+import { mapActions } from 'vuex';
 
 export default {
   name: "MenuView",
@@ -68,6 +69,7 @@ export default {
     Menu
   },
   methods: {
+    ...mapActions(['saveCompleteStep']),
     onMenuCreated(menuId) {
       this.menuId = menuId;
       this.selectedMenu = this.menus.length - 1;
@@ -81,6 +83,7 @@ export default {
       this.skipStepCategories = true;
     },
     nextConfigStep() {
+      this.saveCompleteStep('menu');
       this.$router.push('/configuracoes');
     }
   },

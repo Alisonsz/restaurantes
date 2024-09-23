@@ -1,6 +1,6 @@
 <template>
     <div class="sidebar border border-right col p-0 sidebar-size" :class="open ? 'open' : ''">
-        <a class="navbar-brand icon-double-arrow-left" href="#" @click.prevent="openClose()"></a>
+        <a class="navbar-brand icon-double-arrow-left" href="#" @click.prevent="openClose()" v-if="$store.state.completeConfig"></a>
         <div class="offcanvas-md offcanvas-end" tabindex="-1" id="sidebarMenu" aria-labelledby="sidebarMenuLabel">
             <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-0">
                 <div class="row data-company">
@@ -36,11 +36,16 @@
                                     <div class="sublinks-list float-left collapse" :id="'sublinks' + index" data-bs-parent=".nav-top" :class="[parentMenu === index ? 'show' : '']">
                                         <div class="sublink" v-for="(sublink, i) in link.sublinks" :key="i">
                                             <span v-if="typeof sidebarData?.links !== 'object' || typeof sidebarData?.links[i] === 'object'" :class="'menu-'+i">
-                                                <router-link class="nav-link d-flex align-items-center sublink" aria-current="page" :to="sublink.route" :class="[activePage === i ? 'icon-active' : '']">
+                                                <router-link class="nav-link d-flex align-items-center sublink" aria-current="page" :to="sublink.route" :class="[activePage === i ? 'icon-active' : '']" v-if="typeof sidebarData?.links !== 'object' || sidebarData?.links[i]?.complete">
                                                     <span class="sidbar-icon info-icon" :class="checkAddIcon(i)"></span>
                                                     <span class="sidbar-icon" :class="sublink.icon"></span>
                                                     <span class="name">{{ sublink.name }}</span>
                                                 </router-link>
+                                                <span class="nav-link d-flex align-items-center sublink" aria-current="page" :to="sublink.route" :class="[activePage === i ? 'icon-active' : '']" v-else>
+                                                    <span class="sidbar-icon info-icon" :class="checkAddIcon(i)"></span>
+                                                    <span class="sidbar-icon" :class="sublink.icon"></span>
+                                                    <span class="name">{{ sublink.name }}</span>
+                                                </span>
                                             </span>
                                         </div>
                                     </div>
@@ -91,7 +96,6 @@ export default {
                     icon: "icon-monitor", 
                     name: "Monitor Performance", 
                     sublinks: {
-                    
                         overview: { icon: "icon-grid", name: "Visão geral", route: "/visao" },
                         sales: { icon: "icon-performance", name: "Vendas", route: "/vendas" },
                         operacional: { icon: "icon-efficiency", name: "Eficiência operacional", route: "/operacional" },
@@ -185,7 +189,12 @@ export default {
         }
     },
     mounted() {
-        this.open = this.sidebarData?.open;
+        console.log("tttttttttttttttthis.sidebarData", this.sidebarData)
+        if  (!this.$store.state.completeConfig) {
+            this.open = true;
+        } else {
+            this.open = this.sidebarData?.open;
+        }
         const mainElement = document.querySelector('main');
         const firstChild = mainElement.querySelector('div');
         if (this.open) {

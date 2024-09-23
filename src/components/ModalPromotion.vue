@@ -56,7 +56,7 @@
 
           <div class="form-row bottom-row">
             <div class="form-group percentage-group">
-              <label for="promotionPercentage">Porcentagem de Desconto (%)</label>
+              <label for="promotionPercentage">Desconto (%)</label>
               <div class="form-time">
                 <button
                   class="btn btn-minus"

@@ -278,10 +278,6 @@ const currentConfigStep = ref(5);
 const countConfigSteps = ref(5);
 const successMessage = ref('');
 
-function finishConfig() {
-    completeConfig.value = true;
-}
-
 </script>
 
 <script>
@@ -292,8 +288,12 @@ export default {
   methods: {
     ...mapActions(['saveCompleteConfig']),
     complete() {
-        this.saveCompleteConfig(true)
+        this.saveCompleteConfig(true);
     },
+    finishConfig() {
+        //this.$router.push('/preparo');
+        window.location.reload();
+    }
   }
 }
 </script>

@@ -72,7 +72,7 @@ import axios from 'axios';
 import Navbar from "../components/Navbar.vue";
 import Sidebar from "../components/Sidebar.vue";
 import Footer from "../components/Footer.vue";
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 
 export default {
   name: "PreparationView",
@@ -130,6 +130,7 @@ export default {
     ...mapState(['token'])
   },
   methods: {
+    ...mapActions(['saveCompleteStep']),
     async fetchRestaurantData() {
       try {
         // Obtém o ID do restaurante a partir dos dados do usuário
@@ -204,6 +205,7 @@ export default {
       this.timeNumber.general.time = 0;
     },
     nextConfigStep() {
+      this.saveCompleteStep('preparation');
       this.$router.push('/perfil');
     }
   },
