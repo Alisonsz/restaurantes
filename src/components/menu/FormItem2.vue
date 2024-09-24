@@ -182,18 +182,17 @@ export default {
       complement: [],
     });
 
-    const formattedPrice = ref(""); // Estado para o preço formatado
-    const imageName = ref(""); // Nome do arquivo de imagem
-    const fileInput = ref(null); // Referência ao input de arquivo
-    const selectCategory = ref(""); // Categoria selecionada
-    const selectComplement = ref(""); // Complemento selecionado
-    const categorySelected = ref(null); // Categoria atualmente selecionada
+    const formattedPrice = ref(""); 
+    const imageName = ref(""); 
+    const fileInput = ref(null); 
+    const selectCategory = ref(""); 
+    const selectComplement = ref(""); 
+    const categorySelected = ref(null); 
     const invalid = ref({
       name: false,
       price: false,
     });
 
-    // Função para formatar a moeda
     const formatCurrency = (value) => {
       if (!value) return '0,00';
       return parseFloat(value).toLocaleString('pt-BR', {
@@ -202,50 +201,47 @@ export default {
       });
     };
 
-    // Função para pegar o status do produto via API ao carregar
     const loadProductStatus = async (id) => {
       try {
         const response = await axios.get(`https://api.prattuapp.com.br/api/products/${id}`, {
           headers: {
-            Authorization: `Bearer ${store.state.token}`, // Corrigido para passar o Bearer token
+            Authorization: `Bearer ${store.state.token}`,
           },
         });
-        itemData.value.active = response.data.is_available; // Pega o status da API
+        itemData.value.active = response.data.is_available; 
       } catch (error) {
         console.error('Erro ao carregar status do produto:', error);
       }
     };
 
-    // Função para alterar o status do produto
     const toggleStatus = async (id) => {
       try {
-        const newStatus = !itemData.value.active; // Alterna o status localmente
+        const newStatus = !itemData.value.active; 
         await axios.patch(
           `https://api.prattuapp.com.br/api/products/${id}/availability`,
           { is_available: newStatus },
           {
             headers: {
-              Authorization: `Bearer ${store.state.token}`, // Corrigido para passar o Bearer token
+              Authorization: `Bearer ${store.state.token}`,
             },
           }
         );
-        itemData.value.active = newStatus; // Atualiza o estado local
+        itemData.value.active = newStatus; 
       } catch (error) {
         console.error('Erro ao alterar o status:', error);
       }
     };
 
-    // Função para carregar dados iniciais do produto
     const loadProductData = () => {
       if (props.itemEditData && props.itemEditData.id) {
-        itemData.value = { ...props.itemEditData }; // Clona os dados
+        itemData.value = { ...props.itemEditData }; 
         formattedPrice.value = formatCurrency(props.itemEditData.price || 0);
         imageName.value = props.itemEditData.image ? props.itemEditData.image.split('/').pop() : '';
         categorySelected.value = store.state.formCategories.find(
           (category) => category.id === props.itemEditData.category_id
         );
         selectCategory.value = categorySelected.value;
-        loadProductStatus(props.itemEditData.id); // Carrega o status via API
+        loadProductStatus(props.itemEditData.id); 
       } else {
         resetForm();
       }
@@ -306,7 +302,7 @@ export default {
             { product_id: itemData.value.id },
             {
               headers: {
-                Authorization: `Bearer ${store.state.token}`, // Corrigido para passar o Bearer token
+                Authorization: `Bearer ${store.state.token}`,
               },
             }
           );
@@ -325,7 +321,7 @@ export default {
             { restaurant_id: store.state.restaurantId },
             {
               headers: {
-                Authorization: `Bearer ${store.state.token}`, // Corrigido para passar o Bearer token
+                Authorization: `Bearer ${store.state.token}`,
                 'Content-Type': 'application/json',
               },
             }
@@ -371,7 +367,7 @@ export default {
             formData,
             {
               headers: {
-                Authorization: `Bearer ${store.state.token}`, // Corrigido para passar o Bearer token
+                Authorization: `Bearer ${store.state.token}`,
                 'Content-Type': 'multipart/form-data',
               },
             }
@@ -382,7 +378,7 @@ export default {
             formData,
             {
               headers: {
-                Authorization: `Bearer ${store.state.token}`, // Corrigido para passar o Bearer token
+                Authorization: `Bearer ${store.state.token}`,
                 'Content-Type': 'multipart/form-data',
               },
             }
@@ -392,6 +388,7 @@ export default {
 
         emit('save-item', itemData.value);
         store.dispatch('fetchMenusAndItems');
+        resetForm(); // Resetar formulário após salvar
         emit('close-modal');
       } catch (error) {
         console.error('Erro ao salvar o produto:', error);
@@ -402,10 +399,11 @@ export default {
       try {
         await axios.delete(`https://api.prattuapp.com.br/api/products/${itemData.value.id}`, {
           headers: {
-            Authorization: `Bearer ${store.state.token}`, // Corrigido para passar o Bearer token
+            Authorization: `Bearer ${store.state.token}`,
           },
         });
         store.dispatch('fetchMenusAndItems');
+        resetForm(); // Resetar formulário após exclusão
         emit('close-modal');
       } catch (error) {
         console.error('Erro ao excluir o produto:', error);
@@ -413,6 +411,7 @@ export default {
     };
 
     const closeModal = () => {
+      resetForm();
       emit('close-modal');
     };
 
@@ -444,6 +443,7 @@ export default {
     }),
   },
 };
+
 </script>
 
 <style lang="scss" scoped>

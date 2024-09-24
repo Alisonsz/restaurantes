@@ -47,11 +47,12 @@
         </div>
       </div>
       <div class="mt-3 pointer">
-        <span role="button" @click="showModalFormItem = true">
-          <span class="add-item add-inline add-black ml-1"></span>
-          Clique aqui para criar e adicionar um novo item
-        </span>
-      </div>
+  <span role="button" @click="addItem"> <!-- Aqui chamamos addItem em vez de apenas abrir o modal -->
+    <span class="add-item add-inline add-black ml-1"></span>
+    Clique aqui para criar e adicionar um novo item
+  </span>
+</div>
+
       <div v-if="dataComplement.items && dataComplement.items.length">
         <draggable v-model="dataComplement.items" tag="div">
           <template #item="{ element: item, index }">
@@ -401,8 +402,18 @@ export default {
       }
     },
     addItem() {
-      this.resetFormData(); 
+      this.resetItemEditData();  // Resetar os dados do item ao adicionar
       this.showModalFormItem = true;  
+    },
+    resetItemEditData() {
+      this.itemEditData = {
+        id: null,
+        name: "",
+        price: "",
+        description: "",
+        image: "",
+        complement: [],
+      };
     },
     removeItem(index) {
       if (typeof index === "number") {
@@ -546,6 +557,8 @@ export default {
     }
   }
 };
+
+
 </script>
 
 

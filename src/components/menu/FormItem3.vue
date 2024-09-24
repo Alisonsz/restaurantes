@@ -81,6 +81,7 @@
           <p class="mb-0 required-alert" v-show="invalid.description">*Descrição não pode exceder 250 caracteres</p>
         </div>
       </div>
+
       <!-- Categoria -->
       <div class="row mt-1">
         <div class="col-lg-12 d-grid">
@@ -120,6 +121,7 @@
           </div>
         </div>
       </div>
+
       <!-- Complemento -->
       <div class="row mt-4">
         <div class="col-lg-12 d-grid">
@@ -160,6 +162,7 @@
         </div>
       </div>
     </form>
+
     <div class="row mt-4 justify-content-end">
       <div class="col-lg-2 d-grid gap-2" v-if="itemData.id">
         <button @click.prevent="deleteProduct" type="button" class="btn btn-danger">Excluir</button>
@@ -207,6 +210,24 @@ export default {
     });
     const imageRemoved = ref(false);
 
+    // Resetar estado para novo item
+    const resetItemData = () => {
+      itemData.value = {
+        id: "",
+        active: true,
+        name: "",
+        price: 0,
+        image: "",
+        description: "",
+        complement: [],
+      };
+      formattedPrice.value = "";
+      imageName.value = "";
+      selectedCategories.value = [];
+      selectedComplements.value = [];
+      imageRemoved.value = false;
+    };
+
     // Carregar os dados do produto
     const loadProductData = async (productId) => {
       try {
@@ -217,10 +238,10 @@ export default {
         const product = response.data;
         itemData.value = {
           id: product.id,
-          name: product.name,
-          price: product.price,
-          image: product.products_photo,
-          description: product.description,
+          name: product.name || "",
+          price: product.price || 0,
+          image: product.products_photo || "",
+          description: product.description || "",
           active: product.is_available,
           complement: product.components.map((comp) => comp),
         };
@@ -228,7 +249,6 @@ export default {
         imageName.value = product.products_photo ? product.products_photo.split('/').pop() : '';
         initialAvailability.value = product.is_available;
 
-        // Pre-seleciona a categoria do produto
         selectedCategories.value = Array.isArray(product.category_product) && product.category_product.length
           ? product.category_product.map(category => category)
           : [];
@@ -238,16 +258,32 @@ export default {
       }
     };
 
+    // Watch para resetar o estado ou carregar dados ao editar/criar novo item
+    watch(
+      () => props.itemEditData,
+      (newData) => {
+        if (newData && newData.id) {
+          loadProductData(newData.id);
+        } else {
+          resetItemData();  // Reseta o estado ao criar novo
+        }
+      },
+      { immediate: true }
+    );
+
     // Pre-seleciona a categoria passada pela prop no dropdown
     watch(
       () => props.selectedCategoryId,
       (newCategoryId) => {
         if (newCategoryId) {
           selectCategory.value = newCategoryId;
-          selectedCategories.value.push(store.state.formCategories.find(category => category.id === newCategoryId));
+          const category = store.state.formCategories.find(category => category.id === newCategoryId);
+          if (category && !selectedCategories.value.includes(category)) {
+            selectedCategories.value.push(category);
+          }
         }
       },
-      { immediate: true } // Executa o watch imediatamente
+      { immediate: true }
     );
 
     onMounted(() => {
@@ -309,7 +345,28 @@ export default {
     };
 
     const removeCategory = (index) => {
-      selectedCategories.value.splice(index, 1);
+      const categoryToRemove = selectedCategories.value[index];
+
+      if (itemData.value.id && categoryToRemove) {
+        axios.delete(`https://api.prattuapp.com.br/api/products/${itemData.value.id}/remove-categories`, {
+          data: {
+            restaurant_id: store.state.restaurantId,
+            category_ids: [categoryToRemove.id],
+          },
+          headers: {
+            Authorization: `Bearer ${store.state.token}`,
+          },
+        })
+        .then(() => {
+          selectedCategories.value.splice(index, 1);  // Atualiza o estado local
+        })
+        .catch((error) => {
+          console.error('Erro ao remover a categoria:', error);
+        });
+      } else {
+        // Se for um item novo e não salvo ainda, apenas remove localmente
+        selectedCategories.value.splice(index, 1);
+      }
     };
 
     const removeComplement = (index) => {
@@ -466,6 +523,8 @@ export default {
   },
 };
 </script>
+
+
 
 <style scoped lang="scss">
 /* Estilos copiados do formulário 2 para manter a consistência */

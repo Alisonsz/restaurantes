@@ -1,6 +1,6 @@
 <template>
     <div class="home container-data">
-      <Navbar />
+    <!--  <Navbar /> -->
       <FormLogin />
     </div>
   </template>

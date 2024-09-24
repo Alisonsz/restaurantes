@@ -55,37 +55,37 @@
                         sevenDays: {
                             generalCompare: -14,
                             current: [
-                                { time: "01/06/2024", value: 588 },
-                                { time: "02/06/2024", value: 1058 },
-                                { time: "03/06/2024", value: 685 },
-                                { time: "04/06/2024", value: 1122 },
-                                { time: "05/06/2024", value: 958 },
-                                { time: "06/06/2024", value: 787 },
-                                { time: "07/06/2024", value: 1235 }
+                                { time: "01/08/2024", value: 588 },
+                                { time: "02/08/2024", value: 1058 },
+                                { time: "03/08/2024", value: 685 },
+                                { time: "04/08/2024", value: 1122 },
+                                { time: "05/08/2024", value: 958 },
+                                { time: "06/08/2024", value: 787 },
+                                { time: "07/08/2024", value: 1235 }
                             ],
                             compare: [
-                                { time: "25/07/2024", value: 988 },
-                                { time: "26/07/2024", value: 758 },
-                                { time: "27/07/2024", value: 985 },
-                                { time: "28/07/2024", value: 782 },
-                                { time: "29/07/2024", value: 1002 },
-                                { time: "30/07/2024", value: 887 },
-                                { time: "31/07/2024", value: 935 }
+                                { time: "25/08/2024", value: 988 },
+                                { time: "26/08/2024", value: 758 },
+                                { time: "27/08/2024", value: 985 },
+                                { time: "28/08/2024", value: 782 },
+                                { time: "29/08/2024", value: 1002 },
+                                { time: "30/08/2024", value: 887 },
+                                { time: "31/08/2024", value: 935 }
                             ]
                         },
                         oneMonth: {
                             generalCompare: -18,
                             current: [
-                                { time: "01/06/2024", value: 79726 }, { time: "02/06/2024", value: 38680 }, { time: "03/06/2024", value: 4365 },
-                                { time: "04/06/2024", value: 87521 }, { time: "05/06/2024", value: 72895 }, { time: "06/06/2024", value: 58972 }, 
-                                { time: "07/06/2024", value: 99101 }, { time: "08/06/2024", value: 33147 }, { time: "09/06/2024", value: 15638 },
-                                { time: "10/06/2024", value: 69752 }, { time: "11/06/2024", value: 72765 }, { time: "12/06/2024", value: 73783 },
-                                { time: "13/06/2024", value: 70476 }, { time: "14/06/2024", value: 789 }, { time: "15/06/2024", value: 87365 },
-                                { time: "16/06/2024", value: 43792 }, { time: "17/06/2024", value: 80245 }, { time: "18/06/2024", value: 80043 },
-                                { time: "19/06/2024", value: 63275 }, { time: "20/06/2024", value: 9108 }, { time: "21/06/2024", value: 26130 },
-                                { time: "22/06/2024", value: 37151 }, { time: "23/06/2024", value: 39451 }, { time: "24/06/2024", value: 48316 },
-                                { time: "25/06/2024", value: 8989 }, { time: "26/06/2024", value: 12226 }, { time: "27/06/2024", value: 36833 },
-                                { time: "28/06/2024", value: 11797 }, { time: "29/06/2024", value: 68557 }, { time: "30/06/2024", value: 18301 }
+                                { time: "01/09/2024", value: 79726 }, { time: "01/08/2024", value: 38680 }, { time: "03/06/2024", value: 4365 },
+                                { time: "04/09/2024", value: 87521 }, { time: "05/08/2024", value: 72895 }, { time: "06/06/2024", value: 58972 }, 
+                                { time: "07/09/2024", value: 99101 }, { time: "08/08/2024", value: 33147 }, { time: "09/06/2024", value: 15638 },
+                                { time: "10/09/2024", value: 69752 }, { time: "11/08/2024", value: 72765 }, { time: "12/06/2024", value: 73783 },
+                                { time: "13/09/2024", value: 70476 }, { time: "14/08/2024", value: 789 }, { time: "15/06/2024", value: 87365 },
+                                { time: "16/09/2024", value: 43792 }, { time: "17/08/2024", value: 80245 }, { time: "18/06/2024", value: 80043 },
+                                { time: "19/09/2024", value: 63275 }, { time: "20/08/2024", value: 9108 }, { time: "21/06/2024", value: 26130 },
+                                { time: "22/09/2024", value: 37151 }, { time: "23/08/2024", value: 39451 }, { time: "24/06/2024", value: 48316 },
+                                { time: "25/09/2024", value: 8989 }, { time: "26/08/2024", value: 12226 }, { time: "27/06/2024", value: 36833 },
+                                { time: "28/09/2024", value: 11797 }, { time: "29/08/2024", value: 68557 }, { time: "30/06/2024", value: 18301 }
                             ],
                             compare: [
                                 { time: "01/05/2024", value: 62735 }, { time: "02/05/2024", value: 61688 }, { time: "03/05/2024", value: 94489 }, 
@@ -124,22 +124,22 @@
                         sevenDays: {
                             generalCompare: 17,
                             current: [
-                                { time: "25/07/2024", value: 988 },
-                                { time: "26/07/2024", value: 758 },
-                                { time: "27/07/2024", value: 985 },
-                                { time: "28/07/2024", value: 782 },
-                                { time: "29/07/2024", value: 1002 },
-                                { time: "30/07/2024", value: 887 },
-                                { time: "31/07/2024", value: 935 }
+                                { time: "25/08/2024", value: 988 },
+                                { time: "26/08/2024", value: 758 },
+                                { time: "27/08/2024", value: 985 },
+                                { time: "28/08/2024", value: 782 },
+                                { time: "29/08/2024", value: 1002 },
+                                { time: "30/08/2024", value: 887 },
+                                { time: "31/08/2024", value: 935 }
                             ],
                             compare: [
-                                { time: "01/06/2024", value: 588 },
-                                { time: "02/06/2024", value: 1158 },
-                                { time: "03/06/2024", value: 685 },
-                                { time: "04/06/2024", value: 1122 },
-                                { time: "05/06/2024", value: 958 },
-                                { time: "06/06/2024", value: 787 },
-                                { time: "07/06/2024", value: 1235 }
+                                { time: "01/08/2024", value: 588 },
+                                { time: "02/08/2024", value: 1158 },
+                                { time: "03/08/2024", value: 685 },
+                                { time: "04/08/2024", value: 1122 },
+                                { time: "05/08/2024", value: 958 },
+                                { time: "06/08/2024", value: 787 },
+                                { time: "07/08/2024", value: 1235 }
                             ]
                         },
                         oneMonth: {
@@ -193,68 +193,28 @@
                         sevenDays: {
                             generalCompare: 32,
                             current: [
-                                { time: "01/06/2024", value: 58 },
-                                { time: "02/06/2024", value: 19 },
-                                { time: "03/06/2024", value: 32 },
-                                { time: "04/06/2024", value: 45 },
-                                { time: "05/06/2024", value: 17 },
-                                { time: "06/06/2024", value: 12 },
-                                { time: "07/06/2024", value: 40 }
+                        
                             ],
                             compare: [
-                                { time: "25/07/2024", value: 18 },
-                                { time: "26/07/2024", value: 58 },
-                                { time: "27/07/2024", value: 95 },
-                                { time: "28/07/2024", value: 52 },
-                                { time: "29/07/2024", value: 30 },
-                                { time: "30/07/2024", value: 47 },
-                                { time: "31/07/2024", value: 65 }
+                             
                             ]
                         },
                         oneMonth: {
-                            generalCompare: 12,
+                            generalCompare: 0,
                             current: [
-                                { time: "01/06/2024", value: 58 }, { time: "02/06/2024", value: 19 }, { time: "03/06/2024", value: 32 },
-                                { time: "04/06/2024", value: 45 }, { time: "05/06/2024", value: 17 }, { time: "06/06/2024", value: 12 },
-                                { time: "07/06/2024", value: 40 }, { time: "08/06/2024", value: 76 }, { time: "09/06/2024", value: 24 },
-                                { time: "10/06/2024", value: 53 }, { time: "11/06/2024", value: 65 }, { time: "12/06/2024", value: 34 },
-                                { time: "13/06/2024", value: 22 }, { time: "14/06/2024", value: 47 }, { time: "15/06/2024", value: 38 },
-                                { time: "16/06/2024", value: 41 }, { time: "17/06/2024", value: 20 }, { time: "18/06/2024", value: 89 }, 
-                                { time: "19/06/2024", value: 73 }, { time: "20/06/2024", value: 49 }, { time: "21/06/2024", value: 66 },
-                                { time: "22/06/2024", value: 92 }, { time: "23/06/2024", value: 54 }, { time: "24/06/2024", value: 31 },
-                                { time: "25/06/2024", value: 48 }, { time: "26/06/2024", value: 37 }, { time: "27/06/2024", value: 59 },
-                                { time: "28/06/2024", value: 50 }, { time: "29/06/2024", value: 83 }, { time: "30/06/2024", value: 77 }
+                               
                             ],
                             compare: [
-                                { time: "01/05/2024", value: 62 }, { time: "02/05/2024", value: 61 }, { time: "03/05/2024", value: 94 }, 
-                                { time: "04/05/2024", value: 19 }, { time: "05/05/2024", value: 29 }, { time: "06/05/2024", value: 97 }, 
-                                { time: "07/05/2024", value: 24 }, { time: "08/05/2024", value: 37 }, { time: "09/05/2024", value: 25 }, 
-                                { time: "10/05/2024", value: 50 }, { time: "11/05/2024", value: 82 }, { time: "12/05/2024", value: 73 }, 
-                                { time: "13/05/2024", value: 51 }, { time: "14/05/2024", value: 34 }, { time: "15/05/2024", value: 73 }, 
-                                { time: "16/05/2024", value: 88 }, { time: "17/05/2024", value: 27 }, { time: "18/05/2024", value: 24 }, 
-                                { time: "19/05/2024", value: 99 }, { time: "20/05/2024", value: 13 }, { time: "21/05/2024", value: 32 }, 
-                                { time: "22/05/2024", value: 81 }, { time: "23/05/2024", value: 99 }, { time: "24/05/2024", value: 87 }, 
-                                { time: "25/05/2024", value: 61 }, { time: "26/05/2024", value: 20 }, { time: "27/05/2024", value: 17 }, 
-                                { time: "28/05/2024", value: 37 }, { time: "29/05/2024", value: 83 }, { time: "30/05/2024", value: 51 }
+                              
                             ]
                         },
                         sixMonths:  {
-                            generalCompare: -8,
+                            generalCompare: 0,
                             current: [
-                                { time: "Jan/2024", value: 258 },
-                                { time: "Fev/2024", value: 350 },
-                                { time: "Mar/2024", value: 508 },
-                                { time: "Abr/2024", value: 205 },
-                                { time: "Mai/2024", value: 485 },
-                                { time: "Jun/2024", value: 359 }
+                         
                             ],
                             compare: [
-                                { time: "Jul/2023", value: 775 },
-                                { time: "Ago/2023", value: 566 },
-                                { time: "Set/2023", value: 333 },
-                                { time: "Out/2023", value: 322 },
-                                { time: "Nov/2023", value: 272 },
-                                { time: "dez/2023", value: 555 }
+                         
                             ]
                         }
                     },
@@ -448,6 +408,9 @@
     .card-percent {
         font-size: 12px;
         font-weight: 500;
+        padding-top: 6px !important;  
+
+      
     }
     .interval {
         position: relative;
@@ -516,6 +479,7 @@
                 place-items: center;
                 p {
                     padding: 0;
+                 
                     margin: 0;
                 }
             }
@@ -646,4 +610,5 @@
             }
         }
     }
+
 </style>

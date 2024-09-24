@@ -196,7 +196,7 @@ export default {
         this.$emit('saveOpeningHours', this.openingData);
         this.$emit('closeModal');
       } catch (error) {
-        const apiErrorMessage = error.response?.data?.errors?.error?.[0] || 'O cardápio não pode funcionar em um horário/dia em que o estabelecimento estiver fechado.';
+        const apiErrorMessage = error.response?.data?.errors?.error?.[0] || 'Os horários selecionados conflitam com o horário de funcionamento de outro cardápio já existente.';
         console.log(apiErrorMessage);
         this.message = {
           text: apiErrorMessage,

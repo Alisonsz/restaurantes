@@ -71,7 +71,7 @@
             </li>
           </ul>
 
-          <!-- Exibição das Categorias Selecionadas - MOVIDO PARA CIMA -->
+          <!-- Exibição das Categorias Selecionadas -->
           <div
             class="selected-categories position-relative d-inline-block mt-2"
             v-if="categoryData.selectedCategories.length > 0"
@@ -94,6 +94,9 @@
             Salvar
           </button>
         </div>
+
+        <!-- Mensagem de erro -->
+        <p v-if="errorMessage" class="alert alert-danger">{{ errorMessage }}</p>
       </div>
     </form>
   </div>
@@ -123,6 +126,7 @@ export default {
     const categoriesList = ref([]);
     const showCreateCategoryForm = ref(false);
     const showSearchCategoryForm = ref(false);
+    const errorMessage = ref(''); // Variável para armazenar a mensagem de erro da API
 
     const hasSelectedMenuIndex = computed(() => props.selectedMenuIndex !== null);
 
@@ -168,6 +172,7 @@ export default {
       showCreateCategoryForm,
       showSearchCategoryForm,
       fetchCategories,
+      errorMessage, // Retornar a variável de erro para o template
       store,
     };
   },
@@ -241,7 +246,11 @@ export default {
           await this.store.dispatch('fetchMenusAndItems');
           this.$emit('closeModal');
         } catch (error) {
-          console.error('Erro ao criar nova categoria:', error.response ? error.response.data : error.message);
+          // Exibe o erro da API para o usuário
+          this.errorMessage = error.response && error.response.data && error.response.data.error
+            ? error.response.data.error
+            : 'Erro ao criar nova categoria. Tente novamente.';
+          console.error(this.errorMessage);
         }
       } else {
         console.error('Campos obrigatórios não preenchidos.');
@@ -265,7 +274,11 @@ export default {
           await this.store.dispatch('fetchMenusAndItems');
           this.$emit('closeModal');
         } catch (error) {
-          console.error('Erro ao associar categoria existente:', error.response ? error.response.data : error.message);
+          // Exibe o erro da API para o usuário
+          this.errorMessage = error.response && error.response.data && error.response.data.error
+            ? error.response.data.error
+            : 'Erro ao associar categoria existente. Tente novamente.';
+          console.error(this.errorMessage);
         }
       } else {
         console.error('Campos obrigatórios não preenchidos.');
@@ -359,6 +372,7 @@ export default {
 .d-grid.mt-3 > * {
   margin-bottom: 5px !important;
 }
+
 
 
 

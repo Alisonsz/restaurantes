@@ -41,7 +41,9 @@ export default {
     };
   },
   methods: {
-    ...mapActions(['saveToken']),
+    ...mapActions(['saveToken', 'preloadData']),
+
+    // Função para validar os campos do formulário
     valid(data) {
       let isValid = true;
       for (const field in this.invalid) {
@@ -56,7 +58,10 @@ export default {
       }
       return isValid;
     },
+
+    // Função para realizar o login
     async login() {
+      // Valida os dados de login antes de enviar
       if (this.valid(this.loginData)) {
         try {
           const response = await fetch('https://api.prattuapp.com.br/api/login', {
@@ -66,10 +71,21 @@ export default {
             },
             body: JSON.stringify(this.loginData)
           });
+
           const data = await response.json();
+
+          // Verifica se a resposta da API foi bem-sucedida
           if (response.ok) {
-            alert(`Token: ${data.token}`);
-            this.saveToken(data.token);  // Save the token to Vuex
+            this.saveToken(data.token);  // Salva o token no Vuex
+            
+            // Realiza o fetch dos dados necessários após o login
+            try {
+              await this.preloadData(); // Carrega os dados (navbar, sidebar, etc.)
+              this.$router.push('/visao'); // Redireciona após o carregamento dos dados
+            } catch (error) {
+              console.error('Erro ao carregar dados após login:', error);
+              alert('Erro ao carregar dados. Tente novamente.');
+            }
           } else {
             alert('Erro ao fazer login');
           }

@@ -43,12 +43,12 @@
                     notifications: 4
                 },
                 intervals: {
-             
+                    sevenDays: "7 Dias",
                     oneMonth: "Mês",
                     sixMonths: "6 meses"
                 },
                 intervalsLastLabel: {
-                 
+                    sevenDays: "7 Dias",
                     oneMonth: "mês passado",
                     sixMonths: "6 meses anteriores"
                 },
@@ -64,14 +64,14 @@
                         action: "interações"
                     },
                     clicks: {
-                        name: "Taxa de cliques - CTR",
+                        name: "Cliques",
                         description: "Número de vezes que os usuários viram o seu estabelecimento no feed social e clicaram.",
                         action: "cliques"
                     },
                     conversion: {
-                        name: "Taxa de conversão",
-                        description: "Número de vezes que os usuários viram o seu estabelecimento no feed social, clicaram e realizaram uma compra.",
-                        action: "Conversões"
+                        name: "Conversões diretas",
+                        description: "Número de vezes que os usuários viram o seu estabelecimento no feed social, clicaram e acabaram realizando uma compra.",
+                        action: "conversões"
                     }
                 },
                 reportSelected: "views",

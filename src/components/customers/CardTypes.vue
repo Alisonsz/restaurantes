@@ -334,6 +334,7 @@
             .card-percent {
                 transform: translateY(-8px);
                 margin-left: 3px;
+                padding-top: 8px !important;
             }
         }
         hr {
