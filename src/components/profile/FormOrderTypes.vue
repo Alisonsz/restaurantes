@@ -22,7 +22,7 @@
                 <button @click.prevent="$emit('closeModal')" type="button" class="btn btn-cancel" >Cancelar</button>
             </div>
             <div class="col-lg-6 d-grid gap-2">
-                <button @click.prevent="" type="submit" class="btn btn-cancel" v-if="(dataType.eatOn === eatOn && dataType.withdrawalOn === withdrawalOn)">Salvar</button>
+                <button @click.prevent="" type="submit" class="btn btn-block" v-if="(dataType.eatOn === eatOn && dataType.withdrawalOn === withdrawalOn)">Salvar</button>
                 <button @click.prevent="saveTypes" type="submit" class="btn btn-save" v-else>Salvar</button>
             </div>
         </div>

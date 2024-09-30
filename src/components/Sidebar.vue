@@ -1,6 +1,6 @@
 <template>
     <div class="sidebar border border-right col p-0 sidebar-size" :class="open ? 'open' : ''">
-        <a class="navbar-brand icon-double-arrow-left" href="#" @click.prevent="openClose()" v-if="$store.state.completeConfig"></a>
+        <a class="navbar-brand icon-double-arrow-left" href="#" @click.prevent="openClose()"></a>
         <div class="offcanvas-md offcanvas-end" tabindex="-1" id="sidebarMenu" aria-labelledby="sidebarMenuLabel">
             <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-0">
                 <div class="row data-company">
@@ -221,6 +221,7 @@ export default {
     .logo {
         width: 31px;
         height: 32px;
+        border-radius: 50%;
         margin: auto;
         margin-top: 20px;
         margin-left: 20px !important;

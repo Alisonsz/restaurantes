@@ -2,7 +2,7 @@
     <form>
         <div class="row mb-2 mt-3">
             <div class="select-placeholder mb-3">
-                <label v-if="selectCategory === ''">Dia</label>
+                <label v-if="selectCategory === ''">Selecione uma categoria</label>
                 <select class="form-select" v-model="selectCategory">
                     <option v-for="(category, index) in allCategories" :key="index">{{ category }}</option>
                 </select>
@@ -13,7 +13,7 @@
                 <button @click.prevent="$emit('closeModal')" type="button" class="btn btn-cancel" >Cancelar</button>
             </div>
             <div class="col-lg-6 d-grid gap-2">
-                <button @click.prevent="" type="submit" class="btn btn-cancel" v-if="(selectCategory === '')">Salvar</button>
+                <button @click.prevent="" type="submit" class="btn btn-block" v-if="(selectCategory === '')">Salvar</button>
                 <button @click.prevent="saveCategory" type="submit" class="btn btn-save" v-if="(selectCategory !== '')">Salvar</button>
             </div>
         </div>
@@ -48,5 +48,11 @@
 <style scoped>
     .modal-container form {
         width: 450px !important;
+    }
+
+    .select-placeholder {
+        label {
+            left: 30px;
+        }
     }
 </style>

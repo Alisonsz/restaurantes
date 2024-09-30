@@ -6,15 +6,28 @@
       <div class="col-lg-6">
         <div class="row">
           <div class="col profile-image">
-            <img v-if="dataCompany.cover_photo" :src="dataCompany.cover_photo ? dataCompany.cover_photo : ''" alt="Capa" @click="uploadCover">
+            <div class="local-image" v-if="dataCompany.cover_photo">
+              <span class="remove-image icon-close" @click="removeCover"></span>
+              <img :src="dataCompany.cover_photo ? dataCompany.cover_photo : ''" alt="Capa" @click="uploadCover">
+            </div>
             <div v-else class="local-cover" @click="uploadCover"> 
               <div class="border icon-image">
-                <span class="label-image">Selecione a capa</span>
+                <span class="label-image"><u>Adcionar capa</u></span>
+                <span class="label-image">JPEG, JPG ou PNG de até 7mb</span>
+                <span class="label-image">Tamanho mínimo: 800x200px</span>
               </div>
             </div>
           </div>
           <div class="col d-flex align-items-center justify-content-center profile-logo">
-            <img :src="dataCompany.logo_photo ? dataCompany.logo_photo : ''" alt="Logo" @click="uploadLogo">
+            <div class="local-image" v-if="dataCompany.logo_photo">
+              <span class="remove-image icon-close" @click="removeLogo"></span>
+              <img v-if="dataCompany.logo_photo" :src="dataCompany.logo_photo ? dataCompany.logo_photo : ''" alt="Logo" @click="uploadLogo">
+            </div>
+            <div v-else class="local-logo" @click="uploadLogo"> 
+              <div class="border icon-image">
+                <span class="label-image"><u>Adcionar logotipo</u></span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -40,7 +53,8 @@
         <div class="categories">
           <hr/>
           <h3>Categorias <span class="edit-data" @click="showModalCategories = true"></span></h3>
-          <p class="hint">Atenção: As categorias poderão ser editadas somente de 20 em 20 dias.</p>
+          <p class="hint" v-if="completeConfig">Atenção: As categorias poderão ser editadas somente de 20 em 20 dias.</p>
+          <p class="hint" v-else>Selecione a categoria na qual o seu estabelecimento faz parte.</p>
           <ul v-if="dataCompany.categories">
             <li class="input-base" v-for="(category, index) in dataCompany.categories" :key="index">{{ category.name }}</li>
           </ul>
@@ -61,6 +75,15 @@
             <li class="input-base">Retirada</li>
             <li class="input-base" v-if="dataCompany.eat_on">Comer no local</li>
           </ul>
+        </div>
+        <div class="scheduling">
+          <hr/>
+          <h3>Agendamentos</h3>
+          <p class="hint">Permite o agendamento de entregas?</p>
+          <label class="switch-yn ml-1">
+            <input type="checkbox" v-model="dataCompany.scheduling" @change="toggleScheduling"/>
+            <span class="slider round"></span>
+          </label>
         </div>
       </div>
       <div class="col-lg-6">
@@ -135,7 +158,8 @@ const dataCompany = reactive({
   opening_hours: [],
   preparation_time: 0,
   category: "",
-  eat_on: false
+  eat_on: false,
+  scheduling: false,
 });
 
 const formattedOpeningHours = computed(() => {
@@ -183,7 +207,7 @@ async function selectFile() {
   return new Promise((resolve, reject) => {
     const input = document.createElement('input');
     input.type = 'file';
-    input.accept = 'image/*';
+    input.accept = '.jpg, .jpeg, .png';
     input.onchange = () => resolve(input.files[0]);
     input.onerror = reject;
     input.click();
@@ -221,9 +245,31 @@ async function uploadImage(file, field) {
   }
 }
 
+async function removeLogo() {
+  try {
+    alert(`Fazer a chamada da api`);
+  } catch (error) {
+    console.error('Erro ao remover logotipo:', error);
+  }
+}
+
+async function removeCover() {
+  try {
+    alert(`Fazer a chamada da api`);
+  } catch (error) {
+    console.error('Erro ao remover logotipo:', error);
+  }
+}
+
+
 async function saveOrderTypes(data) {
   dataCompany.eat_on = data.eatOn;
 }
+
+async function toggleScheduling() {
+  alert("Realizar a chamada  da api!");
+}
+
 
 onMounted(async () => {
   await fetchData();
@@ -380,6 +426,7 @@ export default {
   }
 }
 .local-cover {
+  cursor: pointer;
   background-color: $gray-bg;
   padding: 15px;
   border-radius: 8px;
@@ -390,8 +437,35 @@ export default {
     border: 2px solid #FFF !important;
     border-radius: 4px;
     padding: 20px;
+    display: grid;
+    place-items: center;
     .label-image {
       opacity: 0.4;
+      display: block;
+      text-align: center;
+    }
+  }
+}
+
+.local-logo {
+  cursor: pointer;
+  background-color: $gray-bg;
+  padding: 15px;
+  border-radius: 50%;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  .border {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background-color: $gray-bg;
+    border: 2px solid #FFF !important;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    .label-image {
+      opacity: 0.4;
+      display: block;
+      text-align: center;
     }
   }
 }
@@ -402,7 +476,19 @@ export default {
   background-position: center bottom;
 }
 
-.label-image {
-  
+.local-image {
+  position: relative;
+}
+
+.remove-image {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  right: -14px;
+  top: -15px;
+  position: absolute;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 </style>

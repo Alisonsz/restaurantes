@@ -1,35 +1,37 @@
 <template>
-    <div class="container-form">
-        <form>
-            <div class="form-data">
-                <div class="start-data">
-                    <h2 class="text-center bold-700 title">Começar a receber pedidos</h2>
-                    <p>Antes de começar a receber pedidos, vamos garantir que seu perfil esteja completo e pronto para conquistar novos clientes.</p>
-                    <p>Para isso, precisamos preencher suas informações nas seguintes páginas:</p>
-                    <span>- Horário de funcionamento</span>
-                    <span>- Tempo de preparação</span>
-                    <span>- Perfil</span>
-                    <span>- Cardápio</span>
-                    <span>- Configurações da conta</span>
-                </div>
-                <div class="row mt-4">
-                    <div class="col d-grid">
-                        <button @click.prevent="save()" type="submit" class="btn btn-save">Começar</button>
+    <div class="bg-smoke">
+        <div class="container-form">
+            <form>
+                <div class="form-data">
+                    <div class="start-data">
+                        <h2 class="bold-700 title">Começar a receber pedidos</h2>
+                        <p>Antes de começar a receber pedidos, vamos garantir que seu perfil esteja completo e pronto para conquistar novos clientes.</p>
+                        <p>Para isso, precisamos preencher suas informações nas seguintes páginas:</p>
+                        <span>- Horário de funcionamento</span>
+                        <span>- Tempo de preparação</span>
+                        <span>- Perfil</span>
+                        <span>- Cardápio</span>
+                        <span>- Configurações da conta</span>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col d-grid">
+                            <button @click.prevent="save()" type="submit" class="btn btn-save">Começar</button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </form>
-        <ModalBase :show="showModal" @close="showModal = false">
-            <template #header>
-                <h3>{{ modalTitle }}</h3>
-            </template>
-            <template #body>
-                <p>{{ modalMessage }}</p>
-            </template>
-            <template #footer>
-                <button class="btn btn-cancel" @click="showModal = false">Voltar</button>
-            </template>
-        </ModalBase>
+            </form>
+            <ModalBase :show="showModal" @close="showModal = false">
+                <template #header>
+                    <h3>{{ modalTitle }}</h3>
+                </template>
+                <template #body>
+                    <p>{{ modalMessage }}</p>
+                </template>
+                <template #footer>
+                    <button class="btn btn-cancel" @click="showModal = false">Voltar</button>
+                </template>
+            </ModalBase>
+        </div>
     </div>
 </template>
 
@@ -77,8 +79,20 @@ export default {
 <style lang="scss" scoped>
 .title {
     border-bottom: 1px solid $gray-line;
-    padding-bottom: 10px;
+    padding-bottom: 15px;
     margin-bottom: 25px;
+}
+.bg-smoke {
+    position: absolute;
+    display: grid;
+    place-items: center;
+    background-color: rgba(0, 0, 0, 0.7);
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding-top: 60px;
+    z-index: 9999;
 }
 .container-form {
     max-width: 550px;
