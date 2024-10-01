@@ -57,9 +57,6 @@
                     <div class="col"></div>
                 </div>
             </div>
-
-            <pre>{{ paymentsData.transfersX }}</pre>
-
             <div class="mt-4 table-data">
                 <table class="table mt-3 mb-4">
                     <thead>

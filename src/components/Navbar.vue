@@ -110,7 +110,7 @@ export default {
     }
     .navbar .open-time {
         position: relative;
-        top: 7px;
+        top: -10px;
     }
     .open-time.open {
         background-color: $light-green;

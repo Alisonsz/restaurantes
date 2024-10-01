@@ -91,6 +91,7 @@ export default {
             selectedSublinks: [],
             positionSublink: 0,
             visibleSublink: false,
+            completeConfig: false,
             parentMenu: '',
             links: {
                 monitor: { 
@@ -190,6 +191,7 @@ export default {
         }
     },
     mounted() {
+        this.completeConfig = this.$store.state.completeConfig;
         if  (!this.$store.state.completeConfig) {
             this.open = true;
         } else {

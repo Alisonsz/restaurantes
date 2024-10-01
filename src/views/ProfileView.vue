@@ -4,9 +4,6 @@
     <Sidebar activePage="profile" />
     <div class="row">
       <div class="col-lg-6">
-
-        <pre>{{ invalid }}</pre>
-
         <div class="row">
           <div class="col profile-image">
             <div class="local-image" v-if="dataCompany.cover_photo">
@@ -19,19 +16,21 @@
                 <span class="label-image">JPEG, JPG ou PNG de até 7mb</span>
                 <span class="label-image">Tamanho mínimo: 800x200px</span>
               </div>
-              <p class="mb-0 required-alert" v-show="invalid.coverPhoto">*Campo obrigatório</p>
             </div>
+            <p class="mb-0 required-alert" v-show="invalid.coverPhoto">*Campo obrigatório</p>
           </div>
           <div class="col d-flex align-items-center justify-content-center profile-logo">
-            <div class="local-image" v-if="dataCompany.logo_photo">
-              <span class="remove-image remove-logo icon-close" @click="removeLogo"></span>
-              <img v-if="dataCompany.logo_photo" :src="dataCompany.logo_photo ? dataCompany.logo_photo : ''" alt="Logo" @click="uploadLogo">
-            </div>
-            <div v-else class="local-logo" @click="uploadLogo"> 
-              <div class="border icon-image">
-                <span class="label-image"><u>Adcionar logotipo</u></span>
+            <div>
+              <div class="local-image" v-if="dataCompany.logo_photo">
+                <span class="remove-image remove-logo icon-close" @click="removeLogo"></span>
+                <img v-if="dataCompany.logo_photo" :src="dataCompany.logo_photo ? dataCompany.logo_photo : ''" alt="Logo" @click="uploadLogo">
               </div>
-              <p class="mb-0 required-alert" v-show="invalid.coverPhoto">*Campo obrigatório</p>
+              <div v-else class="local-logo" @click="uploadLogo"> 
+                <div class="border icon-image">
+                  <span class="label-image"><u>Adcionar logotipo</u></span>
+                </div>
+              </div>
+              <p class="mb-0 required-alert" v-show="invalid.logoPhoto">*Campo obrigatório</p>
             </div>
           </div>
         </div>
@@ -63,6 +62,7 @@
           <ul v-if="dataCompany.category">
             <li class="input-base">{{ dataCompany.category }}</li>
           </ul>
+          <p class="mb-0 required-alert top-zero" v-show="invalid.category">*Campo obrigatório</p>
         </div>
         <div class="preparation-time">
           <hr/>
@@ -80,6 +80,7 @@
             <li class="input-base" v-if="dataCompany.withdrawal_on">Retirada</li>
             <li class="input-base" v-if="dataCompany.eat_on">Comer no local</li>
           </ul>
+          <p class="mb-0 required-alert top-zero" v-show="invalid.orderTypes">*Campo obrigatório</p>
         </div>
         <div class="scheduling">
           <hr/>
@@ -96,15 +97,22 @@
           <hr/>
           <h3>Descrição</h3>
           <textarea v-model="dataCompany.description" placeholder="Descrição do restaurante..." class="form-control"></textarea>
+          <p class="mb-0 mt-1 required-alert" v-show="invalid.description">*Campo obrigatório</p>
         </div>
         <div class="withdrawal">
           <h3 class="mt-4">Instruções para retirada</h3>
           <textarea v-model="dataCompany.withdrawal" placeholder="Instruções para retirada..." class="form-control"></textarea>
+          <p class="mb-0 mt-1 required-alert" v-show="invalid.withdrawal">*Campo obrigatório</p>
         </div>
         <div class="opening-hours">
           <h3 class="mt-4">Horários de funcionamento <router-link to="/horario" class="edit-data"></router-link></h3>
           <p>{{ formattedOpeningHours }}</p>
         </div>
+      </div>
+    </div>
+    <div class="row" v-if="completeConfig">
+      <div class="col pt-3 text-end">
+        <button @click.prevent="saveDescriptionAndWithdrawal" type="button" class="btn btn-save">Salvar</button>
       </div>
     </div>
   </div>
@@ -528,5 +536,9 @@ export default {
 .remove-logo {
   right: -2px;
   top: -3px;
+}
+
+.top-zero {
+  margin-top: -16px;
 }
 </style>
