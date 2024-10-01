@@ -154,7 +154,7 @@ export default {
 
         this.restaurantId = restaurantId;
         const preparationTime = restaurantResponse.data.preparation_time;
-        this.timeNumber.general.time = preparationTime; // Inicializar com o valor em minutos
+        this.dataTime.general = {time: preparationTime}; // Inicializar com o valor em minutos
       } catch (error) {
         console.error('Erro ao buscar dados do restaurante:', error);
       }

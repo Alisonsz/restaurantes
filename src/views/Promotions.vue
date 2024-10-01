@@ -355,10 +355,6 @@ h3.title {
   justify-content: center; /* Centraliza horizontalmente o texto */
 }
 
-.promotion-button:hover {
-  background-color: darkgreen;
-}
-
 /* Responsividade */
 @media (max-width: 768px) {
   .columns {
@@ -446,6 +442,7 @@ h4 {
   font-size: 14px;
   color: black;
   font-weight: 500;
+  white-space: nowrap;
 }
 
 .promo-type-1 {

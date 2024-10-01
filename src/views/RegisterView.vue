@@ -18,9 +18,12 @@
             <Asaas @next-step="nextStep" @back-step="backStep" :currentStep="currentStep" :countSteps="countSteps"/>
         </div>
         <div class="col" v-show="currentStep == 6">
-            <Welcome @next-step="nextStep" @back-step="backStep" :currentStep="currentStep" :countSteps="countSteps"/>
+            <Email @next-step="nextStep" @back-step="backStep" :currentStep="currentStep" :countSteps="countSteps"/>
         </div>
         <div class="col" v-show="currentStep == 7">
+            <Welcome @next-step="nextStep" @back-step="backStep" :currentStep="currentStep" :countSteps="countSteps"/>
+        </div>
+        <div class="col" v-show="currentStep == 8">
             <Start @next-step="nextStep" @back-step="backStep" :currentStep="currentStep" :countSteps="countSteps"/>
         </div>
     </div>
@@ -34,6 +37,7 @@
     import Plan from "../components/register/Plan.vue";
     import Finance from "../components/register/Finance.vue";
     import Asaas from "../components/register/Asaas.vue";
+    import Email from "../components/register/Email.vue";
     import Welcome from "../components/register/Welcome.vue";
     import Start from "../components/register/Start.vue";
     
@@ -46,6 +50,7 @@
             Plan,
             Finance,
             Asaas,
+            Email,
             Welcome,
             Start,
         },
@@ -54,7 +59,7 @@
                 showNavBack: false,
                 currentStep: 1,
                 countSteps: 5,
-                limitSteps: 7,
+                limitSteps: 8,
             }            
         },
         methods: {

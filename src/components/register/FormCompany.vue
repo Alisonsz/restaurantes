@@ -132,6 +132,7 @@
               type="text"
               class="form-control mt-3"
               v-model="dataCompany.phone"
+              @input="formatPhone"
               placeholder="Telefone"
             />
           </div>
@@ -250,6 +251,11 @@
       ...mapState(['token'])
     },
     methods: {
+      formatPhone(event) {
+        const input = event.target.value.replace(/\D/g, '');
+        const formatted = input.replace(/^(\d{2})(\d{5})(\d{4}).*/, '($1) $2-$3');
+        this.dataCompany.phone = formatted;
+      },
       valid(data) {
         let isvalid = true;
         for (const field in this.invalid) {

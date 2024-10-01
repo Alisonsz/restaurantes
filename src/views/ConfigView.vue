@@ -18,8 +18,8 @@
                 O e-mail será utilizado para acessar a Prattu e, em caso de eventuais problemas, essa será a pessoa contatada.
             </h4>
             <div class="image-container">
-                <img :src="profileImage" alt="Profile Image" class="profile-image" @click="selectImage" />
-                <button @click="selectImage">Alterar imagem</button>
+                <img :src="profileImage" alt="Profile Image" class="profile-image" @click="selectImage" v-if="profileImage"/>
+                <button @click="selectImage">{{ profileImage ? "Alterar imagem" : "Inserir imagem" }}</button>
             </div>
             <div class="form-container">
                 <div class="left-column">
@@ -252,7 +252,7 @@ async function save() {
     }
 }
 
-function applyPhoneMask(event) {
+function applyPhoneMaskX(event) {
     let value = event.target.value.replace(/\D/g, '');
     if (value.length > 10) {
         value = value.replace(/^(\d{2})(\d{5})(\d{4}).*/, '($1) $2-$3');
@@ -264,6 +264,12 @@ function applyPhoneMask(event) {
         value = value.replace(/^(\d*)/, '($1');
     }
     event.target.value = value;
+}
+
+function applyPhoneMask(event) {
+    const input = event.target.value.replace(/\D/g, '');
+    const formatted = input.replace(/^(\d{2})(\d{5})(\d{4}).*/, '($1) $2-$3');
+    event.target.value = formatted;
 }
 
 const hasChanges = computed(() => {

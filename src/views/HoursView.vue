@@ -120,7 +120,7 @@ export default {
     verifyCompleteStep() {
       this.saveCompleteStep('hours');
       return this.completeStep = Object.values(this.dataHour).every(day =>
-        day.every(hour => hour.id !== null)
+        day.every(hour => hour.id !== null && hour.open && hour.close)
       );
     },
     initializeDataHour(openingHours) {

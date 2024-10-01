@@ -5,7 +5,8 @@
             <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-0">
                 <div class="row data-company">
                     <div class="company-logo">
-                        <img class="logo" :src="sidebarData?.logo" :alt="sidebarData?.company">
+                        <img class="logo" :src="sidebarData?.logo" :alt="sidebarData?.company" v-if="sidebarData?.logo">
+                        <img class="logo" src="~@/assets/img/img.svg" :alt="sidebarData?.company" v-else>
                     </div>
                     <div class="col">
                         <span class="company-name">{{ sidebarData?.company }}</span>
@@ -28,7 +29,7 @@
                         <div v-for="(link, index) in links" :key="index">
                             <li class="nav-item" :class="typeof link.sublinks === 'object' ? 'with-sublink' : ''" v-if="typeof sidebarData?.links !== 'object' || typeof sidebarData?.links[index] === 'object'">
                                 <span v-if="typeof link.sublinks === 'object'" @click="selectSublink(index, link.sublinks, $event)" ref="clickableElement">
-                                    <a class="nav-link d-flex align-items-center collapsed" data-bs-toggle="collapse" :href="'#sublinks' + index" aria-expanded="false" :aria-controls="'sublinks' + index" :class="[parentMenu === index ? 'menu-parent' : '']">
+                                    <a class="nav-link d-flex align-items-center collapsed" data-bs-toggle="collapse" :href="'#sublinks' + (completeConfig ? index : 'x')" aria-expanded="false" :aria-controls="'sublinks' + index" :class="[parentMenu === index ? 'menu-parent' : '']">
                                         <span class="sidbar-icon" :class="link.icon" v-tippy="open ? '' : link.name"></span>
                                         <span class="name">{{ link.name }}</span>
                                         <span class="sublink-icon"></span>
@@ -59,7 +60,7 @@
                         </div>
                     </ul>
                     <ul class="nav nav-bottom flex-column">
-                        <li class="nav-item item-help">
+                        <li class="nav-item item-help" v-if="completeConfig">
                             <router-link to="/ajuda" class="nav-link d-flex align-items-center" aria-current="page">
                                 <span class="sidbar-icon icon-helper" v-tippy="open ? '' : 'Ajuda'"></span>
                                 <span class="name">Ajuda</span>
@@ -189,7 +190,6 @@ export default {
         }
     },
     mounted() {
-        console.log("tttttttttttttttthis.sidebarData", this.sidebarData)
         if  (!this.$store.state.completeConfig) {
             this.open = true;
         } else {

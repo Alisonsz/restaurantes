@@ -4,9 +4,11 @@
             <form>
                 <div class="form-data">
                     <div class="welcome-data">
-                        <h2 class="bold-700 title">Obaa, sejam bem-vindo(a)s à Prattu!!</h2>
-                        <p>Estamos suuuper empolgados em ter vocês como parceiros!</p>
-                        <p>Podemos garantir que iremos fazer de tudo (e mais um pouco!) para que o seu estabelecimento cresça e se destaque cada vez mais no mercado!</p>
+                        <h2 class="bold-700 title">Link do Asaas</h2>
+                        <div class="data">
+                            <span class="icon icon-exclamation"></span>
+                            <p class="text">Atenção: não se esqueça de acessar o link do Asaas enviado para o seu email cadastrado e inserir todas as suas informações financeiras. Sua conta só será aprovada após você finalizar essa etapa.</p>
+                        </div>
                     </div>
                     <div class="row mt-4">
                         <div class="col d-grid">
@@ -36,7 +38,7 @@ import ModalBase from '@/components/ModalBase.vue';
 import { useStore } from 'vuex';
 
 export default {
-    name: "Welcome",
+    name: "Email",
     components: {
         ModalBase
     },
@@ -76,6 +78,23 @@ export default {
     border-bottom: 1px solid $gray-line;
     padding-bottom: 15px;
     margin-bottom: 25px;
+}
+.data {
+    position: relative;
+}
+.icon {
+    text-align: center;
+    width: 30px;
+    height: 30px;
+    background-size: 20px 20px;
+    background-repeat: no-repeat;
+    background-position: center center;
+    position: absolute;
+    top: -3px;
+    left: 0;
+}
+.text {
+    margin-left: 30px;
 }
 .bg-smoke {
     position: absolute;

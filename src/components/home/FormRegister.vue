@@ -16,7 +16,11 @@
             <input type="tel" class="form-control mt-2" v-model="accountData.phone" @input="formatPhone" placeholder="Celular">
             <p class="mb-0 required-alert" v-show="invalid.phone">*Campo obrigatório, insira um telefone válido</p>
             <input type="password" class="form-control mt-2" v-model="accountData.password" placeholder="Senha">
-            <p class="mb-0 required-alert" v-show="invalid.password">*A senha deve conter, no mínimo, 6 caracteres, com pelo menos: - 1 caractere especial - 1 letra maiúscula - 1 letra minúscula - 1 número</p>
+            <p class="mb-0 required-alert" v-show="invalid.password">*A senha deve conter, no mínimo, 6 caracteres, com pelo menos:</p>
+            <p class="mb-0 required-alert" v-show="invalid.password">- 1 caractere especial</p>
+            <p class="mb-0 required-alert" v-show="invalid.password">- 1 letra maiúscula</p>
+            <p class="mb-0 required-alert" v-show="invalid.password">- 1 letra minúscula</p>
+            <p class="mb-0 required-alert" v-show="invalid.password">- 1 número</p>
             <input type="password" class="form-control mt-2" v-model="confirmPassword" placeholder="Confirme a senha">
             <p class="mb-0 required-alert" v-show="invalidConfirmPassword">*As senhas devem ser iguais</p>
             <div class="form-checkx mt-2">
