@@ -4,6 +4,9 @@
     <Sidebar activePage="profile" />
     <div class="row">
       <div class="col-lg-6">
+
+        <pre>{{ invalid }}</pre>
+
         <div class="row">
           <div class="col profile-image">
             <div class="local-image" v-if="dataCompany.cover_photo">
@@ -16,17 +19,19 @@
                 <span class="label-image">JPEG, JPG ou PNG de até 7mb</span>
                 <span class="label-image">Tamanho mínimo: 800x200px</span>
               </div>
+              <p class="mb-0 required-alert" v-show="invalid.coverPhoto">*Campo obrigatório</p>
             </div>
           </div>
           <div class="col d-flex align-items-center justify-content-center profile-logo">
             <div class="local-image" v-if="dataCompany.logo_photo">
-              <span class="remove-image icon-close" @click="removeLogo"></span>
+              <span class="remove-image remove-logo icon-close" @click="removeLogo"></span>
               <img v-if="dataCompany.logo_photo" :src="dataCompany.logo_photo ? dataCompany.logo_photo : ''" alt="Logo" @click="uploadLogo">
             </div>
             <div v-else class="local-logo" @click="uploadLogo"> 
               <div class="border icon-image">
                 <span class="label-image"><u>Adcionar logotipo</u></span>
               </div>
+              <p class="mb-0 required-alert" v-show="invalid.coverPhoto">*Campo obrigatório</p>
             </div>
           </div>
         </div>
@@ -55,8 +60,8 @@
           <h3>Categorias <span class="edit-data" @click="showModalCategories = true"></span></h3>
           <p class="hint" v-if="completeConfig">Atenção: As categorias poderão ser editadas somente de 20 em 20 dias.</p>
           <p class="hint" v-else>Selecione a categoria na qual o seu estabelecimento faz parte.</p>
-          <ul v-if="dataCompany.categories">
-            <li class="input-base" v-for="(category, index) in dataCompany.categories" :key="index">{{ category.name }}</li>
+          <ul v-if="dataCompany.category">
+            <li class="input-base">{{ dataCompany.category }}</li>
           </ul>
         </div>
         <div class="preparation-time">
@@ -72,7 +77,7 @@
           <h3>Formas de pedidos aceitas <span class="edit-data" @click="showModalOrderTypes = true"></span></h3>
           <p class="hint">Essas serão as formas com que o cliente poderá pedir do seu estabelecimento através do aplicativo.</p>
           <ul>
-            <li class="input-base">Retirada</li>
+            <li class="input-base" v-if="dataCompany.withdrawal_on">Retirada</li>
             <li class="input-base" v-if="dataCompany.eat_on">Comer no local</li>
           </ul>
         </div>
@@ -103,7 +108,7 @@
       </div>
     </div>
   </div>
-  <Footer @next-config-step="nextConfigStep" :currentConfigStep="currentConfigStep" :countConfigSteps="countConfigSteps" :completeStep="verifyCompleteStep(dataCompany)" v-if="completeConfig === false"/>
+  <Footer @next-config-step="nextConfigStep(dataCompany)" @valid-next-step="validNextStep(dataCompany)" :currentConfigStep="currentConfigStep" :countConfigSteps="countConfigSteps" :completeStep="verifyCompleteStep(dataCompany)" v-if="completeConfig === false"/>
   <Teleport to="body">
     <ModalCategories :show="showModalCategories" @close="showModalCategories = false">
       <template #header>Categoria</template>
@@ -114,7 +119,7 @@
     <ModalOrderTypes :show="showModalOrderTypes" @close="showModalOrderTypes = false">
       <template #header>Formas de pedidos aceitas</template>
       <template #body>
-        <FormOrderTypes @close-modal="showModalOrderTypes = false" @save-modal="saveOrderTypes" :eatOn="dataCompany.eat_on" :withdrawalOn="true"/>
+        <FormOrderTypes @close-modal="showModalOrderTypes = false" @save-modal="saveOrderTypes" :eatOn="dataCompany.eat_on" :withdrawalOn="dataCompany.withdrawal_on"/>
       </template>
     </ModalOrderTypes>
     <ModalCompany :show="showModalCompany" @close="showModalCompany = false">
@@ -153,12 +158,13 @@ const dataCompany = reactive({
   number: "",
   city: "",
   state: "",
-  description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-  withdrawal: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+  description: "",
+  withdrawal: "",
   opening_hours: [],
   preparation_time: 0,
   category: "",
   eat_on: false,
+  withdrawal_on: false,
   scheduling: false,
 });
 
@@ -248,6 +254,7 @@ async function uploadImage(file, field) {
 async function removeLogo() {
   try {
     alert(`Fazer a chamada da api`);
+    dataCompany.logo_photo = "";
   } catch (error) {
     console.error('Erro ao remover logotipo:', error);
   }
@@ -256,18 +263,25 @@ async function removeLogo() {
 async function removeCover() {
   try {
     alert(`Fazer a chamada da api`);
+    dataCompany.cover_photo = "";
   } catch (error) {
     console.error('Erro ao remover logotipo:', error);
   }
 }
 
-
 async function saveOrderTypes(data) {
+  alert(`Fazer a chamada da api`);
   dataCompany.eat_on = data.eatOn;
+  dataCompany.withdrawal_on = data.withdrawalOn;
 }
 
 async function toggleScheduling() {
   alert("Realizar a chamada  da api!");
+}
+
+async function saveCategories(data) {
+  alert("Precisa fazer a chamada para a api");
+  dataCompany.category = data;
 }
 
 
@@ -313,6 +327,14 @@ export default {
       completeConfig: this.$store.state.completeConfig,
       currentConfigStep: 3,
       countConfigSteps: 5,
+      invalid: {
+        logoPhoto: false,
+        coverPhoto: false,
+        category: false,
+        orderTypes: false,
+        description: false,
+        withdrawal: false
+      },
       sidebarData: {
         logo: "/img/logo1.png",
         company: "TATÁ Sushi",
@@ -347,13 +369,23 @@ export default {
     showModalCover() {
       this.showModalCompany = true;
     },
-    saveCategories(data) {
-      this.dataCompany.category = data;
-    },
     saveCompany(data) {
       this.dataCompany = data;
     },
-    nextConfigStep() {
+    saveDescriptionAndWithdrawal() {
+      alert("Precisa fazer a chamada para a api para Descrição e Instruções para retirada");
+    },
+    validNextStep(dataCompany) {
+      this.invalid.logoPhoto = !(typeof dataCompany?.logo_photo === "string" &&  dataCompany?.logo_photo.trim() !== "");
+      this.invalid.coverPhoto = !(typeof dataCompany?.cover_photo === "string" &&  dataCompany?.cover_photo.trim() !== "");
+      this.invalid.description = !(typeof dataCompany?.description === "string" &&  dataCompany?.description.trim() !== "");
+      this.invalid.withdrawal = !(typeof dataCompany?.withdrawal === "string" &&  dataCompany?.withdrawal.trim() !== "");
+      this.invalid.category = !(typeof dataCompany?.category === "string" &&  dataCompany?.category.trim() !== "");
+      this.invalid.orderTypes = !(dataCompany.withdrawal_on || dataCompany.eat_on);
+    },
+    nextConfigStep(dataCompany) {
+      this.validNextStep(dataCompany);
+      this.saveDescriptionAndWithdrawal();
       this.saveCompleteStep('profile');
       this.$router.push('/cardapio');
     },
@@ -361,9 +393,10 @@ export default {
       return (
         (typeof dataCompany?.logo_photo === "string" &&  dataCompany?.logo_photo.trim() !== "")
         && (typeof dataCompany?.cover_photo === "string" &&  dataCompany?.cover_photo.trim() !== "")
-        //&& (typeof dataCompany?.description === "string" &&  dataCompany?.description.trim() !== "")
+        && (typeof dataCompany?.description === "string" &&  dataCompany?.description.trim() !== "")
         && (typeof dataCompany?.withdrawal === "string" &&  dataCompany?.withdrawal.trim() !== "")
-        && (typeof dataCompany?.categories === "object" &&  dataCompany?.categories.length > 0)
+        && (typeof dataCompany?.category === "string" &&  dataCompany?.category.trim() !== "")
+        && (dataCompany.withdrawal_on || dataCompany.eat_on)
       );
     },
   }
@@ -490,5 +523,10 @@ export default {
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
+}
+
+.remove-logo {
+  right: -2px;
+  top: -3px;
 }
 </style>

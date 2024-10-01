@@ -5,7 +5,7 @@
             <button @click.prevent="$emit('nextConfigStep', 'link')" type="button" class="btn btn-save" v-if="completeStep">
                 {{ (currentConfigStep && currentConfigStep === countConfigSteps ? "Salvar e finalizar" : "Salvar e continuar") }}
             </button>
-            <button @click.prevent="" type="button" class="btn btn-save-off" v-else>
+            <button @click.prevent="$emit('validNextStep')" type="button" class="btn btn-save-off" v-else>
                 {{ (currentConfigStep && currentConfigStep === countConfigSteps ? "Salvar e finalizar" : "Salvar e continuar") }}
             </button>
         </div>

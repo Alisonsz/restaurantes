@@ -4,14 +4,14 @@
       <div class="mb-2">
         <div class="position-relative">
           <label for="displayName" class="form-label">Nome do restaurante</label>
-          <input type="text" class="form-control" id="displayName" v-model="dataCompany.display_name">
+          <input readonly type="text" class="form-control" id="displayName" v-model="dataCompany.display_name">
           <span class="icon-padlock"></span>
         </div>
       </div>
       <div class="mb-2">
         <div class="position-relative">
           <label for="name" class="form-label">Razão social</label>
-          <input type="text" class="form-control" id="name" v-model="dataCompany.name">
+          <input readonly type="text" class="form-control" id="name" v-model="dataCompany.name">
           <span class="icon-padlock"></span>
         </div>
       </div>
@@ -21,14 +21,14 @@
         <div class="col-lg-4">
           <div class="position-relative">
             <label for="zipCode" class="form-label">CEP</label>
-            <input type="text" class="form-control" id="zipCode" v-model="dataCompany.zip_code">
+            <input readonly type="text" class="form-control" id="zipCode" v-model="dataCompany.zip_code">
             <span class="icon-padlock"></span>
           </div>
         </div>
         <div class="col-lg-8">
           <div class="position-relative">
             <label for="neighborhood" class="form-label">Bairro</label>
-            <input type="text" class="form-control" id="neighborhood" v-model="dataCompany.address_line2">
+            <input readonly type="text" class="form-control" id="neighborhood" v-model="dataCompany.address_line2">
             <span class="icon-padlock"></span>
           </div>
         </div>
@@ -37,14 +37,14 @@
         <div class="col-lg-8">
           <div class="position-relative">
             <label for="street" class="form-label">Rua</label>
-            <input type="text" class="form-control" id="street" v-model="dataCompany.street">
+            <input readonly type="text" class="form-control" id="street" v-model="dataCompany.street">
             <span class="icon-padlock"></span>
           </div>
         </div>
         <div class="col-lg-4">
           <div class="position-relative">
             <label for="number" class="form-label">Número</label>
-            <input type="text" class="form-control" id="number" v-model="dataCompany.number">
+            <input readonly type="text" class="form-control" id="number" v-model="dataCompany.number">
             <span class="icon-padlock"></span>
           </div>
         </div>
@@ -53,14 +53,14 @@
         <div class="col-lg-7">
           <div class="position-relative">
             <label for="city" class="form-label">Cidade</label>
-            <input type="text" class="form-control" id="city" v-model="dataCompany.city">
+            <input readonly type="text" class="form-control" id="city" v-model="dataCompany.city">
             <span class="icon-padlock"></span>
           </div>
         </div>
         <div class="col-lg-5">
           <div class="position-relative">
             <label for="state" class="form-label">Estado</label>
-            <input type="text" class="form-control" id="state" v-model="dataCompany.state">
+            <input readonly type="text" class="form-control" id="state" v-model="dataCompany.state">
             <span class="icon-padlock"></span>
           </div>
         </div>
