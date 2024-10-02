@@ -14,7 +14,7 @@
           </div>
         </div>
         <p class="mb-0 mt-2 required-alert" v-show="invalid.general">*Campo obrigatório</p>
-        <p class="mt-2 required-alert">Recomendamos não colocar um tempo de preparo longo, uma vez que isso pode fazer com que os consumidores desistam da compra.</p>
+        <p class="mt-2 required-alert"><b class="bold-700">Recomendamos não colocar um tempo de preparo longo</b> para evitar que os consumidores desistam da compra.</p>
         <p v-if="dataTime.general !== ''">Tempo definido: {{ dataTime.general.time }} minutos <span class="add-item icon-trash" role="button" @click="removeGeneralTime()"></span></p>
         <hr>
             <div class="list-item accordion mt-3">
