@@ -18,10 +18,10 @@
             <Asaas @next-step="nextStep" @back-step="backStep" :currentStep="currentStep" :countSteps="countSteps"/>
         </div>
         <div class="col" v-show="currentStep == 6">
-            <Email @next-step="nextStep" @back-step="backStep" :currentStep="currentStep" :countSteps="countSteps"/>
+            <Welcome @next-step="nextStep" @back-step="backStep" :currentStep="currentStep" :countSteps="countSteps"/>
         </div>
         <div class="col" v-show="currentStep == 7">
-            <Welcome @next-step="nextStep" @back-step="backStep" :currentStep="currentStep" :countSteps="countSteps"/>
+            <Email @next-step="nextStep" @back-step="backStep" :currentStep="currentStep" :countSteps="countSteps"/>
         </div>
         <div class="col" v-show="currentStep == 8">
             <Start @next-step="nextStep" @back-step="backStep" :currentStep="currentStep" :countSteps="countSteps"/>

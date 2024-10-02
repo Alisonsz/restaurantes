@@ -480,8 +480,4 @@ h4 {
   height: 16px;
 }
 
-.edit-button:hover {
-  background-color: #e9e3e3;
-}
-
 </style>

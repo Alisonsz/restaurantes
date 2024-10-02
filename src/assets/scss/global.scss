@@ -280,6 +280,9 @@ hr {
 .btn-block {
     background-color: $gray-line;
 }
+.btn-block:hover {
+    background-color: $gray-line !important;
+}
 
 .text-green {
     color: $light-green;

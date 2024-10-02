@@ -12,7 +12,7 @@
             </div>
             <div v-else class="local-cover" @click="uploadCover"> 
               <div class="border icon-image">
-                <span class="label-image"><u>Adcionar capa</u></span>
+                <span class="label-image"><u>Adicionar capa</u></span>
                 <span class="label-image">JPEG, JPG ou PNG de até 7mb</span>
                 <span class="label-image">Tamanho mínimo: 800x200px</span>
               </div>
@@ -27,7 +27,7 @@
               </div>
               <div v-else class="local-logo" @click="uploadLogo"> 
                 <div class="border icon-image">
-                  <span class="label-image"><u>Adcionar logotipo</u></span>
+                  <span class="label-image"><u>Adicionar logotipo</u></span>
                 </div>
               </div>
               <p class="mb-0 required-alert" v-show="invalid.logoPhoto">*Campo obrigatório</p>

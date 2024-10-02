@@ -503,10 +503,6 @@ const isEditing = computed(() => {
   background-color: $gray-tab;
 }
 
-.btn-save.enabled:hover {
-  background-color: darkgreen;
-}
-
 .modal-footer {
   display: flex;
   justify-content: space-between;
@@ -549,10 +545,6 @@ const isEditing = computed(() => {
   margin-left: 10px;
   line-height: 16px;
   margin-right: 15px;
-}
-
-.btn-delete:hover {
-  background-color: darkred;
 }
 
 .add-item {

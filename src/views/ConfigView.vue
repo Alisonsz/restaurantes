@@ -17,9 +17,18 @@
                 <br />
                 O e-mail será utilizado para acessar a Prattu e, em caso de eventuais problemas, essa será a pessoa contatada.
             </h4>
-            <div class="image-container">
-                <img :src="profileImage" alt="Profile Image" class="profile-image" @click="selectImage" v-if="profileImage"/>
-                <button @click="selectImage">{{ profileImage ? "Alterar imagem" : "Inserir imagem" }}</button>
+            <div class="image-container d-flex align-items-center profile-logo">
+                <div>
+                <div class="local-image" v-if="profileImage">
+                    <span class="remove-image remove-logo icon-close" @click="removeLogo"></span>
+                    <img v-if="profileImage" :src="profileImage ? profileImage : ''" alt="Logo" @click="selectImage" class="user-image">
+                </div>
+                <div v-else class="local-logo" @click="selectImage"> 
+                    <div class="border icon-image">
+                    <span class="label-image"><u>Adicionar imagem</u></span>
+                    </div>
+                </div>
+                </div>
             </div>
             <div class="form-container">
                 <div class="left-column">
@@ -279,6 +288,15 @@ const hasChanges = computed(() => {
            passwordData.value.confirmNewPassword;
 });
 
+async function removeLogo() {
+  try {
+    alert(`Fazer a chamada da api`);
+    profileImage.value = "";
+  } catch (error) {
+    console.error('Erro ao remover logotipo:', error);
+  }
+}
+
 const completeConfig = ref(store.state.completeConfig);
 const currentConfigStep = ref(5);
 const countConfigSteps = ref(5);
@@ -306,7 +324,7 @@ export default {
 
 
 
-<style scoped>
+<style lang="scss" scoped>
 @import url('https://fonts.googleapis.com/css2?family=Red+Hat+Text:wght@400&display=swap');
 
 .config.container-data {
@@ -331,6 +349,7 @@ h4 {
     text-align: left;
     margin-bottom: 48px;
     margin-top: 48px;
+    width: 150px;
 }
 
 .profile-image {
@@ -431,7 +450,7 @@ select {
 }
 
 .buttons .btn-success {
-    background-color: #2ecc71;
+    background-color: $light-green;
     text-decoration: none;
     color: black;
 }
@@ -445,5 +464,57 @@ select {
     background-color: #d3d3d3; /* Cinza */
     cursor: not-allowed;
     color: #999;
+}
+
+.icon-image {
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center bottom;
+}
+
+.local-image {
+    position: relative;
+}
+
+.remove-image {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    right: 4px;
+    top: 5px;
+    position: absolute;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.local-logo {
+    cursor: pointer;
+    background-color: $gray-bg;
+    padding: 15px;
+    border-radius: 50%;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    .border {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        background-color: $gray-bg;
+        border: 2px solid #FFF !important;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        .label-image {
+        opacity: 0.4;
+        display: block;
+        text-align: center;
+        }
+    }
+}
+
+.user-image {
+    width: 100%;
+    object-fit: cover;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
 }
 </style>
