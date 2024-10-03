@@ -191,11 +191,14 @@ export default {
       }
     },
     changeTime(field, operation) {
+      if (!this.timeNumber[field].time) {
+        this.timeNumber[field].time = 0;
+      }
       if (operation === 'plus') {
-        this.timeNumber[field].time += 1;
+        this.timeNumber[field].time =  parseInt(this.timeNumber[field].time) + 1;
       } else if (operation === 'minus') {
-        this.timeNumber[field].time -= 1;
-        if (this.timeNumber[field].time < 0) {
+        this.timeNumber[field].time =  parseInt(this.timeNumber[field].time) - 1;
+        if (parseInt(this.timeNumber[field].time) < 0) {
           this.timeNumber[field].time = 0;
         }
       }
@@ -205,7 +208,8 @@ export default {
       this.timeNumber.general.time = 0;
     },
     saveSpecialTime() {
-      alert("Falta fazer a cahamda para a api");
+      alert("Falta fazer a chamada para a api");
+      this.timeNumber.special.time = parseInt(this.timeNumber.special.time);
       let time = this.timeNumber.special;
       if (time.time > 0 && time.day !== "" && time.open !== "" && time.close !== "") {
           this.dataTime.special[time.day] = time;
@@ -215,7 +219,7 @@ export default {
       }
     },
     removeSpecialTime(index) {
-      alert("Falta fazer a cahamda para a api");
+      alert("Falta fazer a chamada para a api");
       this.dataTime.special[index] = "";
     },
     nextConfigStep() {
