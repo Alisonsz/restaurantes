@@ -135,11 +135,14 @@
               @input="formatPhone"
               placeholder="Telefone"
             />
+            <p class="mb-0 required-alert" v-show="invalid.phone">
+              *Campo obrigatório
+            </p>
           </div>
         </div>
         <div class="row">
           <div class="col">
-            <select class="form-select mt-3" v-model="companyType">
+            <select class="form-select mt-3" v-model="dataCompany.companyType">
               <option value="">Tipo de empresa</option>
               <option
                 v-for="(type, index) in companyTypes"
@@ -149,6 +152,9 @@
                 {{ type }}
               </option>
             </select>
+            <p class="mb-0 required-alert" v-show="invalid.companyType">
+              *Campo obrigatório
+            </p>
           </div>
         </div>
         <div class="row">
@@ -163,6 +169,9 @@
                 {{ revenue }}
               </option>
             </select>
+            <p class="mb-0 required-alert" v-show="invalid.revenue">
+              *Campo obrigatório
+            </p>
           </div>
         </div>
         <div class="row">
@@ -221,6 +230,9 @@
           trade: false, 
           address: false,
           number: false,
+          phone: false,
+          companyType: false,
+          revenue: false,
         },
         dataCompany: {
           id: null,
@@ -237,10 +249,10 @@
           phone: "",
           revenue: "",
           latitude: "",
-          longitude: ""
+          longitude: "",
+          companyType: ""
         },
         address: "",
-        companyType: ""
       };
     },
     props: {

@@ -12,7 +12,8 @@
             <input type="text" class="form-control mt-2" v-model="accountData.name" placeholder="Nome completo">
             <p class="mb-0 required-alert" v-show="invalid.name">*Campo obrigatório, insira nome e sobrenome</p>
             <input type="email" class="form-control mt-2" v-model="accountData.email" placeholder="E-mail">
-            <p class="mb-0 required-alert" v-show="invalid.email">*Campo obrigatório, insira um email válido</p>
+            <p class="mb-0 required-alert" v-show="invalid.email" v-if="!emailUsed">*Campo obrigatório, insira um email válido</p>
+            <p class="mb-0 required-alert" v-show="invalid.email" v-else>*Esse e-mail já foi cadastrado</p>
             <input type="tel" class="form-control mt-2" v-model="accountData.phone" @input="formatPhone" placeholder="Celular">
             <p class="mb-0 required-alert" v-show="invalid.phone">*Campo obrigatório, insira um telefone válido</p>
             <input type="password" class="form-control mt-2" v-model="accountData.password" placeholder="Senha">
@@ -62,7 +63,8 @@ export default {
         email: "",
         phone: "",
         password: ""
-      }
+      },
+      emailUsed: false,
     };
   },
   methods: {
@@ -125,6 +127,7 @@ export default {
       return isvalid;
     },
     async save() {
+      this.emailUsed = false;
       if (this.valid(this.accountData)) {
         if (this.accountData.password !== this.confirmPassword) {
           this.invalidConfirmPassword = true;
@@ -147,6 +150,11 @@ export default {
               this.$router.push({ name: 'register' });
             } catch (error) {
               console.error('Erro ao registrar o usuário:', error);
+
+              if (error?.response?.data?.errors?.email) {
+                this.invalid.email = true;
+                this.emailUsed = true;
+              }
             }
           }
         }
