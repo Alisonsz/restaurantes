@@ -223,6 +223,7 @@
                     custody: 'São os pagamentos já realizados pelos clientes, mas que aguardam a confirmação de retirada e/ou consumo no local para que o repasse seja liberado.',
                     overdue: 'Quando um consumidor gera um código para pagamento via Pix, porém não conclui a compra, ela acaba sendo considerada como “Vencida”. Estes pedidos não chegam para o estabelecimento.'
                 },
+                baseData: "",
                 paymentsData: {
                     general: {
                         expected: 0,
@@ -359,9 +360,29 @@
             },
             clearFilter() {
                 this.filters = JSON.parse(JSON.stringify(this.filtersBase));
+                this.paymentsData.transfers = JSON.parse(JSON.stringify(this.baseData.transfers));
+                this.selectPage(1);
             },
             applyFilter() {
+                let dateStart = "";
+                let dateEnd = "";
+                let filterData = JSON.parse(JSON.stringify(this.baseData.transfers));
 
+
+
+                if (Object.keys(this.filters.status).filter(key => this.filters.status[key]).length) {
+                    this.paymentsData.transfers = filterData.filter(
+                        payment => Object.keys(this.filters.status).filter(key => this.filters.status[key]).includes(payment.status)
+                    );
+                }
+                if (dateStart) {
+                    console.log("dateStart:", dateStart);
+                }
+                if (dateStart) {
+                    console.log("dateEnd:", dateEnd);
+                }
+                
+                this.selectPage(1);
             },
             selectInterval() {
                 this.loadData();
@@ -379,6 +400,7 @@
             this.dateEnd = today.toISOString().split('T')[0];
             this.filters = JSON.parse(JSON.stringify(this.filtersBase));
             this.loadData();
+            this.baseData = JSON.parse(JSON.stringify(this.paymentsData));
         }
     }
 </script>
