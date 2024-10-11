@@ -6,7 +6,7 @@
                 <div class="modal-header">
                     <slot name="header"></slot>
                 </div>
-                <hr class="hr-header">
+                <hr class="hr-header" v-if="noLine !== true">
                 <div class="modal-body">
                     <slot name="body"></slot>
                 </div>
@@ -22,7 +22,8 @@
     const props = defineProps({
         show: Boolean,
         noClose: Boolean,
-        bgGray: Boolean
+        bgGray: Boolean,
+        noLine: Boolean
     });
 </script>
 

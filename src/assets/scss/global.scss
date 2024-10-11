@@ -86,6 +86,25 @@ button, input[type="text"], input[type="email"], input[type="number"], input[typ
     background-color: $blue-primary;
 }
 
+.icon-custody {
+    background-color: $yellow-secondary;
+}
+.icon-confirmed {
+    background-color: $blue-primary;
+}
+.icon-received {
+    background-color: $green-secondary;
+}
+.icon-reversed {
+    background-color: $red-secondary;
+}
+.icon-chargeback {
+    background-color: $purple-secondary;
+}
+.icon-overdue {
+    background-color: $red-secondary;
+}
+
 .btn-round {
     border-radius: 26px !important;
     height: 36px !important;
@@ -99,6 +118,13 @@ button, input[type="text"], input[type="email"], input[type="number"], input[typ
     opacity: 0.3;
 }
 .icon-base.icon-help:hover {
+    opacity: 1;
+}
+
+.icon-base.icon-data {
+    opacity: 0.3;
+}
+.icon-base.icon-data:hover {
     opacity: 1;
 }
 
