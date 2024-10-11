@@ -166,7 +166,8 @@
                             <button type="button" class="btn btn-cancel" @click="clearFilter(), showModalFilters = false">Limpar filtros</button>
                         </div>
                         <div class="col-lg-6 d-grid gap-2">
-                            <button type="button" class="btn btn-save" @click="applyFilter(), showModalFilters = false">Filtrar</button>
+                            <button type="button" class="btn btn-save" @click="applyFilter(), showModalFilters = false" v-if="validFilter()">Filtrar</button>
+                            <button type="button" class="btn btn-block" v-else>Filtrar</button>
                         </div>
                     </div>
                 </template>
@@ -187,7 +188,7 @@
     export default {
         name: "PaymentsView",
         setup() {
-            const showModalFilters = ref(true);
+            const showModalFilters = ref(false);
 
             const pageNumber = ref(1);
             const setPageNumber = (value) => {
@@ -363,24 +364,62 @@
                 this.paymentsData.transfers = JSON.parse(JSON.stringify(this.baseData.transfers));
                 this.selectPage(1);
             },
+            validFilter() {
+                if (Object.keys(this.filters.status).filter(key => this.filters.status[key]).length) {
+                    return true;
+                }
+                if (["beginning", "year", "month"].includes(this.filters.period.type)) {
+                    return true;
+                }
+                if (this.filters.period.type === "personalized" && (this.filters.period.start || this.filters.period.end)) {
+                    return true;
+                }
+                return false;
+            },
             applyFilter() {
                 let dateStart = "";
                 let dateEnd = "";
                 let filterData = JSON.parse(JSON.stringify(this.baseData.transfers));
 
-
+                if (["beginning", "year", "month", "personalized"].includes(this.filters.period.type)) {
+                    const currentDate = new Date();
+                    switch (this.filters.period.type) {
+                        case 'year':
+                            dateStart = new Date(currentDate.getFullYear(), 0, 1);
+                        break;
+                        case 'month':
+                            dateStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+                        break;
+                        case 'personalized':
+                            if (this.filters.period.start) {
+                                dateStart = new Date(this.filters.period.start);
+                            }
+                            if (this.filters.period.end) {
+                                dateEnd = new Date(this.filters.period.end);
+                            }
+                        break;
+                    }
+                }
 
                 if (Object.keys(this.filters.status).filter(key => this.filters.status[key]).length) {
-                    this.paymentsData.transfers = filterData.filter(
+                    filterData = filterData.filter(
                         payment => Object.keys(this.filters.status).filter(key => this.filters.status[key]).includes(payment.status)
                     );
                 }
+
                 if (dateStart) {
-                    console.log("dateStart:", dateStart);
+                    filterData = filterData.filter(
+                        payment => new Date(payment.date.split('/').reverse().join('-')) >= dateStart
+                    );
                 }
-                if (dateStart) {
-                    console.log("dateEnd:", dateEnd);
+
+                if (dateEnd) {
+                    filterData = filterData.filter(
+                        payment => new Date(payment.date.split('/').reverse().join('-')) <= dateEnd
+                    );
                 }
+
+                this.paymentsData.transfers = filterData;
                 
                 this.selectPage(1);
             },
