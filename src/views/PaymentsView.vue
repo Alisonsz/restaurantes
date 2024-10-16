@@ -6,7 +6,7 @@
                 <div class="col">
                     <h3 class="bold-700">Pagamentos</h3>
                 </div>
-                <div class="col-lg-4  text-end">
+                <div class="col-lg-8  text-end">
                     <span class="icon-base icon-help ml-1" v-tippy="'Para realizar transações e editar/alterar informações financeiras, será necessário acessar a nossa plataforma parceira através do botão ao lado.'"></span>
                     <router-link  to="/" class="btn go-config">
                         <span class="add-item add-inline icon-config"></span> Configurar informações financeiras
@@ -17,9 +17,12 @@
         <div class="report-data">
             <div class="select-interval">
                 <div class="row">
-                    <div class="col bold-500">Pagamentos</div>
+                    <div class="col bold-500"></div>
                     <div class="col col-md-auto bold-500 filter" @click="showModalFilters = true">
-                        Filtros <span class="icon-base icon-filter"></span>
+                        Filtros 
+                        <span class="icon-base icon-filter">
+                            <span class="filter-on" v-if="validFilter()"></span>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -56,10 +59,14 @@
                         <p class="value">R$ {{ paymentsData.general.overdue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}</p>
                     </div>
                     <div class="col">
-                        <span class="seeMore" v-if="seeMore" @click="seeMore = false">Veja menos</span>
-                        <span class="seeMinus" v-else @click="seeMore = true">Veja mais</span>
-                        <span class="left-icon" v-if="seeMore"></span>
-                        <span class="right-icon" v-else></span>
+                        <span v-if="seeMore" @click="seeMore = false">
+                            <span class="seeMore">Ver menos</span>
+                            <span class="left-icon"></span>
+                        </span>
+                        <span v-else @click="seeMore = true">
+                            <span class="seeMinus">Veja mais</span>
+                            <span class="right-icon"></span>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -82,7 +89,7 @@
                                 <p class="bold-600 mt-2 mb-2">Forma de pagamento</p>
                             </th>
                             <th scope="col" class="col-val">
-                                <p class="bold-600 mt-2 mb-2">Valor</p>
+                                <p class="bold-600 mt-2 mb-2">Valor (R$)</p>
                             </th>
                             <th scope="col" class="col-status">
                                 <p class="bold-600 mt-2 mb-2">Status</p>
@@ -118,47 +125,49 @@
             </div>
         </div>
         <Teleport to="body">
-            <ModalFilters :show="showModalFilters" @close="showModalFilters = false" :noLine="true">
+            <ModalFilters :show="showModalFilters" @close="showModalFilters = false, resetFilter()" :noLine="true">
                 <template #header>Filtros</template>
                 <template #body>
-                    <div class="list-filter mb-3">
-                        <h5 class="title-filter">Filtre o período de exibição</h5>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" id="filter-period-beginning" value="beginning" v-model="filters.period.type"/>
-                            <label class="form-check-label" for="filter-period-beginning">Desde o início</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" id="filter-period-year" value="year" v-model="filters.period.type"/>
-                            <label class="form-check-label" for="filter-period-year">Este ano</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" id="filter-period-month" value="month" v-model="filters.period.type"/>
-                            <label class="form-check-label" for="filter-period-month">Este mês</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" id="filter-period-personalized" value="personalized" v-model="filters.period.type"/>
-                            <label class="form-check-label" for="filter-period-personalized">Personalizado</label>
-                        </div>
-                        <div v-if="filters.period.type === 'personalized'">
-                            <div class="col col-md-auto">
-                                <div class="col-date">
-                                    <label for="dateStart" class="col-form-label bold-500">Data início</label>
-                                    <input type="date" lang="pt-br" id="dateStart" class="form-control date" v-model="filters.period.start">
+                    <div class="line-filter">
+                        <div class="list-filter mb-3">
+                            <h5 class="title-filter">Filtre o período de exibição</h5>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" id="filter-period-beginning" value="beginning" v-model="filters.period.type"/>
+                                <label class="form-check-label" for="filter-period-beginning">Desde o início</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" id="filter-period-year" value="year" v-model="filters.period.type"/>
+                                <label class="form-check-label" for="filter-period-year">Este ano</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" id="filter-period-month" value="month" v-model="filters.period.type"/>
+                                <label class="form-check-label" for="filter-period-month">Este mês</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" id="filter-period-personalized" value="personalized" v-model="filters.period.type"/>
+                                <label class="form-check-label" for="filter-period-personalized">Personalizado</label>
+                            </div>
+                            <div v-if="filters.period.type === 'personalized'">
+                                <div class="col col-md-auto">
+                                    <div class="col-date">
+                                        <label for="dateStart" class="col-form-label bold-500">Data início</label>
+                                        <input type="date" lang="pt-br" id="dateStart" class="form-control date" v-model="filters.period.start">
+                                    </div>
+                                </div>
+                                <div class="col col-md-auto">
+                                    <div class="col-date">
+                                        <label for="dateEnd" class="col-form-label bold-500">Data fim</label>
+                                        <input type="date" lang="pt-br" id="dateEnd" class="form-control date" v-model="filters.period.end">
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col col-md-auto">
-                                <div class="col-date">
-                                    <label for="dateEnd" class="col-form-label bold-500">Data fim</label>
-                                    <input type="date" lang="pt-br" id="dateEnd" class="form-control date" v-model="filters.period.end">
-                                </div>
-                            </div>
                         </div>
-                    </div>
-                    <div class="list-filter">
-                        <h5 class="title-filter">Filtre por status</h5>
-                        <div class="form-check" v-for="(item, index) in statusLabel" :key="index">
-                            <input class="form-check-input" type="checkbox" :id="'filter-status-'+index" v-model="filters.status[index]"/>
-                            <label class="form-check-label" :for="'filter-status-'+index">{{ item }}</label>
+                        <div class="list-filter">
+                            <h5 class="title-filter">Filtre por status</h5>
+                            <div class="form-check" v-for="(item, index) in statusLabel" :key="index">
+                                <input class="form-check-input" type="checkbox" :id="'filter-status-'+index" v-model="filters.status[index]"/>
+                                <label class="form-check-label" :for="'filter-status-'+index">{{ item }}</label>
+                            </div>
                         </div>
                     </div>
                     <div class="row mt-4 mb-1">
@@ -251,6 +260,7 @@
                 tableData: [],
                 dataDetails: [],
                 filters: {},
+                filtersApplied: {},
                 filtersBase: {
                     period: {
                         type: "",
@@ -281,7 +291,7 @@
                 let id = 3424235;
                 let listCustomers = [ "Patricia Gomes", "Felipe Martins", "Carlos Oliveira", "Laura Souza", "João Andrade", "Ana Andrade", "Felipe Pedro", "Felipe Martins", "Carlos Maria", "Maria Martins" ];
                 let listMethods = ["Crédito", "Débito", "PIX"];
-                let listDesc = ["Torrada", "Suco de uva", "Pizza"];
+                let listDesc = ["Torrada", "Suco de uva", "Pizza", "Compras realizadas na plataforma no período de 10 de agosto de 2024 até 30 de outubro de 2014 confirmadas e com pagamento realizado até a data atual"];
                 let listNum = [3, 5, 8, 10, 12, 15, 20, 45];
                 let listValues = [120, 123, 145, 190, -50, -78, 200];
                 let newStatus;
@@ -308,7 +318,7 @@
                         transactions: [],
                         cnabData: "dados bancarios das transacoes...",
                         amount: 0,
-                        description: listDesc[Math.floor(Math.random() * 3)],
+                        description: listDesc[Math.floor(Math.random() * 4)],
                         paymentmethod: listMethods[Math.floor(Math.random() * 3)],
                         status: newStatus,
                         info: (newStatus === "confirmed" ? "Disponível \n 10/10/2024" : "")
@@ -420,8 +430,12 @@
                 }
 
                 this.paymentsData.transfers = filterData;
+                this.filtersApplied = JSON.parse(JSON.stringify(this.filters));
                 
                 this.selectPage(1);
+            },
+            resetFilter() {
+                this.filters = JSON.parse(JSON.stringify(this.filtersApplied));
             },
             selectInterval() {
                 this.loadData();
@@ -440,6 +454,7 @@
             this.filters = JSON.parse(JSON.stringify(this.filtersBase));
             this.loadData();
             this.baseData = JSON.parse(JSON.stringify(this.paymentsData));
+            this.filtersApplied = JSON.parse(JSON.stringify(this.filtersBase));
         }
     }
 </script>
@@ -459,6 +474,7 @@
         border-bottom: 5px solid transparent;
         border-top: 5px solid transparent;
         margin-left: 12px;
+        cursor: pointer;
     }
 
     .left-icon {
@@ -470,6 +486,7 @@
         border-bottom: 5px solid transparent;
         border-top: 5px solid transparent;
         margin-left: 5px;
+        cursor: pointer;
     }
 
     .go-config {
@@ -507,6 +524,17 @@
         width: 22px;
         height: 22px;
         background-size: 22px 22px;
+        position: relative;
+        .filter-on {
+            position: absolute;
+            top: -2px;
+            right: -3px;
+            background-color: $light-green;
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            display: block;
+        }
     }
 
     .select-interval {
@@ -653,6 +681,10 @@
         }
     }
 
+    thead th p {
+        // white-space: nowrap;
+    }
+
     @media (max-width: 1280px) {
         .sidebar-open {
             .col-val {
@@ -660,4 +692,18 @@
             }
         }
     }
+
+    @media (max-height: 700px) {
+        .line-filter {
+            min-width: 550px;
+            display: flex;
+            justify-content: space-between;
+            .list-filter {
+                width: 48%;
+                padding: 10px;
+                margin-bottom: 0 !important;
+            }
+        }
+    }
+
 </style>
