@@ -2,7 +2,7 @@
     <div class="performance container-report">
     <div class="report-titles">
       <Navbar :navbarData="navbarData" />
-      <Sidebar :sidebarData="sidebarData" />
+      <Sidebar activePage="orders" />
       <div class="header-row">
         <h3 class="bold-700">Gestor de Pedidos</h3>
         <div class="button-group">

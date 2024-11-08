@@ -1,7 +1,7 @@
 <template>
   <div class="performance container-report">
       <div class="report-titles">
-          <Navbar :navbarData="navbarData" /><Sidebar :sidebarData="sidebarData" />
+          <Navbar :navbarData="navbarData" /><Sidebar activePage="sales" />
           <div class="row">
               <div class="col">
                   <h3 class="bold-700">Vendas</h3>
@@ -56,7 +56,7 @@
                   sixMonths: "6 meses"
               },
               intervalsLastLabel: {
-                  sevenDays: "Últimos 7 dias",
+                  sevenDays: "últimos 7 dias",
                   oneMonth: "mês passado",
                   sixMonths: "6 meses anteriores"
               },

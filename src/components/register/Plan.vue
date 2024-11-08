@@ -6,13 +6,13 @@
             <div class="form-data">
                 <div class="plan-data">
                     <h3 class="bold-500">Plano básico</h3>
-                    <p><span class="add-item check-single"></span> 3,6% de taxa de processamento</p>
-                    <p><span class="add-item check-single"></span> 5% de taxa operacional Prattu</p>
-                    <p><span class="add-item check-single"></span> Acesso ao gestor de pedidos</p>
-                    <p><span class="add-item check-single"></span> Acesso ao nosso parceiro financeiro</p>
-                    <p><span class="add-item check-single"></span> Gestão completa de pedidos, vendas e clientes</p>
-                    <p><span class="add-item check-single"></span> Suporte do nosso time durante o processo de cadastro e ativação da conta na plataforma</p>
-                    <p><span class="add-item check-single"></span> Início de cobrança: após Mês de uso</p>
+                    <p><span class="add-item check-single"></span> 3,6% de taxa para compras no crédito / R$1,19 para compras no Pix;</p>
+                    <p><span class="add-item check-single"></span> 5% de taxa operacional Prattu;</p>
+                    <p><span class="add-item check-single"></span> Acesso ao gestor de pedidos;</p>
+                    <p><span class="add-item check-single"></span> Acesso à plataforma do Asaas;</p>
+                    <p><span class="add-item check-single"></span> Gestão completa de pedidos, vendas e clientes;</p>
+                    <p><span class="add-item check-single"></span> Suporte do nosso time durante o processo de cadastro e ativação da conta na plataforma;</p>
+                    <p><span class="add-item check-single"></span> Início de cobrança: após 1 mês de uso.</p>
                 </div>
                 <div class="row mt-4">
                     <div class="col-6 d-grid">

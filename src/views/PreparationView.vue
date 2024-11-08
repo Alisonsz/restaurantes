@@ -1,6 +1,6 @@
 <template>
     <div class="preparation" :class="completeConfig ? '' : 'with-footer'">
-      <Navbar :navbarData="navbarData" /><Sidebar :sidebarData="sidebarData" />
+      <Navbar :navbarData="navbarData" /><Sidebar activePage="preparation" />
       <h2 class="bold-700 title">Tempo de preparo</h2>
       <div class="container-data">
         <label class="bold-500">Tempo médio padrão</label>
@@ -8,25 +8,25 @@
         <div class="row">
           <div class="col form-time">
             <button class="btn btn-minus" @click="changeTime('general', 'minus')"><span class="add-item add-right add-minus"></span></button>
-            <input type="number" class="form-control mt-3 text" placeholder="Ex. 20 min" v-model.number="timeNumber.general.time">
+            <input type="tel" class="form-control mt-3 text" placeholder="Ex. 20 min" v-model.number="timeNumber.general.time">
             <button class="btn btn-plus" @click="changeTime('general', 'plus')"><span class="add-item add-right add-plus"></span></button>
             <button class="btn btn-save" :class="timeNumber.general.time === '' ? 'inactive' : ''" @click="saveGeneralTime(timeNumber.general)">Salvar</button>
           </div>
         </div>
         <p class="mb-0 mt-2 required-alert" v-show="invalid.general">*Campo obrigatório</p>
-        <p class="mt-2 required-alert">Recomendamos não colocar um tempo de preparo longo, uma vez que isso pode fazer com que os consumidores desistam da compra.</p>
+        <p class="mt-2 required-alert"><b class="bold-700">Recomendamos não colocar um tempo de preparo longo</b> para evitar que os consumidores desistam da compra.</p>
         <p v-if="dataTime.general !== ''">Tempo definido: {{ dataTime.general.time }} minutos <span class="add-item icon-trash" role="button" @click="removeGeneralTime()"></span></p>
         <hr>
             <div class="list-item accordion mt-3">
                 <label class="bold-500 mt-2">Tempo médio específico</label>
                 <p class="mb-0 mt-0">Tempo que o estabelecimento terá para preparar os pedidos em determinados dias e horários da semana. Esse tempo aparecerá para  o consumidor no aplicativo.</p>
-                <div class="row">
+                  <div class="row">
                     <div class="col form-time">
                         <button class="btn btn-minus" @click="changeTime('special', 'minus')"><span class="add-item add-right add-minus"></span></button>
-                        <input type="text" class="form-control mt-3 text" placeholder="Ex. 20 min" v-model="timeNumber.special.time">
+                        <input type="tel" class="form-control mt-3 text" placeholder="Ex. 20 min" v-model="timeNumber.special.time">
                         <button class="btn btn-plus" @click="changeTime('special', 'plus')"><span class="add-item add-right add-plus"></span></button>
                         <button class="btn btn-save" 
-                            :class="timeNumber.special.number <= 0 || timeNumber.special.day === '' || timeNumber.special.open === '' || timeNumber.special.close === '' ? 'inactive' : ''" 
+                            :class="timeNumber.special.time <= 0 || timeNumber.special.day === '' || timeNumber.special.open === '' || timeNumber.special.close === '' ? 'inactive' : ''" 
                             @click="saveSpecialTime(timeNumber.special)">
                             Salvar
                         </button>
@@ -64,7 +64,7 @@
             </div>
         </div>
     </div>
-    <Footer @next-config-step="nextConfigStep" :currentConfigStep="currentConfigStep" :countConfigSteps="countConfigSteps" v-if="completeConfig === false"/>
+    <Footer @next-config-step="nextConfigStep" :currentConfigStep="currentConfigStep" :countConfigSteps="countConfigSteps" :completeStep="dataTime.general.time" v-if="completeConfig === false"/>
 </template>
 
 <script>
@@ -72,14 +72,14 @@ import axios from 'axios';
 import Navbar from "../components/Navbar.vue";
 import Sidebar from "../components/Sidebar.vue";
 import Footer from "../components/Footer.vue";
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 
 export default {
   name: "PreparationView",
   data() {
     return {
-      completeConfig: false,
-      currentConfigStep: 4,
+      completeConfig: this.$store.state.completeConfig,
+      currentConfigStep: 2,
       countConfigSteps: 5,
       weekdays: {
         1: "Domingo",
@@ -102,7 +102,7 @@ export default {
       },
       timeNumber: {
         general: { number: 0, time: 0 },
-        special: { number: 0, time: "", day: "", open: "", close: "" }
+        special: { number: 0, time: 0, day: "", open: "", close: "" }
       },
       dataTime: {
         general: "",
@@ -130,6 +130,7 @@ export default {
     ...mapState(['token'])
   },
   methods: {
+    ...mapActions(['saveCompleteStep']),
     async fetchRestaurantData() {
       try {
         // Obtém o ID do restaurante a partir dos dados do usuário
@@ -153,7 +154,7 @@ export default {
 
         this.restaurantId = restaurantId;
         const preparationTime = restaurantResponse.data.preparation_time;
-        this.timeNumber.general.time = preparationTime; // Inicializar com o valor em minutos
+        this.dataTime.general = {time: preparationTime}; // Inicializar com o valor em minutos
       } catch (error) {
         console.error('Erro ao buscar dados do restaurante:', error);
       }
@@ -190,11 +191,14 @@ export default {
       }
     },
     changeTime(field, operation) {
+      if (!this.timeNumber[field].time) {
+        this.timeNumber[field].time = 0;
+      }
       if (operation === 'plus') {
-        this.timeNumber[field].time += 1;
+        this.timeNumber[field].time =  parseInt(this.timeNumber[field].time) + 1;
       } else if (operation === 'minus') {
-        this.timeNumber[field].time -= 1;
-        if (this.timeNumber[field].time < 0) {
+        this.timeNumber[field].time =  parseInt(this.timeNumber[field].time) - 1;
+        if (parseInt(this.timeNumber[field].time) < 0) {
           this.timeNumber[field].time = 0;
         }
       }
@@ -203,8 +207,24 @@ export default {
       this.dataTime.general = "";
       this.timeNumber.general.time = 0;
     },
+    saveSpecialTime() {
+      alert("Falta fazer a chamada para a api");
+      this.timeNumber.special.time = parseInt(this.timeNumber.special.time);
+      let time = this.timeNumber.special;
+      if (time.time > 0 && time.day !== "" && time.open !== "" && time.close !== "") {
+          this.dataTime.special[time.day] = time;
+          this.dataTime.special[time.day].day = this.weekdays[time.day];
+          this.timeNumber.special = { number: 0, time: "", day: "", open: "", close: ""};
+          this.invalid.special = false;
+      }
+    },
+    removeSpecialTime(index) {
+      alert("Falta fazer a chamada para a api");
+      this.dataTime.special[index] = "";
+    },
     nextConfigStep() {
-      this.$router.push('/configuracoes');
+      this.saveCompleteStep('preparation');
+      this.$router.push('/perfil');
     }
   },
   async created() {

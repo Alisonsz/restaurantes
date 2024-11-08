@@ -5,47 +5,53 @@
             <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-0">
                 <div class="row data-company">
                     <div class="company-logo">
-                        <img class="logo" :src="sidebarData.logo" :alt="sidebarData.company">
+                        <img class="logo" :src="sidebarData?.logo" :alt="sidebarData?.company" v-if="sidebarData?.logo">
+                        <img class="logo" src="~@/assets/img/img.svg" :alt="sidebarData?.company" v-else>
                     </div>
                     <div class="col">
-                        <span class="company-name">{{ sidebarData.company }}</span>
-                        <span class="company-adress">{{ sidebarData.address }}</span>
+                        <span class="company-name">{{ sidebarData?.company }}</span>
+                        <span class="company-adress">{{ sidebarData?.address }}</span>
                     </div>
                 </div>
                 <div class="sublinks-floating" :style="{ top: positionSublink + 'px' }" v-show="visibleSublink">
                     <span v-for="(sublink, i) in selectedSublinks" :key="i">
-                        <p :class="[sidebarData.active === i ? 'item-active' : '']" v-if="typeof sidebarData.links !== 'object' || typeof sidebarData.links[i] === 'object'">
+                        <p :class="[activePage === i ? 'item-active' : '']" v-if="typeof sidebarData?.links !== 'object' || typeof sidebarData?.links[i] === 'object'">
                             <router-link class="nav-sublink" :to="sublink.route">
-                                <span class="sidbar-icon" :class="sublink.icon"></span>
+                                <span class="sidbar-icon" :class="i === 'orders' ? 'icon-clipboard' : sublink.icon"></span>
                                 <span class="sublink-name">{{ sublink.name }}</span>
                             </router-link>
                         </p>
                     </span>
                 </div>
                 <div class="menu-content" @scroll="visibleSublink = false">
-                    <p class="message" v-if="typeof sidebarData.message === 'string'">{{ sidebarData.message }}</p>
-                    <ul class="nav nav-top flex-column" :class="typeof sidebarData.message === 'string' ? '' : 'mt-1'">
+                    <p class="message" v-if="typeof sidebarData?.message === 'string'">{{ sidebarData?.message }}</p>
+                    <ul class="nav nav-top flex-column" :class="typeof sidebarData?.message === 'string' ? '' : 'mt-1'">
                         <div v-for="(link, index) in links" :key="index">
-                            <li class="nav-item" :class="typeof link.sublinks === 'object' ? 'with-sublink' : ''" v-if="typeof sidebarData.links !== 'object' || typeof sidebarData.links[index] === 'object'">
+                            <li class="nav-item" :class="typeof link.sublinks === 'object' ? 'with-sublink' : ''" v-if="typeof sidebarData?.links !== 'object' || typeof sidebarData?.links[index] === 'object'">
                                 <span v-if="typeof link.sublinks === 'object'" @click="selectSublink(index, link.sublinks, $event)" ref="clickableElement">
-                                    <a class="nav-link d-flex align-items-center collapsed" data-bs-toggle="collapse" :href="'#sublinks' + index" aria-expanded="false" :aria-controls="'sublinks' + index" :class="[parentMenu === index ? 'menu-parent' : '']">
+                                    <a class="nav-link d-flex align-items-center collapsed" data-bs-toggle="collapse" :href="'#sublinks' + (completeConfig ? index : 'x')" aria-expanded="false" :aria-controls="'sublinks' + index" :class="[parentMenu === index ? 'menu-parent' : '']">
                                         <span class="sidbar-icon" :class="link.icon" v-tippy="open ? '' : link.name"></span>
                                         <span class="name">{{ link.name }}</span>
                                         <span class="sublink-icon"></span>
                                     </a>
                                     <div class="sublinks-list float-left collapse" :id="'sublinks' + index" data-bs-parent=".nav-top" :class="[parentMenu === index ? 'show' : '']">
                                         <div class="sublink" v-for="(sublink, i) in link.sublinks" :key="i">
-                                            <span v-if="typeof sidebarData.links !== 'object' || typeof sidebarData.links[i] === 'object'" :class="'menu-'+i">
-                                                <router-link class="nav-link d-flex align-items-center sublink" aria-current="page" :to="sublink.route" :class="[sidebarData.active === i ? 'icon-active' : '']">
+                                            <span v-if="typeof sidebarData?.links !== 'object' || typeof sidebarData?.links[i] === 'object'" :class="'menu-'+i">
+                                                <router-link class="nav-link d-flex align-items-center sublink" aria-current="page" :to="sublink.route" :class="[activePage === i ? 'icon-active' : '']" v-if="typeof sidebarData?.links !== 'object' || sidebarData?.links[i]?.complete">
                                                     <span class="sidbar-icon info-icon" :class="checkAddIcon(i)"></span>
                                                     <span class="sidbar-icon" :class="sublink.icon"></span>
                                                     <span class="name">{{ sublink.name }}</span>
                                                 </router-link>
+                                                <span class="nav-link d-flex align-items-center sublink" aria-current="page" :to="sublink.route" :class="[activePage === i ? 'icon-active' : '']" v-else>
+                                                    <span class="sidbar-icon info-icon" :class="checkAddIcon(i)"></span>
+                                                    <span class="sidbar-icon" :class="sublink.icon"></span>
+                                                    <span class="name">{{ sublink.name }}</span>
+                                                </span>
                                             </span>
                                         </div>
                                     </div>
                                 </span>
-                                <router-link class="nav-link d-flex align-items-center" aria-current="page" v-else :to="link.route" :class="[sidebarData.active === index ? 'icon-active ' : '']">
+                                <router-link class="nav-link d-flex align-items-center" aria-current="page" v-else :to="link.route" :class="[activePage === index ? 'icon-active ' : '']">
                                     <span class="sidbar-icon info-icon" :class="checkAddIcon(index)"></span>
                                     <span class="sidbar-icon" :class="link.icon"></span>
                                     <span class="name">{{ link.name }}</span>
@@ -54,7 +60,7 @@
                         </div>
                     </ul>
                     <ul class="nav nav-bottom flex-column">
-                        <li class="nav-item item-help">
+                        <li class="nav-item item-help" v-if="completeConfig">
                             <router-link to="/ajuda" class="nav-link d-flex align-items-center" aria-current="page">
                                 <span class="sidbar-icon icon-helper" v-tippy="open ? '' : 'Ajuda'"></span>
                                 <span class="name">Ajuda</span>
@@ -85,13 +91,13 @@ export default {
             selectedSublinks: [],
             positionSublink: 0,
             visibleSublink: false,
+            completeConfig: false,
             parentMenu: '',
             links: {
                 monitor: { 
                     icon: "icon-monitor", 
                     name: "Monitor Performance", 
                     sublinks: {
-                    
                         overview: { icon: "icon-grid", name: "Visão geral", route: "/visao" },
                         sales: { icon: "icon-performance", name: "Vendas", route: "/vendas" },
                         operacional: { icon: "icon-efficiency", name: "Eficiência operacional", route: "/operacional" },
@@ -104,12 +110,12 @@ export default {
                     icon: "icon-settings", 
                     name: "Configuração da loja", 
                     sublinks: {
-                        profile: { icon: "icon-account", name: "Perfil", route: "/perfil" },
-                        menu: { icon: "icon-summarize", name: "Cardápio", route: "/cardapio" },
                         hours: { icon: "icon-clock", name: "Horário funcionamento", route: "/horario" },
                         preparation: { icon: "icon-pot", name: "Tempo de preparacão", route: "/preparo" },
-                        promotions: { icon: "icon-promotion", name: "Promoções", route: "/promocoes" },
+                        profile: { icon: "icon-account", name: "Perfil", route: "/perfil" },
+                        menu: { icon: "icon-summarize", name: "Cardápio", route: "/cardapio" },
                         config: { icon: "icon-slider", name: "Configurações da conta", route: "/configuracoes" },
+                        promotions: { icon: "icon-promotion", name: "Promoções", route: "/promocoes" },
                     }
                 },
                 management: {
@@ -118,7 +124,7 @@ export default {
                     sublinks: {
                         orders: { icon: "icon-assignment", name: "Pedidos", route: "/pedidos" },
                         history: { icon: "icon-summarize", name: "Histórico de pedidos", route: "/historico" },
-                        support: { icon: "icon-support", name: "Chamados/suporte", route: "/suporte" },
+                        support: { icon: "icon-support", name: "Chamados/suporte", route: "/chamados" },
                     }
                 }
             }
@@ -126,6 +132,9 @@ export default {
     },
     computed: {
         ...mapState(['sidebarData'])
+    },
+    props: {
+        activePage: String
     },
     methods: {
         openClose() {
@@ -142,10 +151,10 @@ export default {
             }
         },
         checkAddIcon(index) {
-            if (typeof this.sidebarData.links === "object") {
-                if (typeof this.sidebarData.links[index] === "object") {
-                    if (typeof this.sidebarData.links[index].complete === "boolean") {
-                        if (this.sidebarData.links[index].complete) {
+            if (typeof this.sidebarData?.links === "object") {
+                if (typeof this.sidebarData?.links[index] === "object") {
+                    if (typeof this.sidebarData?.links[index].complete === "boolean") {
+                        if (this.sidebarData?.links[index].complete) {
                             return 'check-on';
                         } else {
                             return 'icon-alert';
@@ -182,7 +191,12 @@ export default {
         }
     },
     mounted() {
-        this.open = this.sidebarData.open;
+        this.completeConfig = this.$store.state.completeConfig;
+        if  (!this.$store.state.completeConfig) {
+            this.open = true;
+        } else {
+            this.open = this.sidebarData?.open;
+        }
         const mainElement = document.querySelector('main');
         const firstChild = mainElement.querySelector('div');
         if (this.open) {
@@ -192,7 +206,7 @@ export default {
             firstChild.style.marginLeft = '90px';
             firstChild.classList.remove('sidebar-open');
         }
-        this.parentMenu = this.findParentMenu(this.sidebarData.active);
+        this.parentMenu = this.findParentMenu(this.activePage);
     }
 };
 </script>
@@ -209,6 +223,7 @@ export default {
     .logo {
         width: 31px;
         height: 32px;
+        border-radius: 50%;
         margin: auto;
         margin-top: 20px;
         margin-left: 20px !important;
@@ -270,6 +285,8 @@ export default {
     }
     .icon-active .sidbar-icon {
         opacity: 1 !important;
+        margin-top: 1px;
+        margin-bottom: 1px;
     }
     .nav-top .nav-item {
         width: 50px !important;
@@ -450,7 +467,7 @@ export default {
             padding-bottom: 5px;
         }
         .sublinks-list {
-            padding-top: 15px;
+            padding-top: 9px;
         }
     }
 
@@ -495,6 +512,7 @@ export default {
     }
     .item-exit {
         padding-bottom: 25px;
+        margin-bottom: 30px;
     }
 
     @media (max-height: 950px) {

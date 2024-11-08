@@ -1,17 +1,10 @@
 <template>
   <div class="performance container-report">
       <div class="report-titles">
-          <Navbar :navbarData="navbarData" /><Sidebar :sidebarData="sidebarData"  />
-          <div class="type-report">
-              <button @click.prevent="changeReport('sales')" type="submit" class="btn" :class="reportSelected === 'sales' ? 'report-active' : ''">
-                  <span class="add-item add-inline icon-sale"></span> Vendas
-              </button>
-              <button @click.prevent="changeReport('requests')" type="submit" class="btn" :class="reportSelected === 'requests' ? 'report-active' : ''">
-                  <span class="add-item add-inline icon-request"></span> Pedidos
-              </button>
-          </div>
+          <Navbar :navbarData="navbarData" /><Sidebar activePage="overview"  />
+          <h3 class="bold-700 mb-4">Visão geral</h3>
       </div>
-      <Chart :reportSelected="reportSelected" :intervals="intervals" :intervalsLastLabel="intervalsLastLabel" ref="chart"/>
+      <Chart :intervals="intervals" :intervalsLastLabel="intervalsLastLabel" ref="chart"/>
       <Cards :intervals="intervals" :intervalsLastLabel="intervalsLastLabel"/>
       <Notifications />
   </div>
@@ -46,18 +39,11 @@
                   sixMonths: "6 meses"
               },
               intervalsLastLabel: {
-                  sevenDays: "Últimos 7 dias",
+                  sevenDays: "últimos 7 dias",
                   oneMonth: "mês passado",
                   sixMonths: "6 meses anteriores"
               },
-              reportSelected: "sales"
           }            
-      },
-      methods: {
-          changeReport(report) {
-              this.reportSelected = report;
-              this.$refs.chart.reloadChart(report);
-          }
       },
       components: {
           Navbar,
@@ -71,12 +57,7 @@
 </script>
 
 <style lang="scss" scoped>
-  .type-report button {
-      background-color: $gray-line;
-      width: 120px;
-      margin-right: 15px;
-  }
-  .report-active {
-      background-color: $light-green !important;
-  }
+    .report-titles h3 {
+        padding-bottom: 10px;
+    }
 </style>

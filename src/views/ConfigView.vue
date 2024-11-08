@@ -1,17 +1,34 @@
 <template>
-    <div class="config container-data" :class="completeConfig ? '' : 'with-footer'">
+    <div class="container-report" :class="completeConfig ? '' : 'with-footer'">
         <Navbar :navbarData="navbarData" />
-        <Sidebar :sidebarData="sidebarData" />
-        <div class="content">
-            <h3 class="bold-600">Configurações</h3>
+        <Sidebar activePage="config" />
+        <div class="report-titles">
+            <Navbar :navbarData="navbarData" /><Sidebar activePage="config" />
+            <div class="row">
+                <div class="col">
+                    <h3 class="bold-700 mb-2">Configurações</h3>
+                </div>
+            </div>
+        </div>
+        <div class="container-data">
+            <div class="content">
             <h4>
                 Configure as informações da pessoa responsável pela conta do estabelecimento na plataforma.
                 <br />
                 O e-mail será utilizado para acessar a Prattu e, em caso de eventuais problemas, essa será a pessoa contatada.
             </h4>
-            <div class="image-container">
-                <img :src="profileImage" alt="Profile Image" class="profile-image" @click="selectImage" />
-                <button @click="selectImage">Alterar imagem</button>
+            <div class="image-container d-flex align-items-center profile-logo">
+                <div>
+                <div class="local-image" v-if="profileImage">
+                    <span class="remove-image remove-logo icon-close" @click="removeLogo"></span>
+                    <img v-if="profileImage" :src="profileImage ? profileImage : ''" alt="Logo" @click="selectImage" class="user-image">
+                </div>
+                <div v-else class="local-logo" @click="selectImage"> 
+                    <div class="border icon-image">
+                    <span class="label-image"><u>Adicionar imagem</u></span>
+                    </div>
+                </div>
+                </div>
             </div>
             <div class="form-container">
                 <div class="left-column">
@@ -25,44 +42,49 @@
                         <i class="fas fa-envelope"></i>
                         <input type="email" id="email" v-model="formData.email" placeholder="Email" />
                     </div>
-                    <div class="form-group">
-                        <label for="phone">Telefone</label>
-                        <i class="fas fa-phone"></i>
-                        <input type="text" id="phone" v-model="formData.phone" @input="applyPhoneMask" placeholder="Telefone" />
-                    </div>
                 </div>
                 <div class="right-column">
                     <div class="form-group">
                         <label for="position">Posição</label>
                         <i class="fas fa-briefcase"></i>
                         <select id="position" v-model="formData.position">
-                            <option value="gerente">Gerente</option>
+                            <option value="Proprietário(a)">Proprietário(a)</option>
+                            <option value="Gerente Geral">Gerente Geral</option>
+                            <option value="Gerente de Cozinha">Gerente de Cozinha</option>
+                            <option value="Funcionário(a)">Funcionário(a)</option>
                         </select>
                     </div>
-                    <div class="password-container">
-                        <div class="form-group">
-                            <label for="current-password">Senha Atual</label>
-                            <i class="fas fa-lock"></i>
-                            <input type="password" id="current-password" v-model="passwordData.currentPassword" placeholder="Senha Atual" />
-                        </div>
-                        <div class="form-group">
-                            <label for="new-password">Nova Senha</label>
-                            <i class="fas fa-lock"></i>
-                            <input type="password" id="new-password" v-model="passwordData.newPassword" placeholder="Nova Senha" />
-                        </div>
-                        <div class="form-group">
-                            <label for="confirm-new-password">Confirme a Nova Senha</label>
-                            <i class="fas fa-lock"></i>
-                            <input type="password" id="confirm-new-password" v-model="passwordData.confirmNewPassword" placeholder="Confirme a Nova Senha" />
-                        </div>
+                    <div class="form-group">
+                        <label for="phone">Telefone</label>
+                        <i class="fas fa-phone"></i>
+                        <input type="text" id="phone" v-model="formData.phone" @input="applyPhoneMask" placeholder="Telefone" />
                     </div>
                 </div>
             </div>
+            <!-- <div class="form-container" v-if="completeConfig">
+                <div class="password-container">
+                    <div class="form-group">
+                        <label for="current-password">Senha Atual</label>
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="current-password" v-model="passwordData.currentPassword" placeholder="Senha Atual" />
+                    </div>
+                    <div class="form-group">
+                        <label for="new-password">Nova Senha</label>
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="new-password" v-model="passwordData.newPassword" placeholder="Nova Senha" />
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm-new-password">Confirme a Nova Senha</label>
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="confirm-new-password" v-model="passwordData.confirmNewPassword" placeholder="Confirme a Nova Senha" />
+                    </div>
+                </div>
+            </div> -->
             <div class="buttons" v-if="completeConfig === true">
                 <button :class="['btn', 'btn-success', { 'btn-disabled': !hasChanges }]" :disabled="!hasChanges" @click="save">Salvar</button>
             </div>
         </div>
-        <Footer @next-config-step="showModalCongratulations = true" :currentConfigStep="currentConfigStep" :countConfigSteps="countConfigSteps" v-if="completeConfig === false" />
+        <Footer @next-config-step="showModalCongratulations = true, complete()" :currentConfigStep="currentConfigStep" :countConfigSteps="countConfigSteps" :completeStep="formData.position.length > 0" v-if="completeConfig === false" />
         <Teleport to="body">
             <ModalCongratulations :show="showModalCongratulations" @close="showModalCongratulations = false">
                 <template #header>Parabéns!</template>
@@ -77,6 +99,8 @@
         </Teleport>
 
     </div>
+        </div>
+        
 </template>
 
 <script setup>
@@ -98,7 +122,7 @@ const profileImage = ref('/path/to/default-image.jpg');
 const formData = ref({
     name: '',
     email: '',
-    position: 'gerente',
+    position: 'Gerente Geral',
     phone: ''
 });
 
@@ -139,7 +163,7 @@ onMounted(async () => {
         formData.value = {
             name: userData.name,
             email: userData.email,
-            position: 'gerente',
+            position: 'Gerente Geral',
             phone: userData.phone
         };
         initialFormData.value = { ...formData.value };
@@ -237,7 +261,7 @@ async function save() {
     }
 }
 
-function applyPhoneMask(event) {
+function applyPhoneMaskX(event) {
     let value = event.target.value.replace(/\D/g, '');
     if (value.length > 10) {
         value = value.replace(/^(\d{2})(\d{5})(\d{4}).*/, '($1) $2-$3');
@@ -251,6 +275,12 @@ function applyPhoneMask(event) {
     event.target.value = value;
 }
 
+function applyPhoneMask(event) {
+    const input = event.target.value.replace(/\D/g, '');
+    const formatted = input.replace(/^(\d{2})(\d{5})(\d{4}).*/, '($1) $2-$3');
+    event.target.value = formatted;
+}
+
 const hasChanges = computed(() => {
     return JSON.stringify(formData.value) !== JSON.stringify(initialFormData.value) || 
            passwordData.value.currentPassword || 
@@ -258,19 +288,43 @@ const hasChanges = computed(() => {
            passwordData.value.confirmNewPassword;
 });
 
-const completeConfig = ref(false);
+async function removeLogo() {
+  try {
+    alert(`Fazer a chamada da api`);
+    profileImage.value = "";
+  } catch (error) {
+    console.error('Erro ao remover logotipo:', error);
+  }
+}
+
+const completeConfig = ref(store.state.completeConfig);
 const currentConfigStep = ref(5);
 const countConfigSteps = ref(5);
 const successMessage = ref('');
 
-function finishConfig() {
-    completeConfig.value = true;
-}
-
-
 </script>
 
-<style scoped>
+<script>
+import { mapActions } from 'vuex';
+
+export default {
+  name: "ConfigView",
+  methods: {
+    ...mapActions(['saveCompleteConfig']),
+    complete() {
+        this.saveCompleteConfig(true);
+    },
+    finishConfig() {
+        //this.$router.push('/preparo');
+        window.location.reload();
+    }
+  }
+}
+</script>
+
+
+
+<style lang="scss" scoped>
 @import url('https://fonts.googleapis.com/css2?family=Red+Hat+Text:wght@400&display=swap');
 
 .config.container-data {
@@ -295,6 +349,7 @@ h4 {
     text-align: left;
     margin-bottom: 48px;
     margin-top: 48px;
+    width: 150px;
 }
 
 .profile-image {
@@ -395,7 +450,7 @@ select {
 }
 
 .buttons .btn-success {
-    background-color: #2ecc71;
+    background-color: $light-green;
     text-decoration: none;
     color: black;
 }
@@ -409,5 +464,57 @@ select {
     background-color: #d3d3d3; /* Cinza */
     cursor: not-allowed;
     color: #999;
+}
+
+.icon-image {
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center bottom;
+}
+
+.local-image {
+    position: relative;
+}
+
+.remove-image {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    right: 4px;
+    top: 5px;
+    position: absolute;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.local-logo {
+    cursor: pointer;
+    background-color: $gray-bg;
+    padding: 15px;
+    border-radius: 50%;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    .border {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        background-color: $gray-bg;
+        border: 2px solid #FFF !important;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        .label-image {
+        opacity: 0.4;
+        display: block;
+        text-align: center;
+        }
+    }
+}
+
+.user-image {
+    width: 100%;
+    object-fit: cover;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
 }
 </style>

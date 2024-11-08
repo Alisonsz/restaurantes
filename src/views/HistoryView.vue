@@ -2,7 +2,7 @@
     <div class="performance container-report">
         <div class="report-titles">
             <Navbar :navbarData="navbarData" />
-            <Sidebar :sidebarData="sidebarData" />
+            <Sidebar activePage="history" />
             <div class="row">
                 <div class="col">
                     <h3 class="bold-700">Histórico de pedidos</h3>
@@ -118,9 +118,9 @@ export default {
             pageRecords: 10,
             intervalSelected: "sevenDays",
             intervalsLabels: {
-                sevenDays: "7 Dias",
-                oneMonth: "1 Mês",
-                sixMonths: "6 Meses"
+                sevenDays: "7 dias",
+                oneMonth: "1 mês",
+                sixMonths: "6 meses"
             },
             statusLabel: {
                 "5": "Pago",
@@ -269,7 +269,7 @@ export default {
         }
     }
     .btn-contact:hover {
-        background-color: #light-green;
+        background-color: $light-green;
     }
 }
 

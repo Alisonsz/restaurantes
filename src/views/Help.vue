@@ -1,9 +1,9 @@
 <template>
-  <div class="profile container-data">
+  <div class="profile">
     <Navbar :navbarData="navbarData" />
-    <Sidebar :sidebarData="sidebarData" />
-    <div class="content">
-      <h3 class="bold-600">Dúvidas Frequentes</h3>
+    <Sidebar activePage="help" />
+    <h3 class="bold-700 title">Dúvidas Frequentes</h3>
+    <div class="content container-data">
       <h4>Bem-vindo à página de ajuda! Clique nos tópicos abaixo para ver as respostas.</h4>
       <div class="accordion-container">
         <div v-for="(section, sectionIndex) in faqSections" :key="sectionIndex" class="accordion-item">
@@ -173,6 +173,13 @@ function toggleItemAccordion(sectionIndex, itemIndex) {
     padding: 40px;
     font-family: 'Red Hat Text', sans-serif;
    
+  }
+
+  h3.title {
+    font-size: 23px;
+    margin-top: 12px;
+    margin-bottom: 21px;
+    display: inline-block;
   }
   
   h4 {

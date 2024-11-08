@@ -1,7 +1,7 @@
 <template>
   <div class="hours container-data" :class="completeConfig ? '' : 'with-footer'">
     <Navbar :navbarData="navbarData" />
-    <Sidebar :sidebarData="sidebarData" />
+    <Sidebar activePage="hours" />
     <h3 class="bold-600">Horário de funcionamento</h3>
     <hr />
     <div class="row header-hours">
@@ -31,13 +31,13 @@
         </div>
       </div>
     </div>
-    <Footer @next-config-step="nextConfigStep" :currentConfigStep="currentConfigStep" :countConfigSteps="countConfigSteps" v-if="!completeConfig" />
+    <Footer @next-config-step="nextConfigStep" :currentConfigStep="currentConfigStep" :countConfigSteps="countConfigSteps" :completeStep="verifyCompleteStep()" v-if="!completeConfig" />
   </div>
 </template>
 
 <script>
 import axios from 'axios';
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 import Navbar from "../components/Navbar.vue";
 import Sidebar from "../components/Sidebar.vue";
 import Footer from "../components/Footer.vue";
@@ -46,9 +46,10 @@ export default {
   name: "HoursView",
   data() {
     return {
-      completeConfig: false,
-      currentConfigStep: 3,
+      completeConfig: this.$store.state.completeConfig,
+      currentConfigStep: 1,
       countConfigSteps: 5,
+      completeStep: true,
       hoursOptions: [
         "00:00", "01:00", "02:00", "03:00", "04:00", "05:00", 
         "06:00", "07:00", "08:00", "09:00", "10:00", "11:00",  
@@ -85,9 +86,10 @@ export default {
     };
   },
   computed: {
-    ...mapState(['token'])
+    ...mapState(['token']),
   },
   methods: {
+    ...mapActions(['saveCompleteStep']),
     async fetchRestaurantId() {
       try {
         const response = await axios.get('https://api.prattuapp.com.br/api/users/me', {
@@ -114,6 +116,13 @@ export default {
         throw error;
       }
     },
+    
+    verifyCompleteStep() {
+      this.saveCompleteStep('hours');
+      return this.completeStep = Object.values(this.dataHour).every(day =>
+        day.every(hour => hour.id !== null && hour.open && hour.close)
+      );
+    },
     initializeDataHour(openingHours) {
       this.dataHour = {};
       openingHours.forEach(hour => {
@@ -122,8 +131,8 @@ export default {
           this.dataHour[dayOfWeek] = [];
         }
         this.dataHour[dayOfWeek].push({
-          open: hour.is_closed ? "closed" : hour.open_time.slice(0, 5),
-          close: hour.is_closed ? "closed" : hour.close_time.slice(0, 5),
+          open: !hour.id ? "" :(hour.is_closed ? "closed" : hour.open_time.slice(0, 5)),
+          close: !hour.id ? "" :(hour.is_closed ? "closed" : hour.close_time.slice(0, 5)),
           id: hour.id,
           is_closed: hour.is_closed
         });

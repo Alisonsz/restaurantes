@@ -5,17 +5,16 @@
             <p class="text-center mb-4 bold-400">Etapa {{ currentStep }} de {{ countSteps }}</p>
             <div class="form-data">
                 <div class="finance-data">
-                    <h3 class="bold-500 mb-4">Pagamento</h3>
-                    <p>Aqui na Prattu, trabalhamos com a <strong class="bold-500">Asaas</strong>, nossa parceira financeira, responsável por todos os repasses que serão feitos para o seu estabelecimento.</p>
-                    <p>Assim que concluída essa primeira etapa do cadastro, você receberá um e-mail para que possa completar o cadastro na Asaas. Este e-mail conterá todas as instruções necessárias e o link para que você possa criar a senha e inserir suas informações bancárias.</p>
-                    <p>Estamos aqui para ajudar em caso de dúvidas.<br> Obrigado por escolher a <span class="bold-500 text-green">Prattu</span>!</p>
+                    <h3 class="bold-500 mb-4">Repasses e Pagamentos</h3>
+                    <p>Na Prattu, trabalhamos em parceria com o Asaas, plataforma financeira que será responsável por realizar todos os repasses e pagamentos ao seu estabelecimento.</p>
+                    <p>Importante: <span class="bold-500">O cadastro no Asaas é obrigatório</span> para que você possa receber os pagamentos e repasses. Todas as informações inseridas durante o cadastro na Prattu serão automaticamente transferidas para a criação da sua conta no Asaas.</p>
                 </div>
                 <div class="row mt-4">
                     <div class="col-6 d-grid">
                         <button @click.prevent="cancel()" type="button" class="btn btn-cancel">Voltar</button>
                     </div>
                     <div class="col-6 d-grid">
-                        <button @click.prevent="createAsaasAccount()" type="submit" class="btn btn-save">Finalizar cadastro</button>
+                        <button @click.prevent="save()" type="submit" class="btn btn-save">Próximo</button>
                     </div>
                 </div>
             </div>
@@ -55,22 +54,8 @@ export default {
         };
     },
     methods: {
-        async createAsaasAccount() {
-            try {
-                const response = await axios.post('https://api.prattuapp.com.br/api/create-asaas-account', {}, {
-                    headers: {
-                        Authorization: `Bearer ${this.$store.state.token}`
-                    }
-                });
-                this.modalTitle = 'Conta Asaas criada com sucesso';
-                this.modalMessage = `Resposta da API: ${JSON.stringify(response.data, null, 2)}`;
-            } catch (error) {
-                const errorMessage = error.response?.data ? error.response.data.details : error.message;
-                this.modalTitle = 'Erro ao criar conta da Asaas';
-                this.modalMessage = `Erro: ${errorMessage}`;
-            } finally {
-                this.showModal = true;
-            }
+        async save() {
+            this.$emit('nextStep');
         },
         cancel() {
             this.$emit('backStep');

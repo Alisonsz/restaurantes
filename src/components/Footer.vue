@@ -2,7 +2,10 @@
     <nav class="navbar fixed-bottom navbar-light bg-light text-end">
         <div class="form-inlinev w-100">
             <span class="text-step">Etapa {{ currentConfigStep }} de {{ countConfigSteps }}</span>
-            <button @click.prevent="$emit('nextConfigStep', 'link')" type="submit" class="btn btn-save">
+            <button @click.prevent="$emit('nextConfigStep', 'link')" type="button" class="btn btn-save" v-if="completeStep">
+                {{ (currentConfigStep && currentConfigStep === countConfigSteps ? "Salvar e finalizar" : "Salvar e continuar") }}
+            </button>
+            <button @click.prevent="$emit('validNextStep')" type="button" class="btn btn-save-off" v-else>
                 {{ (currentConfigStep && currentConfigStep === countConfigSteps ? "Salvar e finalizar" : "Salvar e continuar") }}
             </button>
         </div>
@@ -14,7 +17,8 @@
         name: "Footer",
         props: {
             currentConfigStep: Number,
-            countConfigSteps: Number
+            countConfigSteps: Number,
+            completeStep: Boolean
         }
     }
 </script>
@@ -30,5 +34,8 @@
     }
     .text-step {
         margin-right: 20px;
+    }
+    .btn-save-off {
+        background-color: $gray-line;
     }
 </style>

@@ -1,43 +1,68 @@
 <template>
     <form @submit.prevent="saveCompany">
+      <p class="required-alert">Essas informações não podem ser editadas diretamente. Para fazer alterações, entre em contato com nosso suporte.</p>
       <div class="mb-2">
-        <label for="displayName" class="form-label">Nome do restaurante</label>
-        <input type="text" class="form-control" id="displayName" v-model="dataCompany.display_name">
+        <div class="position-relative">
+          <label for="displayName" class="form-label">Nome do restaurante</label>
+          <input readonly type="text" class="form-control" id="displayName" v-model="dataCompany.display_name">
+          <span class="icon-padlock"></span>
+        </div>
       </div>
       <div class="mb-2">
-        <label for="name" class="form-label">Razão social</label>
-        <input type="text" class="form-control" id="name" v-model="dataCompany.name">
+        <div class="position-relative">
+          <label for="name" class="form-label">Razão social</label>
+          <input readonly type="text" class="form-control" id="name" v-model="dataCompany.name">
+          <span class="icon-padlock"></span>
+        </div>
       </div>
       <hr>
       <h3>Endereço</h3>
       <div class="row mb-2">
         <div class="col-lg-4">
-          <label for="zipCode" class="form-label">CEP</label>
-          <input type="text" class="form-control" id="zipCode" v-model="dataCompany.zip_code">
+          <div class="position-relative">
+            <label for="zipCode" class="form-label">CEP</label>
+            <input readonly type="text" class="form-control" id="zipCode" v-model="dataCompany.zip_code">
+            <span class="icon-padlock"></span>
+          </div>
         </div>
         <div class="col-lg-8">
-          <label for="neighborhood" class="form-label">Bairro</label>
-          <input type="text" class="form-control" id="neighborhood" v-model="dataCompany.address_line2">
+          <div class="position-relative">
+            <label for="neighborhood" class="form-label">Bairro</label>
+            <input readonly type="text" class="form-control" id="neighborhood" v-model="dataCompany.address_line2">
+            <span class="icon-padlock"></span>
+          </div>
         </div>
       </div>
       <div class="row mb-2">
         <div class="col-lg-8">
-          <label for="street" class="form-label">Rua</label>
-          <input type="text" class="form-control" id="street" v-model="dataCompany.street">
+          <div class="position-relative">
+            <label for="street" class="form-label">Rua</label>
+            <input readonly type="text" class="form-control" id="street" v-model="dataCompany.street">
+            <span class="icon-padlock"></span>
+          </div>
         </div>
         <div class="col-lg-4">
-          <label for="number" class="form-label">Número</label>
-          <input type="text" class="form-control" id="number" v-model="dataCompany.number">
+          <div class="position-relative">
+            <label for="number" class="form-label">Número</label>
+            <input readonly type="text" class="form-control" id="number" v-model="dataCompany.number">
+            <span class="icon-padlock"></span>
+          </div>
         </div>
       </div>
       <div class="row mb-2">
-        <div class="col-lg-8">
-          <label for="city" class="form-label">Cidade</label>
-          <input type="text" class="form-control" id="city" v-model="dataCompany.city">
+        <div class="col-lg-7">
+          <div class="position-relative">
+            <label for="city" class="form-label">Cidade</label>
+            <input readonly type="text" class="form-control" id="city" v-model="dataCompany.city">
+            <span class="icon-padlock"></span>
+          </div>
         </div>
-        <div class="col-lg-4">
-          <label for="state" class="form-label">Estado</label>
-          <input type="text" class="form-control" id="state" v-model="dataCompany.state">
+        <div class="col-lg-5">
+          <div class="position-relative">
+            <label for="state" class="form-label">Estado</label>
+            <input readonly type="text" class="form-control" id="state" v-model="dataCompany.state">
+            <span class="icon-padlock"></span>
+          </div>
         </div>
       </div>
       <div class="row mt-4 mb-1">
@@ -45,7 +70,7 @@
           <button @click.prevent="$emit('closeModal')" type="button" class="btn btn-cancel">Cancelar</button>
         </div>
         <div class="col-lg-6 d-grid gap-2">
-          <button type="submit" class="btn btn-save">Salvar</button>
+          <button type="button" class="btn btn-block">Salvar</button>
         </div>
       </div>
     </form>
@@ -135,6 +160,20 @@
   <style scoped>
   .modal-container form {
     width: 500px !important;
+  }
+  .icon-padlock {
+    text-align: center;
+    width: 30px;
+    height: 30px;
+    background-size: 20px 20px;
+    background-repeat: no-repeat;
+    background-position: center center;
+    margin: auto;
+    display: inline-block;
+    position: absolute;
+    top: 36px;
+    right: 5px;
+    opacity: 0.2;
   }
   </style>
   

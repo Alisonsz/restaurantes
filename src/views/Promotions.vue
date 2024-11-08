@@ -1,11 +1,10 @@
 <template>
-  <div class="profile container-data">
+  <div class="promotions container-report">
     <Navbar :navbarData="navbarData" />
-    <Sidebar :sidebarData="sidebarData" />
-    <div class="content">
+    <Sidebar activePage="promotions" />
+    <h3 class="bold-700 title">Promoções</h3>
+    <div class="content report-data">
       <!-- Primeiro container: Promoções -->
-      <h3 class="bold-600">Promoções</h3>
-      <hr style="border: 0; border-top: 1px solid #DCDCDC; margin: 10px 0;">
       <h4>Crie, edite, acompanhe e meça os resultados das promoções criadas para o seu estabelecimento.</h4>
       <div class="columns">
         <div class="column" @click="openModal(1)">
@@ -92,10 +91,9 @@
               <span class="promo-type">{{ getPromotionType(promo.type) }}</span>
             </td>
             <td>
-              <label class="switch">
-                <input type="checkbox" v-model="promo.status">
-                <span class="slider round"></span>
-              </label>
+              <span class="promo-type promo-type-1" v-if="promo.status == 1">Ativo</span>
+              <span class="promo-type promo-type-2" v-if="promo.status == 2">Programada</span>
+              <span class="promo-type promo-type-3" v-if="promo.status == 3">Expirada</span>
             </td>
             <td>
               <button class="edit-button btn-round input-base" @click="openModal(promo.type, promo)">
@@ -276,8 +274,14 @@ function savePromotion(promo) {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 @import url('https://fonts.googleapis.com/css2?family=Red+Hat+Text:wght@400&display=swap');
+
+h3.title {
+  font-size: 23px;
+  margin-top: 12px;
+  margin-bottom: 25px;
+}
 
 .container-data {
   display: flex;
@@ -338,7 +342,7 @@ function savePromotion(promo) {
 }
 
 .promotion-button {
-  background-color: #7ED957;
+  background-color: $light-green;
   color: black;
   border: none;
   border-radius: 100px !important; /* Arredondamento com 100px */
@@ -349,10 +353,6 @@ function savePromotion(promo) {
   display: flex;
   align-items: center; /* Centraliza verticalmente o texto */
   justify-content: center; /* Centraliza horizontalmente o texto */
-}
-
-.promotion-button:hover {
-  background-color: darkgreen;
 }
 
 /* Responsividade */
@@ -442,6 +442,17 @@ h4 {
   font-size: 14px;
   color: black;
   font-weight: 500;
+  white-space: nowrap;
+}
+
+.promo-type-1 {
+  background-color: $green-secondary;
+}
+.promo-type-2 {
+  background-color: $purple-secondary;
+}
+.promo-type-3 {
+  background-color: $red-secondary;
 }
 
 .status-switch {
@@ -467,10 +478,6 @@ h4 {
 .edit-button img {
   width: 16px;
   height: 16px;
-}
-
-.edit-button:hover {
-  background-color: #e9e3e3;
 }
 
 </style>

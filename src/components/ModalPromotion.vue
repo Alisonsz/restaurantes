@@ -3,9 +3,7 @@
     <div v-if="show" class="modal-mask">
       <div class="modal-container">
         <div class="modal-header">
-          <button class="icon-back2" @click="$emit('close')" v-if="!noClose">
-            <img src="@/assets/img/back.svg" alt="Voltar" />
-          </button>
+          <button class="icon-back2 modal-default-button icon-back" @click="$emit('close')" v-if="!noClose"></button>
           <h3>{{ getPromotionTitle(formData.type) }}</h3>
         </div>
         <hr class="hr-header" />
@@ -18,6 +16,7 @@
                 id="promotionName"
                 v-model="formData.name"
                 class="form-input"
+                @change="validate()"
               />
             </div>
             <div
@@ -29,6 +28,7 @@
                 id="selectedProducts"
                 v-model="formData.selectedProducts"
                 class="form-select"
+                @change="validate()"
               >
                 <option
                   v-for="product in filteredProducts"
@@ -49,13 +49,14 @@
                 id="couponCode"
                 v-model="formData.couponCode"
                 class="form-input"
+                @change="validate()"
               />
             </div>
           </div>
 
           <div class="form-row bottom-row">
             <div class="form-group percentage-group">
-              <label for="promotionPercentage">Porcentagem de Desconto (%)</label>
+              <label for="promotionPercentage">Desconto (%)</label>
               <div class="form-time">
                 <button
                   class="btn btn-minus"
@@ -68,6 +69,7 @@
                   id="promotionPercentage"
                   v-model.number="formData.percentage"
                   class="form-input text"
+                  @change="validate()"
                 />
                 <button class="btn btn-plus" @click="changePercentage('plus')">
                   <span class="add-item add-right add-plus"></span>
@@ -82,6 +84,7 @@
                 id="promotionStart"
                 v-model="formData.start"
                 class="form-input date-input"
+                @change="validate()"
               />
             </div>
             <div class="form-group date-group">
@@ -93,6 +96,7 @@
                 class="form-input date-input"
                 :disabled="formData.noEnd"
                 :required="!formData.noEnd"
+                @change="validate()"
               />
             </div>
           </div>
@@ -105,12 +109,12 @@
                 type="checkbox"
                 id="noEndCheckbox"
                 v-model="formData.noEnd"
+                @change="validate()"
               />
               <label for="noEndCheckbox">Não expirar</label>
             </div>
           </div>
           <div class="right-footer">
-            <button @click="savePromotion" class="btn-save">Salvar</button>
             <button
               v-if="isEditing"
               @click="deletePromotion"
@@ -118,6 +122,7 @@
             >
               Deletar
             </button>
+            <button @click="savePromotion" class="btn-save" :class="validate() ? 'enabled' : 'disabled'" :disabled="!validate()">Salvar</button>
           </div>
         </div>
       </div>
@@ -221,6 +226,42 @@ function getPromotionTitle(type) {
   return titles[type] || 'Nova Promoção';
 }
 
+function validate() {
+  if (formData.value.type === 1) {
+    if (
+      formData.value.name.trim() !== ""
+      && formData.value.percentage > 0
+      && formData.value.start.trim() !== ""
+      && (formData.value.noEnd || (!formData.value.noEnd && formData.value.end.trim() !== ""))
+    ) {
+      return true
+    }
+  }
+  if (formData.value.type === 2) {
+    if (
+      formData.value.name.trim() !== ""
+      && formData.value.selectedProducts.trim() !== ""
+      && formData.value.percentage > 0
+      && formData.value.start.trim() !== ""
+      && (formData.value.noEnd || (!formData.value.noEnd && formData.value.end.trim() !== ""))
+    ) {
+      return true
+    }
+  }
+  if (formData.value.type === 3) {
+    if (
+      formData.value.name.trim() !== ""
+      && formData.value.couponCode.trim() !== ""
+      && formData.value.percentage > 0
+      && formData.value.start.trim() !== ""
+      && (formData.value.noEnd || (!formData.value.noEnd && formData.value.end.trim() !== ""))
+    ) {
+      return true
+    }
+  }
+  return false
+}
+
 function changePercentage(operation) {
   if (operation === 'plus') {
     formData.value.percentage = (formData.value.percentage || 0) + 1;
@@ -310,7 +351,7 @@ const isEditing = computed(() => {
 
 
 
-<style scoped>
+<style lang="scss" scoped>
 .modal-mask {
   position: fixed;
   z-index: 9998;
@@ -336,7 +377,7 @@ const isEditing = computed(() => {
 .modal-header {
   display: flex;
   align-items: center;
-  gap: 30px;
+  gap: 5px;
 }
 
 .modal-header h3 {
@@ -447,7 +488,6 @@ const isEditing = computed(() => {
 
 .btn-save {
   padding: 10px 20px;
-  background-color: #7ED957;
   border: none;
   border-radius: 100px;
   color: black;
@@ -455,8 +495,12 @@ const isEditing = computed(() => {
   font-size: 16px;
 }
 
-.btn-save:hover {
-  background-color: darkgreen;
+.btn-save.enabled {
+  background-color: $light-green;
+}
+
+.btn-save.disabled {
+  background-color: $gray-tab;
 }
 
 .modal-footer {
@@ -476,9 +520,18 @@ const isEditing = computed(() => {
   opacity: 0;
 }
 
-.icon-back2 img {
-  width: 20px;
-  height: 20px;
+.icon-back2 {
+  width: 30px !important;
+  height: 30px !important;
+  background-color: transparent;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: 13px 13px;
+  border: none;
+}
+
+.hr-header {
+  margin-top: 15px;
 }
 
 .btn-delete {
@@ -491,10 +544,7 @@ const isEditing = computed(() => {
   font-size: 16px;
   margin-left: 10px;
   line-height: 16px;
-}
-
-.btn-delete:hover {
-  background-color: darkred;
+  margin-right: 15px;
 }
 
 .add-item {

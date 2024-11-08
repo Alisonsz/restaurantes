@@ -1,6 +1,6 @@
 <template>
   <div class="home container-data">
-    <Navbar />
+    <Navbar :noData="true" :loggedIn="1"/>
     <FormRegister  @save-account="saveAccount"/>
   </div>
 </template>

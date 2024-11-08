@@ -6,6 +6,8 @@ const store = createStore({
   state: {
     token: null,
     tokenTimestamp: null,
+    email: null,
+    completeConfig: false,
     navbarData: null,
     sidebarData: null,
     restaurantId: null,
@@ -25,13 +27,23 @@ const store = createStore({
       state.token = null;
       state.tokenTimestamp = null;
     },
+    setEmail(state, { email }) {
+      state.email = email;
+    },
+    setCompleteStep(state, { step }) {
+      state.sidebarData.links[step].complete = true;
+    },
+    setCompleteConfig(state, { completeConfig }) {
+      state.completeConfig = completeConfig;
+    },
     setNavbarAndSidebarData(state, data) {
+      const oldSidebarData = state.sidebarData;
       state.navbarData = {
         notifications: 4,
         open: data.is_open,
         time: data.is_open
-          ? `${data.opening_time.split(':')[0]}h às ${data.closing_time.split(':')[0]}h`
-          : `${data.opening_time.split(':')[0]}h`,
+          ? (data.opening_time ? `${data.opening_time.split(':')[0]}h às ${data.closing_time.split(':')[0]}h` : "")
+          : (data.opening_time ? `${data.opening_time.split(':')[0]}h` : ""),
         preparation: data.is_open ? `${data.status === 1 ? 'Ajustado' : data.status === 2 ? 'Pausado' : 'Padrão'} (${data.total_preparation_time} min)` : '',
         preparationStatus: data.status === 1 ? 'adjusted' : data.status === 2 ? 'paused' : 'default'
       };
@@ -39,7 +51,21 @@ const store = createStore({
         logo: data.logo_url,
         company: data.restaurant_name,
         address: data.address,
+        message: null
       };
+      if (!state.completeConfig) {
+        state.navbarData['notifications'] = null,
+        state.navbarData['opening_time'] = null,
+        state.sidebarData['message'] = "Configure os menus abaixo para começar a receber pedidos!",
+        state.sidebarData['links'] = {
+          store: {},
+          hours: { complete: oldSidebarData?.links?.hours ? true : false },
+          preparation: { complete: false },
+          profile: { complete: false },
+          menu: { complete: false },
+          config: { complete: false },          
+        }
+      }
     },
     setRestaurantId(state, restaurantId) {
       state.restaurantId = restaurantId;
@@ -57,7 +83,7 @@ const store = createStore({
     },
     setFormComplements(state, formComplements) {
       state.formComplements = formComplements;
-    }
+    },
   },
   actions: {
     saveToken({ commit }, token) {
@@ -66,6 +92,15 @@ const store = createStore({
     },
     removeToken({ commit }) {
       commit('clearToken');
+    },
+    saveEmail({ commit }, email) {
+      commit('setEmail', { email });
+    },
+    saveCompleteStep({ commit }, step) {
+      commit('setCompleteStep', { step });
+    },
+    saveCompleteConfig({ commit }, completeConfig) {
+      commit('setCompleteConfig', { completeConfig });
     },
     checkTokenValidity({ state, dispatch }) {
       const currentTimestamp = new Date().getTime();
@@ -149,6 +184,8 @@ const store = createStore({
       reducer: (state) => ({
         token: state.token,
         tokenTimestamp: state.tokenTimestamp,
+        email: state.email,
+        completeConfig: state.completeConfig,
         navbarData: state.navbarData,
         sidebarData: state.sidebarData,
         restaurantId: state.restaurantId,
